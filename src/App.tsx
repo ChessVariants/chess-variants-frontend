@@ -1,26 +1,25 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import CustomButton from './Components/Home/Util/CustomButton';
-
-const useStyles = makeStyles(() => ({
-  centerBox: {
-    textAlign: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  }
-
-}));
+import LoginPage from './Components/Login/LoginPage';
+import HomePage from './Components/Home/HomePage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className={useStyles().centerBox}>
-      <header className={useStyles().centerBox}>
-        <CustomButton text="Play" width="200px" height="60px" color="red"/>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+    </Routes>
   );
 }
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+};
+
+export default AppWrapper;
+
+
+
