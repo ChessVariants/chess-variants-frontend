@@ -4,7 +4,7 @@ In the project directory, you can run:
 
 ### `npm install`
 
-Installs the different dependencies
+Installs the different dependencies. Use "npm install --force" as mui does not fully support react 18.0.
 
 ### `npm start`
 
