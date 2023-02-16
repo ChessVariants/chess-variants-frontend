@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
-import React from "react";
-import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
+import { Theme } from "@material-ui/core";
+import Square from "./Square";
 
 interface StyleProps {
     rows: string;
@@ -13,7 +13,6 @@ interface StyleProps {
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
         alignContent: "center",
-
     },
     Board: {
         borderStyle: "solid",
@@ -27,31 +26,37 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         width: (({width}) => width),
         backgroundColor: "blue",
     },
-    SquareContainer: {
-        width: "auto",
-        height: "auto",
-        position: "relative",
-    },
-    Black: {
-        backgroundColor: "black",
-        color: "white",
-    },
-    White: {
-        backgroundColor: "white",
-    },
-    Square: {
-        fontSize: "1vw",
-        overflow: "hidden",
-        position: "absolute",
-        bottom: "-1vw",
-    }
   }));
  
-export default function GameBoard(props: {row : number, col : number}) {
-    const {
-        row,
-        col,
-    } = props;
+export default function GameBoard() {
+    
+    const yourTurn = 1; // 0,1 false, true
+    const home = false; // true, false, white, black
+
+    const row = 4;
+    const col = 8;
+
+    const columnCoordinate = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R","S", "T", "U", "V", "W", "X", "Y", "Z"];  
+
+    // dummy data, to be replaced by info from backend
+    let dummyPositions = "ab4,em4,em8,em2,ab,em,ab4,ab1,em7";
+
+    let tempPositions = dummyPositions.split(",");
+    let pieces : string[] = [];
+
+    for (let index = 0; index < tempPositions.length; index++) {
+        let amount = Number(tempPositions[index].replace(/\D/g, ""));
+        if (amount >= 1) {
+            for (let j = 0; j < amount; j++) {
+                pieces.push(tempPositions[index][0] + tempPositions[index][1]);
+            }
+        }
+        else {
+            pieces.push(tempPositions[index]);
+        }
+    }
+    if (!home) pieces.reverse();
+
 
     const style = {
         rows : "repeat("+ row + ", auto)", 
@@ -61,53 +66,43 @@ export default function GameBoard(props: {row : number, col : number}) {
     };
     const classes = useStyles(style);
 
-    const board = [];
-    let key = 0;
-    for (let r = 0; r < row; r++) {
-        for (let c = 0; c < col; c++) {
-            if(col % 2) {
-                if ((key) % 2) {
-                    board.push(
-                    <Box className={`${classes.SquareContainer} ${classes.Black}`} key={key}>
-                        <Box className={classes.Square}>
-                            <p>b</p>
-                        </Box>
-                    </Box>);
-                }
-                else {
-                    board.push(
-                    <Box className={`${classes.SquareContainer} ${classes.White}`} key={key}>
-                        <Box className={classes.Square}>
-                            <p>w</p>
-                        </Box>
-                    </Box>);
-                }
+    const squareColor = (index : number) => {
+        if (!home) index = pieces.length-1 - index;
+        if (col % 2) {
+            if ((index) % 2) {
+                return true;
             }
             else {
-                if ((key+ r) % 2) {
-                    board.push(
-                    <Box className={`${classes.Black} ${classes.SquareContainer}`} key={key}>
-                        <Box className={classes.Square}>
-                            <p>b</p>
-                        </Box>
-                    </Box>);
-                }
-                else {
-                    board.push(
-                    <Box className={`${classes.SquareContainer} ${classes.White}`} key={key}>
-                        <Box className={classes.Square}>
-                            <p>w</p>
-                        </Box>
-                    </Box>);
-                }
+                return false;
             }
-            key++;
         }
+        else {
+            if ((index + (Math.trunc(index/col) % 2)) % 2) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    } 
+    const squareCoordinate = (index : number) => {
+        let index2 = index;
+        if (!home) index = pieces.length-1 - index;
+        if (home) index2 = pieces.length-1 - index;
+        let coordinate = columnCoordinate[(index % col)] + (Math.trunc(index2/col)+1);
+        
+        return coordinate;
     }
 
     return (
         <Box className={classes.Container}>
-            <Box className={classes.Board}>{board}</Box>
+            <Box className={classes.Board}>
+                {
+                    pieces.map((piece, i) => (
+                        <Square isWhite={squareColor(i)} id={piece} coordinate={squareCoordinate(i)}/>
+                    ))
+                }
+            </Box>
         </Box>
     );
 }

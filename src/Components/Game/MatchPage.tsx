@@ -8,7 +8,7 @@ export default function MatchPage() {
 
   return (
     <Box>
-      <GameBoard row={8} col={8}></GameBoard>
+      <GameBoard></GameBoard>
     </Box>
   );
 }
