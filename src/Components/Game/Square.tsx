@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Box } from "@mui/system";
 import { PieceImageAdapter } from "../../IMG/PieceImageAdapter";
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,12 +17,19 @@ const useStyles = makeStyles<Theme>(theme => ({
         backgroundColor: "black",
     },
     Black: {
-        backgroundColor: "black",
+        backgroundColor: "#717A90",
         color: "white",
     },
+    BlackActive: {
+        backgroundColor:"#6FAF82"
+    }, 
     White: {
         backgroundColor: "white",
     },
+    WhiteActive: {
+        backgroundColor: "#C4FEC4",
+    },
+
     Square: {
         fontSize: "1vw",
         overflow: "hidden",
@@ -49,14 +56,17 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
   }));
  
-export default function Square(props: {isWhite : boolean, id : string, coordinate : string}) {
+export default function Square(props: {isWhite : boolean, id : string, coordinate : string, clickFunction : any, active : string}) {
  
     const classes = useStyles();
+    const [clicked, setClicked] = useState(false);
     
     const {
         isWhite,
         id,
         coordinate,
+        clickFunction,
+        active,
     } = props;
 
     const labelVisibility = (coordinate : string) => {
@@ -65,14 +75,38 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
         return "";
     }
 
-    return (
-        <Box className={`${classes.SquareContainer} ${isWhite ? classes.White : classes.Black}`}>
-            <Box className={classes.Square}>
-            {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
-                <p className={classes.Label}>{labelVisibility(coordinate)}</p>
+    useEffect(() => {
+        if (active === coordinate) {
+            setClicked(true);
+        }
+        else {
+            setClicked(false);
+        }
+
+    }, [active]);
+
+
+    if (isWhite) {
+        return (
+            <Box className={`${classes.SquareContainer} ${clicked ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
+                <Box className={classes.Square}>
+                {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
+                    <p className={classes.Label}>{labelVisibility(coordinate)}</p>
+                </Box>
             </Box>
-        </Box>
-    );
+        );
+    }
+    else {
+        return (
+            <Box className={`${classes.SquareContainer} ${clicked ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
+                <Box className={classes.Square}>
+                {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
+                    <p className={classes.Label}>{labelVisibility(coordinate)}</p>
+                </Box>
+            </Box>
+        );
+    }
+    
 }
 
   

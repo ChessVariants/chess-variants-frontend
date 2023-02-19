@@ -2,6 +2,7 @@ import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "./Square";
+import { useState } from "react";
 
 interface StyleProps {
     rows: string;
@@ -9,14 +10,13 @@ interface StyleProps {
     height: string;
     width: string;
 }
-
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
         alignContent: "center",
     },
     Board: {
         borderStyle: "solid",
-        borderColor: "red",
+        borderColor: "black",
         borderWidth: "5px",
         margin: "0 auto",
         display: "grid",
@@ -27,19 +27,23 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         backgroundColor: "blue",
     },
   }));
- 
+
 export default function GameBoard() {
+
+    const [active, setActive] = useState("");
+
+    // active = "E4"
     
     const yourTurn = 1; // 0,1 false, true
-    const home = false; // true, false, white, black
+    const home = true; // true, false, white, black
 
-    const row = 4;
+    const row = 5;
     const col = 8;
 
     const columnCoordinate = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R","S", "T", "U", "V", "W", "X", "Y", "Z"];  
 
     // dummy data, to be replaced by info from backend
-    let dummyPositions = "ab4,em4,em8,em2,ab,em,ab4,ab1,em7";
+    let dummyPositions = "ab8,em8,ab8,em8,ab8";
 
     let tempPositions = dummyPositions.split(",");
     let pieces : string[] = [];
@@ -61,8 +65,8 @@ export default function GameBoard() {
     const style = {
         rows : "repeat("+ row + ", auto)", 
         cols : "repeat(" + col + ", auto)", 
-        height: (row >= col ? "32vw" : (row/col)*32 + "vw"), 
-        width: (row >= col ? (col/row)*32 + "vw" : "32vw"),
+        height: (row >= col ? "34vw" : (row/col)*34 + "vw"), 
+        width: (row >= col ? (col/row)*34 + "vw" : "34vw"),
     };
     const classes = useStyles(style);
 
@@ -93,13 +97,22 @@ export default function GameBoard() {
         
         return coordinate;
     }
+    const clickFunction = (coordinate : string) => {
+        if (coordinate === active) {
+            setActive("");
+        }
+        else {
+            setActive(coordinate);
+        }
+    }
 
     return (
         <Box className={classes.Container}>
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={piece} coordinate={squareCoordinate(i)}/>
+                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() => 
+                        clickFunction(squareCoordinate(i))}/>
                     ))
                 }
             </Box>
