@@ -31,7 +31,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
 
     Square: {
-        fontSize: "1vw",
+        fontSize: "calc(4px + 0.8vw)",
         overflow: "hidden",
         width: "100%",
         height: "100%",

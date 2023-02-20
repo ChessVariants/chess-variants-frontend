@@ -8,23 +8,31 @@ interface StyleProps {
     rows: string;
     cols: string;
     height: string;
+    heightSmall: string
     width: string;
+    widthSmall: string;
 }
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
-        alignContent: "center",
+        verticalAlign: "top",
+        display: "inline-block",
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     },
     Board: {
         borderStyle: "solid",
-        borderColor: "black",
-        borderWidth: "5px",
-        margin: "0 auto",
+        borderColor: "#2C2D2F",
+        borderWidth: "15px",
+        margin: "0",
         display: "grid",
         gridTemplateRows: (({rows}) => rows),
         gridTemplateColumns: (({cols}) => cols),
         height: (({height}) => height),
         width: (({width}) => width),
         backgroundColor: "blue",
+        [theme.breakpoints.down('xs')]: {
+            height: (({heightSmall}) => heightSmall),
+            width: (({widthSmall}) => widthSmall),
+          },
     },
   }));
 
@@ -32,7 +40,7 @@ export default function GameBoard() {
 
     const [active, setActive] = useState(["", [""]]);
     
-    const yourTurn = 1; // 0,1 false, true
+    const yourTurn = true; 
     const home = true; // true, false, white, black
 
     const row = 5;
@@ -75,8 +83,10 @@ export default function GameBoard() {
     const style = {
         rows : "repeat("+ row + ", auto)", 
         cols : "repeat(" + col + ", auto)", 
-        height: (row >= col ? "34vw" : (row/col)*34 + "vw"), 
-        width: (row >= col ? (col/row)*34 + "vw" : "34vw"),
+        height: (row >= col ? "38vw" : (row/col)*38 + "vw"), 
+        heightSmall: (row >= col ? "56vw" : (row/col)*56 + "vw"), 
+        width: (row >= col ? (col/row)*38 + "vw" : "38vw"),
+        widthSmall: (row >= col ? (col/row)*56 + "vw" : "56vw"),
     };
     const classes = useStyles(style);
 
@@ -114,25 +124,31 @@ export default function GameBoard() {
     }
 
     const clickFunction = (coordinate : string) => {
-        if (active[0] !== "" && active[1].includes(coordinate)) {
-            console.log(active[0] + " -> " + coordinate);
-            setActive(["", []]);
-            // Skicka drag till server
-        }
-        else {
-            if (coordinate === active[0]) {
+        if (yourTurn === true) {
+            if (active[0] !== "" && active[1].includes(coordinate)) {
+                console.log(active[0] + " -> " + coordinate);
                 setActive(["", []]);
+                // Skicka drag till server
             }
             else {
-                //if (getValidMoves(coordinate)) 
-                if (getValidMoves(coordinate).length > 0) {
-                    setActive([coordinate, getValidMoves(coordinate)]);
+                if (coordinate === active[0]) {
+                    setActive(["", []]);
                 }
                 else {
-                    setActive(["", []]);
+                    //if (getValidMoves(coordinate)) 
+                    if (getValidMoves(coordinate).length > 0) {
+                        setActive([coordinate, getValidMoves(coordinate)]);
+                    }
+                    else {
+                        setActive(["", []]);
+                    }
                 }
             }
         }
+        else {
+            // visa att man inte få dra på något vis
+        }
+        
     }
 
     return (
