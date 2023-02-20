@@ -30,9 +30,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 
 export default function GameBoard() {
 
-    const [active, setActive] = useState("");
-
-    // active = "E4"
+    const [active, setActive] = useState(["", [""]]);
     
     const yourTurn = 1; // 0,1 false, true
     const home = true; // true, false, white, black
@@ -41,9 +39,21 @@ export default function GameBoard() {
     const col = 8;
 
     const columnCoordinate = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R","S", "T", "U", "V", "W", "X", "Y", "Z"];  
+    //const validMoves;
 
     // dummy data, to be replaced by info from backend
     let dummyPositions = "ab8,em8,ab8,em8,ab8";
+    let dummyValidMoves : ({from: string; to: string[];}[]) =
+    [
+        {
+         from: "E4",
+         to: ["E1","E2"]
+        }, 
+        {
+         from: "F1",
+         to: ["F5","H3"]
+        },
+     ];
 
     let tempPositions = dummyPositions.split(",");
     let pieces : string[] = [];
@@ -97,12 +107,31 @@ export default function GameBoard() {
         
         return coordinate;
     }
+    const getValidMoves = (coordinate : string) => {
+        // hitta from === coordinate i JSON
+        const moves = dummyValidMoves.filter((item) => item.from === coordinate);
+        return moves[0] ? moves[0].to : [];
+    }
+
     const clickFunction = (coordinate : string) => {
-        if (coordinate === active) {
-            setActive("");
+        if (active[0] !== "" && active[1].includes(coordinate)) {
+            console.log(active[0] + " -> " + coordinate);
+            setActive(["", []]);
+            // Skicka drag till server
         }
         else {
-            setActive(coordinate);
+            if (coordinate === active[0]) {
+                setActive(["", []]);
+            }
+            else {
+                //if (getValidMoves(coordinate)) 
+                if (getValidMoves(coordinate).length > 0) {
+                    setActive([coordinate, getValidMoves(coordinate)]);
+                }
+                else {
+                    setActive(["", []]);
+                }
+            }
         }
     }
 

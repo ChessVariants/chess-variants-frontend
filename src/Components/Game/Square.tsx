@@ -56,10 +56,10 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
   }));
  
-export default function Square(props: {isWhite : boolean, id : string, coordinate : string, clickFunction : any, active : string}) {
+export default function Square(props: {isWhite : boolean, id : string, coordinate : string, clickFunction : any, active : any}) {
  
     const classes = useStyles();
-    const [clicked, setClicked] = useState(false);
+    const [activated, setActivated] = useState(false);
     
     const {
         isWhite,
@@ -76,11 +76,15 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
     }
 
     useEffect(() => {
-        if (active === coordinate) {
-            setClicked(true);
+        if (active[0] === coordinate) {
+            setActivated(true);
+        }
+        else if (active[1].includes(coordinate))
+        {
+            setActivated(true);
         }
         else {
-            setClicked(false);
+            setActivated(false);
         }
 
     }, [active]);
@@ -88,7 +92,7 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
 
     if (isWhite) {
         return (
-            <Box className={`${classes.SquareContainer} ${clicked ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
+            <Box className={`${classes.SquareContainer} ${activated ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
                 {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
                     <p className={classes.Label}>{labelVisibility(coordinate)}</p>
@@ -98,7 +102,7 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
     }
     else {
         return (
-            <Box className={`${classes.SquareContainer} ${clicked ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
+            <Box className={`${classes.SquareContainer} ${activated ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
                 {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
                     <p className={classes.Label}>{labelVisibility(coordinate)}</p>
