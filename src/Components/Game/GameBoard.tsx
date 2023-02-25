@@ -41,27 +41,28 @@ export default function GameBoard() {
     const [active, setActive] = useState(["", [""]]);
     
     const yourTurn = true; 
-    const home = true; // true, false, white, black
+    const isWhite = true; // true, false, white, black
 
     const row = 5;
     const col = 8;
 
-    const columnCoordinate = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R","S", "T", "U", "V", "W", "X", "Y", "Z"];  
+    const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r","s", "t", "u", "v", "w", "x", "Y", "Z"];  
     //const validMoves;
 
     // dummy data, to be replaced by info from backend
-    let dummyPositions = "ab8,em8,ab8,em8,ab8";
+    let dummyPositions = "AB8,em24,ab8";
     let dummyValidMoves : ({from: string; to: string[];}[]) =
     [
         {
-         from: "E4",
-         to: ["E1","E2"]
-        }, 
+         from: "f1",
+         to: ["f5","h3"]
+        },
         {
-         from: "F1",
-         to: ["F5","H3"]
+         from: "f2",
+         to: ["a1","a2"]
         },
      ];
+
 
     let tempPositions = dummyPositions.split(",");
     let pieces : string[] = [];
@@ -77,7 +78,7 @@ export default function GameBoard() {
             pieces.push(tempPositions[index]);
         }
     }
-    if (!home) pieces.reverse();
+    if (!isWhite) pieces.reverse();
 
 
     const style = {
@@ -91,7 +92,7 @@ export default function GameBoard() {
     const classes = useStyles(style);
 
     const squareColor = (index : number) => {
-        if (!home) index = pieces.length-1 - index;
+        if (!isWhite) index = pieces.length-1 - index;
         if (col % 2) {
             if ((index) % 2) {
                 return true;
@@ -111,8 +112,8 @@ export default function GameBoard() {
     } 
     const squareCoordinate = (index : number) => {
         let index2 = index;
-        if (!home) index = pieces.length-1 - index;
-        if (home) index2 = pieces.length-1 - index;
+        if (!isWhite) index = pieces.length-1 - index;
+        if (isWhite) index2 = pieces.length-1 - index;
         let coordinate = columnCoordinate[(index % col)] + (Math.trunc(index2/col)+1);
         
         return coordinate;
