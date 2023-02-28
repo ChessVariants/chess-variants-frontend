@@ -24,48 +24,50 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         borderWidth: "15px",
         margin: "0",
         display: "grid",
-        gridTemplateRows: (({rows}) => rows),
-        gridTemplateColumns: (({cols}) => cols),
-        height: (({height}) => height),
-        width: (({width}) => width),
+        gridTemplateRows: (({ rows }) => rows),
+        gridTemplateColumns: (({ cols }) => cols),
+        height: (({ height }) => height),
+        width: (({ width }) => width),
         backgroundColor: "blue",
         [theme.breakpoints.down('xs')]: {
-            height: (({heightSmall}) => heightSmall),
-            width: (({widthSmall}) => widthSmall),
-          },
+            height: (({ heightSmall }) => heightSmall),
+            width: (({ widthSmall }) => widthSmall),
+        },
     },
-  }));
+}));
 
 export default function GameBoard() {
 
     const [active, setActive] = useState(["", [""]]);
-    
-    const yourTurn = true; 
+
+    const yourTurn = true;
     const isWhite = true; // true, false, white, black
 
-    const row = 5;
+    const row = 8;
     const col = 8;
 
-    const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r","s", "t", "u", "v", "w", "x", "Y", "Z"];  
+    const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
     //const validMoves;
 
-    // dummy data, to be replaced by info from backend
-    let dummyPositions = "AB8,em24,ab8";
-    let dummyValidMoves : ({from: string; to: string[];}[]) =
-    [
-        {
-         from: "f1",
-         to: ["f5","h3"]
-        },
-        {
-         from: "f2",
-         to: ["a1","a2"]
-        },
-     ];
+    // dummy data, to be replaced by info from backend, 
+    //vit, stor, svart, liten
+    // pa, bi, kn, ro, qu, ki
+    let dummyPositions = "ro,kn,bi,qu,ki,bi,kn,ro,pa8,em32,PA8,RO,KN,BI,QU,KI,BI,KN,RO";
+    let dummyValidMoves: ({ from: string; to: string[]; }[]) =
+        [
+            {
+                from: "f1",
+                to: ["f5", "h3"]
+            },
+            {
+                from: "f2",
+                to: ["a1", "a2"]
+            },
+        ];
 
 
     let tempPositions = dummyPositions.split(",");
-    let pieces : string[] = [];
+    let pieces: string[] = [];
 
     for (let index = 0; index < tempPositions.length; index++) {
         let amount = Number(tempPositions[index].replace(/\D/g, ""));
@@ -82,19 +84,19 @@ export default function GameBoard() {
 
 
     const style = {
-        rows : "repeat("+ row + ", auto)", 
-        cols : "repeat(" + col + ", auto)", 
-        height: (row >= col ? "38vw" : (row/col)*38 + "vw"), 
-        heightSmall: (row >= col ? "56vw" : (row/col)*56 + "vw"), 
-        width: (row >= col ? (col/row)*38 + "vw" : "38vw"),
-        widthSmall: (row >= col ? (col/row)*56 + "vw" : "56vw"),
+        rows: "repeat(" + row + ", auto)",
+        cols: "repeat(" + col + ", auto)",
+        height: (row >= col ? "38vw" : (row / col) * 38 + "vw"),
+        heightSmall: (row >= col ? "56vw" : (row / col) * 56 + "vw"),
+        width: (row >= col ? (col / row) * 38 + "vw" : "38vw"),
+        widthSmall: (row >= col ? (col / row) * 56 + "vw" : "56vw"),
     };
     const classes = useStyles(style);
 
-    const squareColor = (index : number) => {
-        if (!isWhite) index = pieces.length-1 - index;
+    const squareColor = (index: number) => {
+        if (!isWhite) index = pieces.length - 1 - index;
         if (col % 2) {
-            if ((index) % 2) {
+            if ((index + 1) % 2) {
                 return true;
             }
             else {
@@ -102,29 +104,29 @@ export default function GameBoard() {
             }
         }
         else {
-            if ((index + (Math.trunc(index/col) % 2)) % 2) {
+            if ((index + 1 + (Math.trunc(index / col) % 2)) % 2) {
                 return true;
             }
             else {
                 return false;
             }
         }
-    } 
-    const squareCoordinate = (index : number) => {
+    }
+    const squareCoordinate = (index: number) => {
         let index2 = index;
-        if (!isWhite) index = pieces.length-1 - index;
-        if (isWhite) index2 = pieces.length-1 - index;
-        let coordinate = columnCoordinate[(index % col)] + (Math.trunc(index2/col)+1);
-        
+        if (!isWhite) index = pieces.length - 1 - index;
+        if (isWhite) index2 = pieces.length - 1 - index;
+        let coordinate = columnCoordinate[(index % col)] + (Math.trunc(index2 / col) + 1);
+
         return coordinate;
     }
-    const getValidMoves = (coordinate : string) => {
+    const getValidMoves = (coordinate: string) => {
         // hitta from === coordinate i JSON
         const moves = dummyValidMoves.filter((item) => item.from === coordinate);
         return moves[0] ? moves[0].to : [];
     }
 
-    const clickFunction = (coordinate : string) => {
+    const clickFunction = (coordinate: string) => {
         if (yourTurn === true) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
                 console.log(active[0] + " -> " + coordinate);
@@ -149,7 +151,7 @@ export default function GameBoard() {
         else {
             // visa att man inte få dra på något vis
         }
-        
+
     }
 
     return (
@@ -157,12 +159,11 @@ export default function GameBoard() {
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() => 
-                        clickFunction(squareCoordinate(i))}/>
+                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
+                            clickFunction(squareCoordinate(i))} />
                     ))
                 }
             </Box>
         </Box>
     );
 }
-  
