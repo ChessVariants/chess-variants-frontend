@@ -29,9 +29,9 @@ const theme = createTheme(darkTheme);
 export default function LoginPage() {
 
   /**
-  * useState used to print a label with error message if the registration service returned an error
+  * useState used to print a label with error message if the login service returned an error
   */
-  const [registrationError, setRegistrationError] = useState("");
+  const [loginError, setLoginError] = useState("");
   /**
   * useStates used to update the textfields to show error if the input is invalid
   */
@@ -132,6 +132,11 @@ export default function LoginPage() {
                 validatePassword(event.target.value);
               }}
             />
+              {loginError ? <Box sx=
+              {{
+                color: "red",
+                fontSize: "12px",
+              }}>{loginError}</Box> : null}
             <Button
               type="submit"
               fullWidth
