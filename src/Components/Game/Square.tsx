@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 import { PieceImageAdapter } from "../../IMG/PieceImageAdapter";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 
-interface StyleProps {
-    image: string;
-}
-
+/**
+ * MUI styles provider
+ */
 const useStyles = makeStyles<Theme>(theme => ({
-
     SquareContainer: {
         width: "auto",
         height: "auto",
@@ -39,6 +37,12 @@ const useStyles = makeStyles<Theme>(theme => ({
         bottom: "0",
     },
     Icon: {
+        userDrag: "none",
+        webkitUserDrag: "none",
+        userSelect: "none",
+        mozUserSelect: "none",
+        webkitUserSelect: "none",
+        msUserSelect: "none",
         boxSizing: "border-box",
         width: "100%",
         height: "100%",
@@ -62,11 +66,22 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
 }));
 
+/**
+ * 
+ * @param props includes boolean for color, id of the piece, coordinate (position, i.e. e4), clickfunction and reference to list of active squares
+ * @returns 
+ */
 export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any }) {
 
     const classes = useStyles();
+    /**
+     * useState to activate square
+     */
     const [activated, setActivated] = useState(false);
 
+    /**
+     * sets props to corresponding constant
+     */
     const {
         isWhite,
         id,
@@ -75,12 +90,21 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         active,
     } = props;
 
+    /**
+     * Checks if the label of position should be visible, only bottom and left squares have active label (from whites perspective)
+     * 
+     * @param coordinate 
+     * @returns label string
+     */
     const labelVisibility = (coordinate: string) => {
         if (coordinate[0] === "a") return coordinate;
         if (coordinate[1] === "1" && coordinate.length === 2) return coordinate;
         return "";
     }
 
+    /**
+     * Changes state of the square if active is changed in the gameboard
+     */
     useEffect(() => {
         if (active[0] === coordinate) {
             setActivated(true);
@@ -95,6 +119,9 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
     }, [active]);
 
 
+    /**
+     * Returns HTML
+     */
     if (isWhite) {
         return (
             <Box className={`${classes.SquareContainer} ${activated ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
