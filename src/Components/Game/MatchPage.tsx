@@ -6,9 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 
 
 const useStyles = makeStyles<Theme>(theme => ({
-  Body: {
-        background: "#505358",
-  },
   Container: {
     alignContent: "center",
     textAlign: "center",
