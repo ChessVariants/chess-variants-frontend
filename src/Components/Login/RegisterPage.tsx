@@ -132,10 +132,10 @@ export default function RegisterPage() {
                   helperText={!isValidUsername[1] ? "Field can not be empty." : ""}
                   required
                   fullWidth
-                  id="id"
-                  label="User ID"
-                  name="id"
-                  autoComplete="id"
+                 id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
                   onChange={(event) => {
                     validateUsername(event.target.value);
                   }}
