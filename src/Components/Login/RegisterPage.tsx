@@ -33,11 +33,17 @@ export default function RegisterPage() {
    */
   const [registrationError, setRegistrationError] = useState("");
   /**
-   * useStates used to update the textfields to show error if the input is invalid
+   * useStates used to update the textfields to show error if the input is invalid, the useStates with FirstCheck is only
+   * used the first before the user have typed any input in order to now show error message before input
    */
-  const [isValidEmail, setIsValidEmail] = useState([false, true]);
-  const [isValidUsername, setisValidUsername] = useState([false, true]);
-  const [isValidPassword, setIsValidPassword] = useState([false, true]);
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [isValidEmailFirstCheck, setIsValidEmailFirstCheck] = useState(true);
+
+  const [isValidUsername, setIsValidUsername] = useState(false);
+  const [isValidUsernameFirstCheck, setIsValidUsernameFirstCheck] = useState(true);
+
+  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [isValidPasswordFirstCheck, setIsValidPasswordFirstCheck] = useState(true);
 
   /**
    * Checks if the email is valid, changes the useState based on results
@@ -47,10 +53,12 @@ export default function RegisterPage() {
     const emailRegexValidator = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
     if (emailRegexValidator.test(email)) {
-      setIsValidEmail([true, true]);
+      setIsValidEmail(true);
+      setIsValidEmailFirstCheck(true);
     }
     else {
-      setIsValidEmail([false, false]);
+      setIsValidEmail(false);
+      setIsValidEmailFirstCheck(false);
     }
   }
   /**
@@ -59,10 +67,12 @@ export default function RegisterPage() {
    */
   const validateUsername = (username: string) => {
     if (username !== "") {
-      setisValidUsername([true, true]);
+      setIsValidUsername(true);
+      setIsValidUsernameFirstCheck(true);
     }
     else {
-      setisValidUsername([false, false]);
+      setIsValidUsername(false);
+      setIsValidUsernameFirstCheck(false);
     }
   }
   /**
@@ -71,10 +81,12 @@ export default function RegisterPage() {
    */
   const validatePassword = (password: string) => {
     if (password !== "") {
-      setIsValidPassword([true, true]);
+      setIsValidPassword(true);
+      setIsValidPasswordFirstCheck(true);
     }
     else {
-      setIsValidPassword([false, false]);
+      setIsValidPassword(false);
+      setIsValidPasswordFirstCheck(false);
     }
   }
 
@@ -128,14 +140,14 @@ export default function RegisterPage() {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                  error={!isValidUsername[1]}
-                  helperText={!isValidUsername[1] ? "Field can not be empty." : ""}
+                  error={!isValidUsername && !isValidUsernameFirstCheck}
+                  helperText={!isValidUsername && !isValidUsernameFirstCheck ? "Field can not be empty." : ""}
                   required
                   fullWidth
-                  id="id"
-                  label="User ID"
-                  name="id"
-                  autoComplete="id"
+                  id="username"
+                  label="Username"
+                  name="username"
+                  autoComplete="username"
                   onChange={(event) => {
                     validateUsername(event.target.value);
                   }}
@@ -143,8 +155,8 @@ export default function RegisterPage() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  error={!isValidEmail[1]}
-                  helperText={!isValidEmail[1] ? "Please use a valid email format." : ""}
+                  error={!isValidEmail && !isValidEmailFirstCheck}
+                  helperText={!isValidEmail && !isValidEmailFirstCheck ? "Please use a valid email format." : ""}
                   required
                   fullWidth
                   id="email"
@@ -158,8 +170,8 @@ export default function RegisterPage() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  error={!isValidPassword[1]}
-                  helperText={!isValidPassword[1] ? "Field can not be empty." : ""}
+                  error={!isValidPassword && !isValidPasswordFirstCheck}
+                  helperText={!isValidPassword && !isValidPasswordFirstCheck ? "Field can not be empty." : ""}
                   required
                   fullWidth
                   name="password"
@@ -185,7 +197,7 @@ export default function RegisterPage() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={!isValidEmail[0] || !isValidPassword[0] || !isValidUsername[0]}
+              disabled={!isValidEmail || !isValidPassword || !isValidUsername}
             >
               Sign Up
             </Button>
