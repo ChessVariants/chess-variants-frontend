@@ -4,6 +4,9 @@ import { Theme } from "@material-ui/core";
 import Square from "./Square";
 import { useState } from "react";
 
+/**
+ * Interface of properties that the userStyles requires to dynamically set different css properties
+ */
 interface StyleProps {
     rows: string;
     cols: string;
@@ -12,6 +15,10 @@ interface StyleProps {
     width: string;
     widthSmall: string;
 }
+
+/**
+ * MUI styles
+ */
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
         verticalAlign: "top",
@@ -36,10 +43,23 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     },
 }));
 
+/**
+ * The GameBoard componenet
+ * 
+ * @returns HTML
+ */
 export default function GameBoard() {
 
+    /**
+     * An array of active squares (highlighted by green color)
+     * The first element is the active square that the user clicks on
+     * The second is an array of active squares that the user can afterwards click on
+     */
     const [active, setActive] = useState(["", [""]]);
 
+    /**
+     * Various variables, this part will see an overhaul with the intergration of the service and router
+     */
     const yourTurn = true;
     const isWhite = true; // true, false, white, black
 
@@ -69,6 +89,10 @@ export default function GameBoard() {
     let tempPositions = dummyPositions.split(",");
     let pieces: string[] = [];
 
+    /**
+     * Changes the positions data (string) to an array to be able to iterate over the positions
+     * Will reverse if the other player is black
+     */
     for (let index = 0; index < tempPositions.length; index++) {
         let amount = Number(tempPositions[index].replace(/\D/g, ""));
         if (amount >= 1) {
@@ -82,7 +106,9 @@ export default function GameBoard() {
     }
     if (!isWhite) pieces.reverse();
 
-
+    /**
+     * CSS properties that should be set on dynamically in shape of StyleProps interface
+     */
     const style = {
         rows: "repeat(" + row + ", auto)",
         cols: "repeat(" + col + ", auto)",
@@ -93,6 +119,12 @@ export default function GameBoard() {
     };
     const classes = useStyles(style);
 
+    /**
+     * Calculates which color the square should be based on the position, first white, then black, etc.
+     * 
+     * @param index of the position list
+     * @returns a boolean where represents true white
+     */
     const squareColor = (index: number) => {
         if (!isWhite) index = pieces.length - 1 - index;
         if (col % 2) {
@@ -112,6 +144,14 @@ export default function GameBoard() {
             }
         }
     }
+
+    /**
+     * Takes a square and returns the corresponding coordinate
+     * The first square would return "a1"
+     * 
+     * @param index of the position list
+     * @returns coordinate
+     */
     const squareCoordinate = (index: number) => {
         let index2 = index;
         if (!isWhite) index = pieces.length - 1 - index;
@@ -120,12 +160,24 @@ export default function GameBoard() {
 
         return coordinate;
     }
+
+    /**
+     * Gets all the valid moves for the selected square
+     * 
+     * @param coordinate 
+     * @returns an array of valid positions that can be clicked
+     */
     const getValidMoves = (coordinate: string) => {
         // hitta from === coordinate i JSON
         const moves = dummyValidMoves.filter((item) => item.from === coordinate);
         return moves[0] ? moves[0].to : [];
     }
 
+    /**
+     * ClickFunction is called when a square is clicked
+     * 
+     * @param coordinate 
+     */
     const clickFunction = (coordinate: string) => {
         if (yourTurn === true) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
