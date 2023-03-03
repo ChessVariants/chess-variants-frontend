@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 import { PieceImageAdapter } from "../../IMG/PieceImageAdapter";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 
-interface StyleProps {
-    image: string;
-}
-
+/**
+ * MUI styles provider
+ */
 const useStyles = makeStyles<Theme>(theme => ({
-
     SquareContainer: {
         width: "auto",
         height: "auto",
@@ -21,8 +19,8 @@ const useStyles = makeStyles<Theme>(theme => ({
         color: "white",
     },
     BlackActive: {
-        backgroundColor:"#6FAF82"
-    }, 
+        backgroundColor: "#6FAF82"
+    },
     White: {
         backgroundColor: "white",
     },
@@ -31,7 +29,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
 
     Square: {
-        fontSize: "calc(4px + 0.8vw)",
+        fontSize: "calc(4px + 0.7vw)",
         overflow: "hidden",
         width: "100%",
         height: "100%",
@@ -39,28 +37,51 @@ const useStyles = makeStyles<Theme>(theme => ({
         bottom: "0",
     },
     Icon: {
+        userDrag: "none",
+        webkitUserDrag: "none",
+        userSelect: "none",
+        mozUserSelect: "none",
+        webkitUserSelect: "none",
+        msUserSelect: "none",
         boxSizing: "border-box",
         width: "100%",
         height: "100%",
         objectFit: "cover",
-        padding: "1vw",
+        padding: ".5vw",
+    },
+    WhitePiece: {
+        filter: "contrast(.7) brightness(1.2)",
+    },
+    BlackPiece: {
+        filter: "sepia(2) saturate(1) hue-rotate(200deg) brightness(.2)",
     },
     Label: {
         position: "absolute",
         bottom: "0",
         left: "0",
         boxSizing: "border-box",
-        margin: "0",    
+        margin: "0",
         marginBlockStart: "0",
         marginBlockEnd: "0",
     },
-  }));
- 
-export default function Square(props: {isWhite : boolean, id : string, coordinate : string, clickFunction : any, active : any}) {
- 
+}));
+
+/**
+ * 
+ * @param props includes boolean for color, id of the piece, coordinate (position, i.e. e4), clickfunction and reference to list of active squares
+ * @returns 
+ */
+export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any }) {
+
     const classes = useStyles();
+    /**
+     * useState to activate square
+     */
     const [activated, setActivated] = useState(false);
-    
+
+    /**
+     * sets props to corresponding constant
+     */
     const {
         isWhite,
         id,
@@ -69,18 +90,26 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
         active,
     } = props;
 
-    const labelVisibility = (coordinate : string) => {
-        if (coordinate[0] === "A") return coordinate;
+    /**
+     * Checks if the label of position should be visible, only bottom and left squares have active label (from whites perspective)
+     * 
+     * @param coordinate 
+     * @returns label string
+     */
+    const labelVisibility = (coordinate: string) => {
+        if (coordinate[0] === "a") return coordinate;
         if (coordinate[1] === "1" && coordinate.length === 2) return coordinate;
         return "";
     }
 
+    /**
+     * Changes state of the square if active is changed in the gameboard
+     */
     useEffect(() => {
         if (active[0] === coordinate) {
             setActivated(true);
         }
-        else if (active[1].includes(coordinate))
-        {
+        else if (active[1].includes(coordinate)) {
             setActivated(true);
         }
         else {
@@ -90,11 +119,17 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
     }, [active]);
 
 
+    /**
+     * Returns HTML
+     */
     if (isWhite) {
         return (
             <Box className={`${classes.SquareContainer} ${activated ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
-                {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
+                    {id !== "em" ? <img src={PieceImageAdapter.getImageRef(id)}
+                        alt={id}
+                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
+                    /> : null}
                     <p className={classes.Label}>{labelVisibility(coordinate)}</p>
                 </Box>
             </Box>
@@ -104,13 +139,16 @@ export default function Square(props: {isWhite : boolean, id : string, coordinat
         return (
             <Box className={`${classes.SquareContainer} ${activated ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
-                {id!=="em" ? <img src={PieceImageAdapter.getImageRef(id)} alt={id} className={classes.Icon}/> : null}
+                    {id !== "em" ? <img
+                        src={PieceImageAdapter.getImageRef(id)}
+                        alt={id}
+                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
+                    /> : null}
                     <p className={classes.Label}>{labelVisibility(coordinate)}</p>
                 </Box>
             </Box>
         );
     }
-    
+
 }
 
-  
