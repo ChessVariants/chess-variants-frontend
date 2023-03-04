@@ -84,7 +84,7 @@ export default class GameService {
      * Requests the server to send an event with the board state
      */
     requestBoardState(): void {
-        this.hubConnection.send('RequestBoardState');
+        this.hubConnection.send('RequestState');
     }
     
     /**
