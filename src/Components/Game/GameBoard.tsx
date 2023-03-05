@@ -47,7 +47,7 @@ type State = {
     boardSize: { row: number, col: number };
     board: string[];
     sideToMove: string;
-    moves: { from: string; to: string }[];
+    moves: { from: string; to: string[] }[];
 };
 const initialState: State = {
     boardSize: { row: 8, col: 8 },
@@ -85,16 +85,39 @@ export default function GameBoard(props: { gameService: GameService }) {
     const { gameService } = props;
 
     gameService.on(GameEvents.UpdatedGameState, (json: string) => {
+        console.log("updatestate");
+        console.log(json);
         setGameState(JSON.parse(json));
     })
 
     gameService.on(GameEvents.GameJoined, (color: string) => {
+        console.log(color);
+        
         if (color === "white") {
             isWhite = true;
         }
         else {
             isWhite = false;
         }
+        gameService.requestBoardState("TESTID123"); 
+    })
+
+    gameService.on(GameEvents.GameCreated, (color: string) => {
+        console.log("game created");
+        console.log(color);
+        
+        if (color === "white") {
+            isWhite = true;
+        }
+        else {
+            isWhite = false;
+        }
+        console.log("game joined");
+           
+    })
+
+    gameService.on(GameEvents.Error, (errorMessage: string) => {
+        alert(errorMessage);
     })
     /**
      * Changes the positions data (string) to an array to be able to iterate over the positions
@@ -191,9 +214,9 @@ export default function GameBoard(props: { gameService: GameService }) {
     const clickFunction = (coordinate: string) => {
         if (isWhite === (gameState.sideToMove === "white" ? true : false)) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
-                console.log(active[0] + " -> " + coordinate);
+                console.log(active[0] + coordinate);
                 setActive(["", []]);
-                gameService.sendMove(active[0] + coordinate, "GAMEID");
+                gameService.sendMove(active[0] + coordinate, "TESTID123");
             }
             else {
                 if (coordinate === active[0]) {

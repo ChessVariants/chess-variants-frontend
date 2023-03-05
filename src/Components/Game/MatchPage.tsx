@@ -3,7 +3,7 @@ import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import GameService from "../../Services/GameService";
+import GameService, { GameEvents } from "../../Services/GameService";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -19,7 +19,14 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 export default function MatchPage() {
 
-  const gameService: GameService = new GameService;
+  const gameService: GameService = GameService.getInstance();
+
+  console.log("match page rendered");
+  
+
+  gameService.on(GameEvents.GameCreated, (color: string) => {
+        console.log("game created");
+  })
 
   const classes = useStyles();
 

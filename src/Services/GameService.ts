@@ -8,6 +8,8 @@ export default class GameService {
     
     public readonly hubConnection: HubConnection;
 
+    private static gameService?: GameService;
+
     constructor(url: string="game", connection?: HubConnection) {
         if (connection === null || connection === undefined) {
             this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
@@ -19,6 +21,13 @@ export default class GameService {
             console.log("Could not connect to user hub");
             console.log(e);
         });
+    }
+
+    static getInstance() {
+        if (this.gameService === null || this.gameService === undefined) {
+            this.gameService = new GameService();
+        }
+        return this.gameService;
     }
 
     /**
@@ -83,8 +92,10 @@ export default class GameService {
     /**
      * Requests the server to send an event with the board state
      */
-    requestBoardState(): void {
-        this.hubConnection.send('RequestState');
+    requestBoardState(gameId: string): void {
+        console.log("Board state requested");
+        
+        this.hubConnection.send('RequestState', gameId);
     }
     
     /**
