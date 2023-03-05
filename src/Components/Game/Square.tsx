@@ -126,7 +126,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         return (
             <Box className={`${classes.SquareContainer} ${activated ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
-                    {id !== "em" ? <img src={PieceImageAdapter.getImageRef(id)}
+                    {id !== "--" ? <img src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
                         className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
                     /> : null}
@@ -139,7 +139,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         return (
             <Box className={`${classes.SquareContainer} ${activated ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
-                    {id !== "em" ? <img
+                    {id !== "--" ? <img
                         src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
                         className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}

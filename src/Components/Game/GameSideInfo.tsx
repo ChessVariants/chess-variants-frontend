@@ -1,7 +1,8 @@
-import { Box } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import CustomButton from "../Util/CustomButton";
+import GameService from "../../Services/GameService";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -21,22 +22,24 @@ const useStyles = makeStyles<Theme>(theme => ({
             marginRight: "auto",
             minWidth: "200px",
             minHeight: "280px",
-          },
+        },
     },
-    
-  }));
- 
-export default function SideInfo() {
- 
+
+}));
+
+export default function SideInfo(props: { gameService: GameService }) {
+
+    const { gameService } = props;
     const classes = useStyles();
-   
+
     return (
         <Box className={classes.Container}>
             <p>Settings</p>
             <CustomButton text={"Leave"} color={"blue"} height={"32px"}></CustomButton>
+            <Button onClick={() => { gameService.createGame("TESTID123"); console.log(gameService.requestBoardState()) }}>Create Game</Button>
+            <Button onClick={() => { gameService.joinGame("TESTID123") }}>Join game</Button>
         </Box>
     );
-    
+
 }
 
-  

@@ -3,6 +3,7 @@ import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
+import GameService from "../../Services/GameService";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -16,7 +17,9 @@ const useStyles = makeStyles<Theme>(theme => ({
   }
 }));
 
-export default function MatchPage() {  
+export default function MatchPage() {
+
+  const gameService: GameService = new GameService;
 
   const classes = useStyles();
 
@@ -24,10 +27,9 @@ export default function MatchPage() {
     //<head className={classes.head}>
     <body className={classes.Body}>
       <Box className={classes.Container}>
-      <GameBoard></GameBoard>
-      <GameSideInfo></GameSideInfo>
+        <GameBoard gameService={gameService}></GameBoard>
+        <GameSideInfo gameService={gameService}></GameSideInfo>
       </Box>
     </body>
   );
 }
-  
