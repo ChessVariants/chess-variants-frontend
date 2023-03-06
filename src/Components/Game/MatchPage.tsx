@@ -20,14 +20,6 @@ const useStyles = makeStyles<Theme>(theme => ({
 export default function MatchPage() {
 
   const gameService: GameService = GameService.getInstance();
-
-  console.log("match page rendered");
-  
-
-  gameService.on(GameEvents.GameCreated, (color: string) => {
-        console.log("game created");
-  })
-
   const classes = useStyles();
 
   return (

@@ -69,13 +69,12 @@ export default function GameBoard(props: { gameService: GameService }) {
      * The second is an array of active squares that the user can afterwards click on
      */
     const [active, setActive] = useState(["", [""]]);
-
+    const [color, setColor] = useState("white");
     const [gameState, setGameState] = useState<State>(initialState);
 
     /**
      * Various variables, this part will see an overhaul with the intergration of the service and router
      */
-    let isWhite = true;
     const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
 
@@ -92,28 +91,28 @@ export default function GameBoard(props: { gameService: GameService }) {
 
     gameService.on(GameEvents.GameJoined, (color: string) => {
         console.log(color);
-        
+
         if (color === "white") {
-            isWhite = true;
+            setColor("white");
         }
         else {
-            isWhite = false;
+            setColor("black");
         }
-        gameService.requestBoardState("TESTID123"); 
+        gameService.requestBoardState("TESTID123");
     })
 
     gameService.on(GameEvents.GameCreated, (color: string) => {
         console.log("game created");
         console.log(color);
-        
+
         if (color === "white") {
-            isWhite = true;
+            setColor("white");
         }
         else {
-            isWhite = false;
+            setColor("black");
         }
         console.log("game joined");
-           
+        //gameService.requestBoardState("TESTID123");   
     })
 
     gameService.on(GameEvents.Error, (errorMessage: string) => {
@@ -137,7 +136,7 @@ export default function GameBoard(props: { gameService: GameService }) {
             pieces.push(tempPositions[index]);
         }
     }
-    if (!isWhite) pieces.reverse();
+    if (!(color === "white")) pieces.reverse();
 
     /**
      * CSS properties that should be set on dynamically in shape of StyleProps interface
@@ -159,7 +158,7 @@ export default function GameBoard(props: { gameService: GameService }) {
      * @returns a boolean where represents true white
      */
     const squareColor = (index: number) => {
-        if (!isWhite) index = pieces.length - 1 - index;
+        if (!(color === "white")) index = pieces.length - 1 - index;
         if (gameState.boardSize.col % 2) {
             if ((index + 1) % 2) {
                 return true;
@@ -187,8 +186,8 @@ export default function GameBoard(props: { gameService: GameService }) {
      */
     const squareCoordinate = (index: number) => {
         let index2 = index;
-        if (!isWhite) index = pieces.length - 1 - index;
-        if (isWhite) index2 = pieces.length - 1 - index;
+        if (!(color === "white")) index = pieces.length - 1 - index;
+        if (color === "white") index2 = pieces.length - 1 - index;
         let coordinate = columnCoordinate[(index % gameState.boardSize.col)] + (Math.trunc(index2 / gameState.boardSize.col) + 1);
 
         return coordinate;
@@ -212,7 +211,7 @@ export default function GameBoard(props: { gameService: GameService }) {
      * @param coordinate 
      */
     const clickFunction = (coordinate: string) => {
-        if (isWhite === (gameState.sideToMove === "white" ? true : false)) {
+        if (color === gameState.sideToMove) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
                 console.log(active[0] + coordinate);
                 setActive(["", []]);
