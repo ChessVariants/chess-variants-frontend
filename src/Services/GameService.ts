@@ -69,8 +69,8 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    createGame(gameId: string): void {
-        this.hubConnection.send('CreateGame', gameId);
+    createGame(gameId: string, variant: Variant = Variant.Standard): void {
+        this.hubConnection.send('CreateGame', gameId, variant);
     }
 
     /**
@@ -124,4 +124,10 @@ export enum GameEvents {
     WhiteWon = "whiteWon",
     BlackWon = "blackWon",
     Tie = "tie",
+}
+
+export enum Variant {
+    Standard = "standard",
+    CaptureTheKing = "captureTheKing",
+    AntiChess = "antiChess",
 }
