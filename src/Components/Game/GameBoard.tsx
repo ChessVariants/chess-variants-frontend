@@ -2,7 +2,7 @@ import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "./Square";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameService, { GameEvents } from "../../Services/GameService";
 
 /**
@@ -83,41 +83,45 @@ export default function GameBoard(props: { gameService: GameService }) {
      */
     const { gameService } = props;
 
-    gameService.on(GameEvents.UpdatedGameState, (json: string) => {
-        console.log("updatestate");
-        console.log(json);
-        setGameState(JSON.parse(json));
-    })
+    useEffect(() => {
+        gameService.on(GameEvents.UpdatedGameState, (json: string) => {
+            console.log("updatestate");
+            // console.log(json);
+            setGameState(JSON.parse(json));
+        })
 
-    gameService.on(GameEvents.GameJoined, (color: string) => {
-        console.log(color);
+        gameService.on(GameEvents.GameJoined, (color: string) => {
+            console.log(color);
 
-        if (color === "white") {
-            setColor("white");
-        }
-        else {
-            setColor("black");
-        }
-        gameService.requestBoardState("TESTID123");
-    })
+            if (color === "white") {
+                setColor("white");
+            }
+            else {
+                setColor("black");
+            }
+            gameService.requestBoardState("TESTID123");
+        })
 
-    gameService.on(GameEvents.GameCreated, (color: string) => {
-        console.log("game created");
-        console.log(color);
+        gameService.on(GameEvents.GameCreated, (color: string) => {
+            console.log("game created");
+            console.log(color);
 
-        if (color === "white") {
-            setColor("white");
-        }
-        else {
-            setColor("black");
-        }
-        console.log("game joined");
-        //gameService.requestBoardState("TESTID123");   
-    })
+            if (color === "white") {
+                setColor("white");
+            }
+            else {
+                setColor("black");
+            }
+            console.log("game joined");
+            //gameService.requestBoardState("TESTID123");   
+        })
 
-    gameService.on(GameEvents.Error, (errorMessage: string) => {
-        alert(errorMessage);
-    })
+        gameService.on(GameEvents.Error, (errorMessage: string) => {
+            alert(errorMessage);
+        })
+    }, [])
+
+    
     /**
      * Changes the positions data (string) to an array to be able to iterate over the positions
      * Will reverse if the other player is black
