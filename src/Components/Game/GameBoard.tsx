@@ -43,12 +43,15 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         },
     },
 }));
+const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
+
 type State = {
     boardSize: { row: number, col: number };
     board: string[];
     sideToMove: string;
     moves: { from: string; to: string[] }[];
 };
+
 const initialState: State = {
     boardSize: { row: 8, col: 8 },
     board: [],
@@ -69,24 +72,28 @@ export default function GameBoard(props: { gameService: GameService }) {
      * The second is an array of active squares that the user can afterwards click on
      */
     const [active, setActive] = useState(["", [""]]);
+    /**
+     * Color of the user, either "white" or "black"
+     */
     const [color, setColor] = useState("white");
+    /**
+     * GameState which includes boardsize, positions, side to move and valid moves.
+     */
     const [gameState, setGameState] = useState<State>(initialState);
 
-    /**
-     * Various variables, this part will see an overhaul with the intergration of the service and router
-     */
-    const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
 
     /**
-     * gameservice
+     * The GameBoard requires the GameService object as a prop
      */
     const { gameService } = props;
 
+    /**
+     * gameService subscriptions which only registers once via useEffect
+     */
     useEffect(() => {
         gameService.on(GameEvents.UpdatedGameState, (json: string) => {
             console.log("updatestate");
-            // console.log(json);
             setGameState(JSON.parse(json));
         })
 
@@ -113,7 +120,6 @@ export default function GameBoard(props: { gameService: GameService }) {
                 setColor("black");
             }
             console.log("game joined");
-            //gameService.requestBoardState("TESTID123");   
         })
 
         gameService.on(GameEvents.Error, (errorMessage: string) => {
@@ -121,7 +127,7 @@ export default function GameBoard(props: { gameService: GameService }) {
         })
     }, [])
 
-    
+
     /**
      * Changes the positions data (string) to an array to be able to iterate over the positions
      * Will reverse if the other player is black
