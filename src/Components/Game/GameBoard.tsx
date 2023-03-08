@@ -2,7 +2,8 @@ import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "./Square";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import GameService, { GameEvents } from "../../Services/GameService";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -42,13 +43,28 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         },
     },
 }));
+const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
+type State = {
+    boardSize: { row: number, col: number };
+    board: string[];
+    sideToMove: string;
+    moves: { from: string; to: string[] }[];
+};
+
+const initialState: State = {
+    boardSize: { row: 8, col: 8 },
+    board: [],
+    sideToMove: "",
+    moves: [],
+};
 /**
  * The GameBoard componenet
  * 
  * @returns HTML
  */
-export default function GameBoard() {
+export default function GameBoard(props: { gameService: GameService }) {
+
 
     /**
      * An array of active squares (highlighted by green color)
@@ -56,43 +72,69 @@ export default function GameBoard() {
      * The second is an array of active squares that the user can afterwards click on
      */
     const [active, setActive] = useState(["", [""]]);
+    /**
+     * Color of the user, either "white" or "black"
+     */
+    const [color, setColor] = useState("white");
+    /**
+     * GameState which includes boardsize, positions, side to move and valid moves.
+     */
+    const [gameState, setGameState] = useState<State>(initialState);
+
+
 
     /**
-     * Various variables, this part will see an overhaul with the intergration of the service and router
+     * The GameBoard requires the GameService object as a prop
      */
-    const yourTurn = true;
-    const isWhite = true; // true, false, white, black
+    const { gameService } = props;
 
-    const row = 8;
-    const col = 8;
+    /**
+     * gameService subscriptions which only registers once via useEffect
+     */
+    useEffect(() => {
+        gameService.on(GameEvents.UpdatedGameState, (json: string) => {
+            console.log("updatestate");
+            setGameState(JSON.parse(json));
+        })
 
-    const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
-    //const validMoves;
+        gameService.on(GameEvents.GameJoined, (color: string) => {
+            console.log(color);
 
-    // dummy data, to be replaced by info from backend, 
-    //vit, stor, svart, liten
-    // pa, bi, kn, ro, qu, ki
-    let dummyPositions = "ro,kn,bi,qu,ki,bi,kn,ro,pa8,em32,PA8,RO,KN,BI,QU,KI,BI,KN,RO";
-    let dummyValidMoves: ({ from: string; to: string[]; }[]) =
-        [
-            {
-                from: "f1",
-                to: ["f5", "h3"]
-            },
-            {
-                from: "f2",
-                to: ["a1", "a2"]
-            },
-        ];
+            if (color === "white") {
+                setColor("white");
+            }
+            else {
+                setColor("black");
+            }
+            gameService.requestBoardState("TESTID123");
+        })
 
+        gameService.on(GameEvents.GameCreated, (color: string) => {
+            console.log("game created");
+            console.log(color);
 
-    let tempPositions = dummyPositions.split(",");
-    let pieces: string[] = [];
+            if (color === "white") {
+                setColor("white");
+            }
+            else {
+                setColor("black");
+            }
+            console.log("game joined");
+        })
+
+        gameService.on(GameEvents.Error, (errorMessage: string) => {
+            alert(errorMessage);
+        })
+    }, [])
+
 
     /**
      * Changes the positions data (string) to an array to be able to iterate over the positions
      * Will reverse if the other player is black
      */
+    let tempPositions = gameState.board;
+    let pieces: string[] = [];
+
     for (let index = 0; index < tempPositions.length; index++) {
         let amount = Number(tempPositions[index].replace(/\D/g, ""));
         if (amount >= 1) {
@@ -104,18 +146,18 @@ export default function GameBoard() {
             pieces.push(tempPositions[index]);
         }
     }
-    if (!isWhite) pieces.reverse();
+    if (!(color === "white")) pieces.reverse();
 
     /**
      * CSS properties that should be set on dynamically in shape of StyleProps interface
      */
     const style = {
-        rows: "repeat(" + row + ", auto)",
-        cols: "repeat(" + col + ", auto)",
-        height: (row >= col ? "38vw" : (row / col) * 38 + "vw"),
-        heightSmall: (row >= col ? "56vw" : (row / col) * 56 + "vw"),
-        width: (row >= col ? (col / row) * 38 + "vw" : "38vw"),
-        widthSmall: (row >= col ? (col / row) * 56 + "vw" : "56vw"),
+        rows: "repeat(" + gameState.boardSize.row + ", auto)",
+        cols: "repeat(" + gameState.boardSize.col + ", auto)",
+        height: (gameState.boardSize.row >= gameState.boardSize.col ? "38vw" : (gameState.boardSize.row / gameState.boardSize.col) * 38 + "vw"),
+        heightSmall: (gameState.boardSize.row >= gameState.boardSize.col ? "56vw" : (gameState.boardSize.row / gameState.boardSize.col) * 56 + "vw"),
+        width: (gameState.boardSize.row >= gameState.boardSize.col ? (gameState.boardSize.col / gameState.boardSize.row) * 38 + "vw" : "38vw"),
+        widthSmall: (gameState.boardSize.row >= gameState.boardSize.col ? (gameState.boardSize.col / gameState.boardSize.row) * 56 + "vw" : "56vw"),
     };
     const classes = useStyles(style);
 
@@ -126,8 +168,8 @@ export default function GameBoard() {
      * @returns a boolean where represents true white
      */
     const squareColor = (index: number) => {
-        if (!isWhite) index = pieces.length - 1 - index;
-        if (col % 2) {
+        if (!(color === "white")) index = pieces.length - 1 - index;
+        if (gameState.boardSize.col % 2) {
             if ((index + 1) % 2) {
                 return true;
             }
@@ -136,7 +178,7 @@ export default function GameBoard() {
             }
         }
         else {
-            if ((index + 1 + (Math.trunc(index / col) % 2)) % 2) {
+            if ((index + 1 + (Math.trunc(index / gameState.boardSize.col) % 2)) % 2) {
                 return true;
             }
             else {
@@ -154,9 +196,9 @@ export default function GameBoard() {
      */
     const squareCoordinate = (index: number) => {
         let index2 = index;
-        if (!isWhite) index = pieces.length - 1 - index;
-        if (isWhite) index2 = pieces.length - 1 - index;
-        let coordinate = columnCoordinate[(index % col)] + (Math.trunc(index2 / col) + 1);
+        if (!(color === "white")) index = pieces.length - 1 - index;
+        if (color === "white") index2 = pieces.length - 1 - index;
+        let coordinate = columnCoordinate[(index % gameState.boardSize.col)] + (Math.trunc(index2 / gameState.boardSize.col) + 1);
 
         return coordinate;
     }
@@ -169,7 +211,7 @@ export default function GameBoard() {
      */
     const getValidMoves = (coordinate: string) => {
         // hitta from === coordinate i JSON
-        const moves = dummyValidMoves.filter((item) => item.from === coordinate);
+        const moves = gameState.moves.filter((item) => item.from === coordinate);
         return moves[0] ? moves[0].to : [];
     }
 
@@ -179,18 +221,17 @@ export default function GameBoard() {
      * @param coordinate 
      */
     const clickFunction = (coordinate: string) => {
-        if (yourTurn === true) {
+        if (color === gameState.sideToMove) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
-                console.log(active[0] + " -> " + coordinate);
+                console.log(active[0] + coordinate);
                 setActive(["", []]);
-                // Skicka drag till server
+                gameService.sendMove(active[0] + coordinate, "TESTID123");
             }
             else {
                 if (coordinate === active[0]) {
                     setActive(["", []]);
                 }
                 else {
-                    //if (getValidMoves(coordinate)) 
                     if (getValidMoves(coordinate).length > 0) {
                         setActive([coordinate, getValidMoves(coordinate)]);
                     }
