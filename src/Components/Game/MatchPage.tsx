@@ -19,7 +19,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 export default function MatchPage() {
 
-  const gameService: GameService = GameService.getInstance();
+  const gameService: GameService = GameService.getInstance(process.env.REACT_APP_BACKEND_BASE_URL);
   const classes = useStyles();
 
   return (

@@ -11,6 +11,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Copyright } from '../Util/Copyright';
+import useFetch from '../../Services/LoginService';
+import axios from 'axios';
 
 /**
  * This page uses the standard darktheme from MUI
@@ -21,6 +23,21 @@ const darkTheme = createTheme({
   },
 });
 const theme = createTheme(darkTheme);
+
+async function loginUser(url: string, email?: string, password?: string) {
+  if (email == null || password == null) {
+    console.log("email or password was null");
+    return;
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({email: email, password: password})
+  })
+    .then(data => data.json())
+ }
 
 /**
  * RegisterPage component
@@ -77,13 +94,18 @@ export default function LoginPage() {
   /**
    * Handles submit on button click of the login button
    */
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData(event.currentTarget);
+
+    const data = await loginUser(
+      process.env.REACT_APP_BACKEND_BASE_URL + 'api/login',
+      formData.get('email')?.toString(),
+      formData.get('password')?.toString()
+    );
+    console.log(data);
+    console.log(data.token); // TODO save token
+
   };
 
   /**

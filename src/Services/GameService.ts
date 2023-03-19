@@ -10,9 +10,13 @@ export default class GameService {
 
     private static gameService?: GameService;
 
-    constructor(url: string="game", connection?: HubConnection) {
+    constructor(baseUrl?: string, path: string="game", connection?: HubConnection) {
         if (connection === null || connection === undefined) {
-            this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
+            let completePath: string = baseUrl + path
+            console.log(path);
+            this.hubConnection = new HubConnectionBuilder()
+            .withUrl(completePath, {accessTokenFactory: () => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZ2FtZXIiLCJlbWFpbCI6ImdhbWVyQGVtYWlsLmNvbSIsIm5iZiI6MTY3OTI0OTYyOCwiZXhwIjoxNjk1MTQ3MjI4LCJpYXQiOjE2NzkyNDk2Mjh9.xRnqBET7e2L-8-AOtSTNdVjW1oPDsJeYqGjif78_fnk"})
+            .withAutomaticReconnect().build();
         } 
         else {
             this.hubConnection = connection!;
@@ -23,9 +27,9 @@ export default class GameService {
         });
     }
 
-    static getInstance() {
+    static getInstance(baseUrl?: string) {
         if (this.gameService === null || this.gameService === undefined) {
-            this.gameService = new GameService();
+            this.gameService = new GameService(baseUrl);
         }
         return this.gameService;
     }
@@ -62,7 +66,7 @@ export default class GameService {
      * @param gameId the game to join or create.
      */
     joinGame(gameId: string): void {
-        this.hubConnection.send('JoinGame', gameId);
+        this.hubConnection.send('JoinGame', gameId).catch(e => console.log(e));
     }
 
     /**
