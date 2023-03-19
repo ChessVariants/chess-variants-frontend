@@ -11,23 +11,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Copyright } from '../Util/Copyright';
-
-/**
- * This page uses the standard darktheme from MUI
- */
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
-const theme = createTheme(darkTheme);
+import { CssBaseline, Divider, Paper } from '@mui/material';
+import CustomDarkTheme from '../Util/CustomDarkTheme';
+import { commonClasses } from '../Util/CommonClasses';
 
 /**
  * RegisterPage component
  * @returns HTML
  */
 export default function LoginPage() {
-
+  const classes = commonClasses();
   /**
   * useState used to print a label with error message if the login service returned an error
   */
@@ -90,14 +83,12 @@ export default function LoginPage() {
    * Returns the HTML
    */
   return (
-    <ThemeProvider theme={darkTheme}>
-      <Container maxWidth="xs">
-        <Box
+    <ThemeProvider theme={CustomDarkTheme}>
+      <CssBaseline />
+      <Container maxWidth="xs" >
+        <Paper className={classes.BasicCard}
           sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            marginTop: '10vh',
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'white' }}>
@@ -105,7 +96,9 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5" sx={{ color: "white" }}>
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{
+            mt: 1,
+          }}>
             <TextField
               margin="normal"
               required
@@ -132,7 +125,7 @@ export default function LoginPage() {
                 validatePassword(event.target.value);
               }}
             />
-              {loginError ? <Box sx=
+            {loginError ? <Box sx=
               {{
                 color: "red",
                 fontSize: "12px",
@@ -159,7 +152,7 @@ export default function LoginPage() {
               </Grid>
             </Grid>
           </Box>
-        </Box>
+        </Paper>
         <Copyright />
       </Container>
     </ThemeProvider>

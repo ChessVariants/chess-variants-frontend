@@ -5,15 +5,15 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
  */
 export default class GameService {
-    
+
     public readonly hubConnection: HubConnection;
 
     private static gameService?: GameService;
 
-    constructor(url: string="game", connection?: HubConnection) {
+    constructor(url: string = "game", connection?: HubConnection) {
         if (connection === null || connection === undefined) {
             this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
-        } 
+        }
         else {
             this.hubConnection = connection!;
         }
@@ -69,7 +69,7 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    createGame(gameId: string, variant: Variant = Variant.Standard): void {
+    createGame(gameId: string, variant: string = Variant.Standard): void {
         this.hubConnection.send('CreateGame', gameId, variant);
     }
 
@@ -94,17 +94,17 @@ export default class GameService {
      */
     requestBoardState(gameId: string): void {
         console.log("Board state requested");
-        
+
         this.hubConnection.send('RequestState', gameId);
     }
-    
+
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
      */
     async startConnection(): Promise<void> {
         if (this.hubConnection.state === HubConnectionState.Disconnected) {
-          await this.hubConnection.start();
-          console.log('Connection to user hub successful');
+            await this.hubConnection.start();
+            console.log('Connection to user hub successful');
         }
     }
 }

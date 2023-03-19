@@ -11,23 +11,16 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Copyright } from '../Util/Copyright';
-
-/**
- * This page uses the standard darktheme from MUI
- */
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
-const theme = createTheme(darkTheme);
+import CustomDarkTheme from '../Util/CustomDarkTheme';
+import { CssBaseline, Paper } from '@mui/material';
+import { commonClasses } from '../Util/CommonClasses';
 
 /**
  * RegisterPage component
  * @returns HTML
  */
 export default function RegisterPage() {
-
+  const classes = commonClasses();
   /**
    * useState used to print a label with error message if the registration service returned an error
    */
@@ -121,14 +114,12 @@ export default function RegisterPage() {
    * Returns the HTML
    */
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={CustomDarkTheme}>
+      <CssBaseline />
       <Container component="main" maxWidth="xs">
-        <Box
+        <Paper className={classes.BasicCard}
           sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            marginTop: '10vh',
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'white' }}>
@@ -209,7 +200,7 @@ export default function RegisterPage() {
               </Grid>
             </Grid>
           </Box>
-        </Box>
+        </Paper>
         <Copyright />
       </Container>
     </ThemeProvider>

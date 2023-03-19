@@ -17,17 +17,17 @@ const useStyles = makeStyles<Theme>(theme => ({
   }
 }));
 
-export default function MatchPage() {
+export default function MatchPage(props: {gameService: GameService}) {
 
-  const gameService: GameService = GameService.getInstance();
+  //const gameService: GameService = GameService.getInstance();
   const classes = useStyles();
 
   return (
     //<head className={classes.head}>
     <body className={classes.Body}>
       <Box className={classes.Container}>
-        <GameBoard gameService={gameService}></GameBoard>
-        <GameSideInfo gameService={gameService}></GameSideInfo>
+        <GameBoard gameService={props.gameService}></GameBoard>
+        <GameSideInfo gameService={props.gameService}></GameSideInfo>
       </Box>
     </body>
   );
