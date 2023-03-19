@@ -11,8 +11,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Copyright } from '../Util/Copyright';
-import useFetch from '../../Services/LoginService';
-import axios from 'axios';
 
 /**
  * This page uses the standard darktheme from MUI

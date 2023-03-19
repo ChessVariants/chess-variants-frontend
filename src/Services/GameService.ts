@@ -66,7 +66,7 @@ export default class GameService {
      * @param gameId the game to join or create.
      */
     joinGame(gameId: string): void {
-        this.hubConnection.send('JoinGame', gameId).catch(e => console.log(e));
+        this.hubConnection.invoke('JoinGame', gameId).catch(e => console.log(e));
     }
 
     /**
