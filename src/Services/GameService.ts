@@ -8,6 +8,8 @@ export default class GameService {
     
     public readonly hubConnection: HubConnection;
 
+    private static gameService?: GameService;
+
     constructor(url: string="game", connection?: HubConnection) {
         if (connection === null || connection === undefined) {
             this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
@@ -19,6 +21,13 @@ export default class GameService {
             console.log("Could not connect to user hub");
             console.log(e);
         });
+    }
+
+    static getInstance() {
+        if (this.gameService === null || this.gameService === undefined) {
+            this.gameService = new GameService();
+        }
+        return this.gameService;
     }
 
     /**
@@ -41,7 +50,7 @@ export default class GameService {
     /**
      * Sends a move to the server for the given gameId.
      * 
-     * @param move the move to send, such as `"e2e4"`
+     * @param move the move to send, such as "e2e4"
      * @param gameId the corresponding gameId where the move should be played
      */
     sendMove(move: string, gameId: string): void {
@@ -57,6 +66,14 @@ export default class GameService {
     }
 
     /**
+     * Joins or creates a game with the supplied gameId on the server
+     * @param gameId the game to join or create.
+     */
+    createGame(gameId: string, variant: Variant = Variant.Standard): void {
+        this.hubConnection.send('CreateGame', gameId, variant);
+    }
+
+    /**
      * Leaves the game with the supplied gameId
      * @param gameId the gameId for the the game to leave
      */
@@ -65,10 +82,20 @@ export default class GameService {
     }
 
     /**
+     * Makes a request to the server to swap colors between players
+     * @param gameId the gameId for the game to swap colors between players in
+     */
+    swapColors(gameId: string) {
+        this.hubConnection.send('SwapColors', gameId);
+    }
+
+    /**
      * Requests the server to send an event with the board state
      */
-    requestBoardState(): void {
-        this.hubConnection.send('RequestBoardState');
+    requestBoardState(gameId: string): void {
+        console.log("Board state requested");
+        
+        this.hubConnection.send('RequestState', gameId);
     }
     
     /**
@@ -80,5 +107,27 @@ export default class GameService {
           console.log('Connection to user hub successful');
         }
     }
-      
+}
+
+export enum GameEvents {
+    GameNotFound = "gameNotFound",
+    PieceMoved = "pieceMoved",
+    UpdatedGameState = "updatedGameState",
+    PlayerLeftGame = "playerLeftGame",
+    PlayerJoinedGame = "playerJoinedGame",
+    GameCreated = "gameCreated",
+    GameJoined = "gameJoined",
+    GameLeft = "gameLeft",
+    PlayerNotFound = "playerNotFound",
+    InvalidMove = "invalidMove",
+    Error = "error",
+    WhiteWon = "whiteWon",
+    BlackWon = "blackWon",
+    Tie = "tie",
+}
+
+export enum Variant {
+    Standard = "standard",
+    CaptureTheKing = "captureTheKing",
+    AntiChess = "antiChess",
 }
