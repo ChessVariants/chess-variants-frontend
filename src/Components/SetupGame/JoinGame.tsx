@@ -3,7 +3,7 @@ import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { commonClasses } from "../Util/CommonClasses";
 import GameService from "../../Services/GameService";
 import { useParams } from "react-router-dom";
-import Lobby from "./Lobby";
+import Lobby from "./Lobby/Lobby";
 
 export default function JoinGame() {
 
@@ -15,7 +15,8 @@ export default function JoinGame() {
     if (joinCode !== "") {
         console.log(joinCode + "")
         gameService.joinGame(joinCode + "");
-        return (<Lobby gameService={GameService.getInstance()} gameID={"he"}></Lobby>)
+        // check if success, then join, otherwise error:
+        return (<Lobby gameID={joinCode + ""} isAdmin={false}></Lobby>)
     }
     else {
         return (

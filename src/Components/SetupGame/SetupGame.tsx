@@ -1,7 +1,7 @@
 import { useState } from "react";
 import GameService from "../../Services/GameService";
-import CreateGame from "./CreateGame";
-import Lobby from "./Lobby";
+import CreateGame from "./CreateLobby";
+import Lobby from "./Lobby/Lobby";
 
 enum pageStates {
     CreateGame = 1,
@@ -31,7 +31,7 @@ export default function NewGame(props: { pageState?: pageStates }) {
         return (<CreateGame createGameFunction={createGameFunction}></CreateGame>);
     }
     else {
-        return (<Lobby gameService={gameService} gameID={gameID}></Lobby>);
+        return (<Lobby gameID={gameID} isAdmin={true}></Lobby>);
     }
 
 }

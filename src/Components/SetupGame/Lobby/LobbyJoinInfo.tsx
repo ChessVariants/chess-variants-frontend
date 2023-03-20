@@ -1,11 +1,30 @@
-import { Button, CssBaseline, InputAdornment, TextField } from "@mui/material";
+import { Button, CssBaseline, InputAdornment, Popover, TextField, Typography } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import GameService from "../../Services/GameService";
+import CustomDarkTheme from "../../Util/CustomDarkTheme";
+import GameService from "../../../Services/GameService";
+import React from "react";
 
 
-export default function Lobby(props: { gameService: GameService, gameID: string }) {
-    const { gameService, gameID } = props;
+export default function Lobby(props: { gameID: string }) {
+
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+    const { gameID } = props;
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        console.log(gameID);
+        navigator.clipboard.writeText("localhost:3000/play/" + gameID);
+        setAnchorEl(event.currentTarget);
+        handleClose();
+    };
+
+    const handleClose = () => {
+        setTimeout(function () {
+            setAnchorEl(null);
+        }, 3000);
+    };
+
     return (
         <ThemeProvider theme={CustomDarkTheme}>
             <CssBaseline />
@@ -25,10 +44,18 @@ export default function Lobby(props: { gameService: GameService, gameID: string 
                     disabled: true,
                     endAdornment: (
                         <InputAdornment position="end">
-                            <Button onClick={() => {
-                                console.log(gameID);
-                                navigator.clipboard.writeText(gameID);
-                            }}>COPY URL</Button>
+                            <Button onClick={handleClick}>
+                                COPY URL</Button>
+                            <Popover
+                                open={open}
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Typography sx={{ p: 2 }}>Link copied to clipboard</Typography>
+                            </Popover>
                         </InputAdornment>
                     ),
                 }}
@@ -38,3 +65,6 @@ export default function Lobby(props: { gameService: GameService, gameID: string 
 
 }
 
+function timeout(delay: number) {
+    return new Promise(res => setTimeout(res, delay));
+}

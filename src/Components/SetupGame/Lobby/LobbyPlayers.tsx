@@ -1,10 +1,10 @@
-import { Box, Button, Container, CssBaseline, Divider, Grid, Icon, Paper, Typography } from "@mui/material";
+import { Box, CssBaseline, Grid, Tooltip, Typography } from "@mui/material";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import { ClassNames, ThemeProvider } from "@emotion/react";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import GameService from "../../Services/GameService";
-import { classicNameResolver } from "typescript";
+import { ThemeProvider } from "@emotion/react";
+import CustomDarkTheme from "../../Util/CustomDarkTheme";
+import GameService from "../../../Services/GameService";
+import { useState } from "react";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -19,16 +19,31 @@ const useStyles = makeStyles<Theme>(theme => ({
         msUserSelect: 'none', /* IE10+/Edge */
         userSelect: 'none', /* Standard */
     },
+    SwitchButtonDisabled: {
+        cursor: 'pointer',
+        color: CustomDarkTheme.palette.text.disabled,
+        webkitUserSelect: 'none',
+        mozUserSelect: 'none', /* Firefox */
+        msUserSelect: 'none', /* IE10+/Edge */
+        userSelect: 'none', /* Standard */
+    },
     GridContainer: {
         marginLeft: "auto",
         marginRight: "auto",
-    }
+    },
 
 }));
-export default function LobbyPlayers(props: { gameService: GameService, gameID: string }) {
-    const { gameService, gameID } = props;
+export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }) {
+    const gameService = GameService.getInstance();
+    const { gameID, isAdmin } = props;
+
+    const [whitePlayer, setWhitePlayer] = useState("You");
+    const [blackPlayer, setBlackPlayer] = useState("Waiting...");
 
     const switchColors = () => {
+        // Maybe create a get for service?
+        setWhitePlayer("");
+        setBlackPlayer("");
         gameService.swapColors(gameID);
     }
 
@@ -40,25 +55,28 @@ export default function LobbyPlayers(props: { gameService: GameService, gameID: 
                 <Grid item width="80%">
                     <Grid container style={{ textAlign: 'left' }}>
                         <Grid item xs={2}>
-                            <Typography>O</Typography>
+                            <Typography>W</Typography>
                         </Grid>
                         <Grid item xs={10}>
-                            <Typography>You</Typography>
+                            <Typography>{whitePlayer}</Typography>
                         </Grid>
                         <Grid item xs={2}>
-                            <Typography>O</Typography>
+                            <Typography>B</Typography>
                         </Grid>
                         <Grid item xs={10}>
-                            <Typography>Opponent</Typography>
+                            {blackPlayer === "Waiting..." ?
+                                <Typography fontStyle={"italic"} color={CustomDarkTheme.palette.text.secondary}>{blackPlayer}</Typography> : <Typography>{blackPlayer}</Typography>}
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item width="20%">
-                    <Box className={classes.SwitchButton} onClick={() => {
-                        switchColors();
-                    }}>
-                        <p>&#11014;&#11015;</p>
-                    </Box>
+                    <Tooltip title={isAdmin ? "" : "Only party leader can swap colors!"}>
+                        <Box className={isAdmin ? classes.SwitchButton : classes.SwitchButtonDisabled} onClick={isAdmin ? () => {
+                            switchColors();
+                        } : () => { }}>
+                            <p>&#11014;&#11015;</p>
+                        </Box>
+                    </Tooltip>
                 </Grid>
             </Grid>
         </ThemeProvider >

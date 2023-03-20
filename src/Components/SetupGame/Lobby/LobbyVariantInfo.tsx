@@ -1,10 +1,13 @@
 import { CssBaseline, Typography } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import GameService from "../../Services/GameService";
+import CustomDarkTheme from "../../Util/CustomDarkTheme";
+import GameService from "../../../Services/GameService";
 
 
-export default function Lobby(props: { gameService: GameService, gameID: string }) {
+export default function Lobby(props: { gameID: string }) {
+
+    const gameService = GameService.getInstance();
+    const { gameID } = props;
 
     return (
         <ThemeProvider theme={CustomDarkTheme}>
