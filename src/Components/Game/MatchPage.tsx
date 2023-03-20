@@ -4,6 +4,7 @@ import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import GameService, { GameEvents } from "../../Services/GameService";
+import Cookies from 'universal-cookie'
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -19,7 +20,8 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 export default function MatchPage() {
 
-  const gameService: GameService = GameService.getInstance(process.env.REACT_APP_BACKEND_BASE_URL);
+  const cookies = new Cookies();
+  const gameService: GameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, cookies.get('jwtToken'))
   const classes = useStyles();
 
   return (

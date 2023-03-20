@@ -11,6 +11,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Copyright } from '../Util/Copyright';
+import GameService from '../../Services/GameService';
+
+import Cookies from 'universal-cookie'
 
 /**
  * This page uses the standard darktheme from MUI
@@ -35,7 +38,16 @@ async function loginUser(url: string, email?: string, password?: string) {
     body: JSON.stringify({email: email, password: password})
   })
     .then(data => data.json())
- }
+}
+
+async function loginGuest(url: string) {
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(data => data.json())
+}
 
 /**
  * RegisterPage component
@@ -102,9 +114,26 @@ export default function LoginPage() {
       formData.get('password')?.toString()
     );
     console.log(data);
-    console.log(data.token); // TODO save token
-
+    const token = data.token;
+    saveTokenAsCookie(token)
   };
+
+  const loginAsGuest = async () => {
+    const data = await loginGuest(process.env.REACT_APP_BACKEND_BASE_URL + 'api/login');
+    console.log(data)
+    const token = data.token;
+    saveTokenAsCookie(token)
+  }
+
+  const saveTokenAsCookie = (token: string) => {
+    if (typeof(token) === "string") {
+      const cookies = new Cookies();
+      cookies.set('jwtToken', token)
+    }
+    else {
+      console.log(`Could not save cookie: ${token}`);
+    }
+  }
 
   /**
    * Returns the HTML
@@ -165,6 +194,15 @@ export default function LoginPage() {
               disabled={!isValidEmail || !isValidPassword}
             >
               Sign In
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={false}
+              onClick={loginAsGuest}
+            >
+              Sign In As Guest
             </Button>
             <Grid container>
               <Grid item xs>
