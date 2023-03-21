@@ -39,7 +39,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
         <ThemeProvider theme={CustomDarkTheme}>
             <CssBaseline />
             <Paper className={classes.CenteredBasicCard}>
-                <Typography variant="h4" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
+                <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
                 <Divider style={{ width: '100%' }}></Divider>
                 <Grid container marginTop="12px" alignItems="center" justifyItems={"center"} justifyContent="center">
                     <Grid item sm={12} md={isAdmin ? 6 : 12} marginTop="14px">
@@ -52,6 +52,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
 
                 </Grid>
                 {isAdmin ? <Button
+                    color={"createColor"}
                     onClick={() => {
                         //set game to active
                         // Go over to 

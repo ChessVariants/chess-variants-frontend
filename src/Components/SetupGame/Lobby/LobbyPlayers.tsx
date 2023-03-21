@@ -10,9 +10,9 @@ import { useState } from "react";
 const useStyles = makeStyles<Theme>(theme => ({
     SwitchButton: {
         cursor: 'pointer',
-        color: CustomDarkTheme.palette.primary.main,
+        color: CustomDarkTheme.palette.createColor.main,
         '&:hover': {
-            color: CustomDarkTheme.palette.primary.dark,
+            color: CustomDarkTheme.palette.createColor.dark,
         },
         webkitUserSelect: 'none',
         mozUserSelect: 'none', /* Firefox */

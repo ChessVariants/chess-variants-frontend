@@ -11,22 +11,31 @@ export default function JoinGame() {
     const classes = commonClasses();
     const { joinCode } = useParams();
 
+    const joinLobby = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({
+            variantID: data.get('joinID'),
+        });
+    };
 
-    if (joinCode !== "") {
+    if (joinCode) {
         console.log(joinCode + "")
         gameService.joinGame(joinCode + "");
         // check if success, then join, otherwise error:
         return (<Lobby gameID={joinCode + ""} isAdmin={false}></Lobby>)
     }
+
     else {
         return (
             <ThemeProvider theme={CustomDarkTheme}>
                 <CssBaseline />
                 <Container maxWidth="xs" >
                     <Paper className={classes.CenteredBasicCard}>
-                        <Box component="form" onSubmit={() => { }} noValidate sx={{ mt: 2 }}>
+                        <Box component="form" onSubmit={joinLobby} noValidate sx={{ mt: 2 }}>
                             <Typography sx={{ letterSpacing: '2px', mb: 1 }}>ENTER JOIN CODE</Typography>
                             <TextField
+                                color={"joinColor"}
                                 margin="normal"
                                 required
                                 fullWidth
@@ -36,6 +45,7 @@ export default function JoinGame() {
                                 autoFocus
                             />
                             <Button
+                                color={"joinColor"}
                                 type="submit"
                                 fullWidth
                                 variant="contained"

@@ -14,7 +14,7 @@ export default function Lobby(props: { gameID: string }) {
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log(gameID);
-        navigator.clipboard.writeText("localhost:3000/play/" + gameID);
+        navigator.clipboard.writeText("localhost:3000/join/" + gameID);
         setAnchorEl(event.currentTarget);
         handleClose();
     };
@@ -44,7 +44,7 @@ export default function Lobby(props: { gameID: string }) {
                     disabled: true,
                     endAdornment: (
                         <InputAdornment position="end">
-                            <Button onClick={handleClick}>
+                            <Button color={"createColor"} onClick={handleClick}>
                                 COPY URL</Button>
                             <Popover
                                 open={open}
