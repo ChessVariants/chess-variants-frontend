@@ -23,7 +23,7 @@ export default function MatchPage() {
   const cookies = new Cookies();
   const gameService: GameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, cookies.get('jwtToken'))
   const classes = useStyles();
-
+  
   return (
     //<head className={classes.head}>
     <body className={classes.Body}>

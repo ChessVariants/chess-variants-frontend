@@ -4,10 +4,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from "@emotion/react";
 import CustomDarkTheme from "../../Util/CustomDarkTheme";
 import { commonClasses } from "../../Util/CommonClasses";
-import GameService from "../../../Services/GameService";
+import GameService, { GameEvents } from "../../../Services/GameService";
 import LobbyPlayers from "./LobbyPlayers";
 import LobbyVariantInfo from "./LobbyVariantInfo";
 import LobbyJoinInfo from "./LobbyJoinInfo";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -15,10 +17,23 @@ const useStyles = makeStyles<Theme>(theme => ({
 }));
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
-
+    /**
+     * Used to navigate to other pages
+     */
+    const navigate = useNavigate();
+    const navigatePage = (link: string) => {
+        navigate(link);
+    }
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;
     const classes = commonClasses();
+
+    useEffect(() => {
+        gameService.on(GameEvents.GameStarted, () => {
+            console.log("Game Started");
+            navigatePage("/match");
+        })
+    }, [])
 
     return (
         <ThemeProvider theme={CustomDarkTheme}>

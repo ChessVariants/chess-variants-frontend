@@ -71,6 +71,9 @@ export default class GameService {
     createGame(gameId: string, variant: string = Variant.Standard): void {
         this.hubConnection.send('CreateGame', gameId, variant);
     }
+    startGame(gameId: string) {
+        this.hubConnection.send('StartGame', gameId);
+    }
 
     /**
      * Leaves the game with the supplied gameId
@@ -108,6 +111,7 @@ export default class GameService {
     }
 }
 
+
 export enum GameEvents {
     GameNotFound = "gameNotFound",
     PieceMoved = "pieceMoved",
@@ -123,6 +127,7 @@ export enum GameEvents {
     WhiteWon = "whiteWon",
     BlackWon = "blackWon",
     Tie = "tie",
+    GameStarted = "GameStarted"
 }
 
 export enum Variant {
