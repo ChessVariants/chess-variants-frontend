@@ -14,6 +14,33 @@ import { Copyright } from '../Util/Copyright';
 import { CssBaseline, Divider, Paper } from '@mui/material';
 import CustomDarkTheme from '../Util/CustomDarkTheme';
 import { commonClasses } from '../Util/CommonClasses';
+import GameService from '../../Services/GameService';
+import Cookies from 'universal-cookie'
+
+
+async function loginUser(url: string, email?: string, password?: string) {
+  if (email == null || password == null) {
+    console.log("email or password was null");
+    return;
+  }
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email: email, password: password })
+  })
+    .then(data => data.json())
+}
+
+async function loginGuest(url: string) {
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(data => data.json())
+}
 
 /**
  * RegisterPage component
@@ -70,14 +97,36 @@ export default function LoginPage() {
   /**
    * Handles submit on button click of the login button
    */
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const formData = new FormData(event.currentTarget);
+
+    const data = await loginUser(
+      process.env.REACT_APP_BACKEND_BASE_URL + 'api/login',
+      formData.get('email')?.toString(),
+      formData.get('password')?.toString()
+    );
+    console.log(data);
+    const token = data.token;
+    saveTokenAsCookie(token)
   };
+
+  const loginAsGuest = async () => {
+    const data = await loginGuest(process.env.REACT_APP_BACKEND_BASE_URL + 'api/login');
+    console.log(data)
+    const token = data.token;
+    saveTokenAsCookie(token)
+  }
+
+  const saveTokenAsCookie = (token: string) => {
+    if (typeof (token) === "string") {
+      const cookies = new Cookies();
+      cookies.set('jwtToken', token)
+    }
+    else {
+      console.log(`Could not save cookie: ${token}`);
+    }
+  }
 
   /**
    * Returns the HTML
@@ -138,6 +187,15 @@ export default function LoginPage() {
               disabled={!isValidEmail || !isValidPassword}
             >
               Sign In
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={false}
+              onClick={loginAsGuest}
+            >
+              Sign In As Guest
             </Button>
             <Grid container>
               <Grid item xs>
