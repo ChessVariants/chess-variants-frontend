@@ -9,98 +9,99 @@ export default class GameService {
 
     public readonly hubConnection: HubConnection;
 
-    constructor(baseUrl: string, token: string, path: string = "game") {
-        let completePath: string = baseUrl + path;
-        this.hubConnection = new HubConnectionBuilder()
-            .withUrl(completePath, { accessTokenFactory: () => token })
-            .withAutomaticReconnect().build();
+    private static gameService?: GameService;
 
-        constructor(url: string = "game", connection ?: HubConnection) {
-            if (connection === null || connection === undefined) {
-                this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
-            }
-            else {
-                this.hubConnection = connection!;
-            }
-            this.startConnection().catch((e) => {
-                console.log("Could not connect to user hub");
-                console.log(e);
-            })
+    constructor(url: string = "game", connection?: HubConnection) {
+        if (connection === null || connection === undefined) {
+            this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
         }
-
-        /**
-         * Forwards the event subscription to the internal {@link HubConnection}.
-         * @param methodName the event to subscribe to
-         * @param newMethod a function on what to do with the event information received
-         * 
-         * @example
-         * Subscribes to the event "playerJoinedGame" and logs the received value.
-         * ```ts
-         * gameService.on('playerJoinedGame', (value: string) => {
-         *   console.log(value);
-         * });
-         * ```
-         */
-        on(methodName: string, newMethod: (...args: any[]) => any): void {
-            this.hubConnection.on(methodName, newMethod)
+        else {
+            this.hubConnection = connection!;
         }
-
-        /**
-         * Sends a move to the server for the given gameId.
-         * 
-         * @param move the move to send, such as "e2e4"
-         * @param gameId the corresponding gameId where the move should be played
-         */
-        sendMove(move: string, gameId: string): void {
-            this.hubConnection.send('MovePiece', move, gameId);
+        this.startConnection().catch((e) => {
+            console.log("Could not connect to user hub");
+            console.log(e);
+        });
+    }
+    static getInstance() {
+        if (this.gameService === null || this.gameService === undefined) {
+            this.gameService = new GameService();
         }
+        return this.gameService;
+    }
+    /**
+     * Forwards the event subscription to the internal {@link HubConnection}.
+     * @param methodName the event to subscribe to
+     * @param newMethod a function on what to do with the event information received
+     * 
+     * @example
+     * Subscribes to the event "playerJoinedGame" and logs the received value.
+     * ```ts
+     * gameService.on('playerJoinedGame', (value: string) => {
+     *   console.log(value);
+     * });
+     * ```
+     */
+    on(methodName: string, newMethod: (...args: any[]) => any): void {
+        this.hubConnection.on(methodName, newMethod)
+    }
 
-        /**
-         * Joins or creates a game with the supplied gameId on the server
-         * @param gameId the game to join or create.
-         */
-        joinGame(gameId: string): void {
-            this.hubConnection.invoke('JoinGame', gameId).catch(e => console.log(e));
-        }
+    /**
+     * Sends a move to the server for the given gameId.
+     * 
+     * @param move the move to send, such as "e2e4"
+     * @param gameId the corresponding gameId where the move should be played
+     */
+    sendMove(move: string, gameId: string): void {
+        this.hubConnection.send('MovePiece', move, gameId);
+    }
 
-        /**
-         * Joins or creates a game with the supplied gameId on the server
-         * @param gameId the game to join or create.
-         */
-        createGame(gameId: string, variant: string = Variant.Standard): void {
-            this.hubConnection.send('CreateGame', gameId, variant);
-        }
+    /**
+     * Joins or creates a game with the supplied gameId on the server
+     * @param gameId the game to join or create.
+     */
+    joinGame(gameId: string): void {
+        this.hubConnection.invoke('JoinGame', gameId).catch(e => console.log(e));
+    }
 
-        /**
-         * Leaves the game with the supplied gameId
-         * @param gameId the gameId for the the game to leave
-         */
-        leaveGame(gameId: string): void {
-            this.hubConnection.send('LeaveGame', gameId);
-        }
+    /**
+     * Joins or creates a game with the supplied gameId on the server
+     * @param gameId the game to join or create.
+     */
+    createGame(gameId: string, variant: string = Variant.Standard): void {
+        this.hubConnection.send('CreateGame', gameId, variant);
+    }
 
-        /**
-         * Makes a request to the server to swap colors between players
-         * @param gameId the gameId for the game to swap colors between players in
-         */
-        swapColors(gameId: string) {
-            this.hubConnection.send('SwapColors', gameId);
-        }
+    /**
+     * Leaves the game with the supplied gameId
+     * @param gameId the gameId for the the game to leave
+     */
+    leaveGame(gameId: string): void {
+        this.hubConnection.send('LeaveGame', gameId);
+    }
 
-        /**
-         * Requests the server to send an event with the board state
-         */
-        requestBoardState(gameId: string): void {
-            console.log("Board state requested");
+    /**
+     * Makes a request to the server to swap colors between players
+     * @param gameId the gameId for the game to swap colors between players in
+     */
+    swapColors(gameId: string) {
+        this.hubConnection.send('SwapColors', gameId);
+    }
 
-            this.hubConnection.send('RequestState', gameId);
-        }
+    /**
+     * Requests the server to send an event with the board state
+     */
+    requestBoardState(gameId: string): void {
+        console.log("Board state requested");
+
+        this.hubConnection.send('RequestState', gameId);
+    }
 
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
      */
-    async startConnection(): Promise < void> {
-            if(this.hubConnection.state === HubConnectionState.Disconnected) {
+    async startConnection(): Promise<void> {
+        if (this.hubConnection.state === HubConnectionState.Disconnected) {
             await this.hubConnection.start();
             console.log('Connection to user hub successful');
         }
