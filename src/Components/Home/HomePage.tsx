@@ -6,33 +6,35 @@ import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { commonClasses } from "../Util/CommonClasses";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import LoginPage from "../Login/Login";
 import Slide from '@mui/material/Slide';
 import React from "react";
+import LoginDialog from "../Account/Login/LoginDialog";
 
+/**
+ * Slide animation function, used by dialog window
+ * @param props 
+ * @returns 
+ */
+function SlideUp(props: any) {
+  const [direction, setDirection] = React.useState('down');
 
-const useStyles = makeStyles<Theme>(theme => ({
+  return (
+    <Slide
+      {...props}
+      direction={direction}
+      onEntered={() => setDirection('down')}
+      onExited={() => setDirection('up')}
+    />
+  );
+}
 
-}));
 export default function HomePage() {
-  function SlideUp(props: any) {
-    const [direction, setDirection] = React.useState('down');
-
-    return (
-      <Slide
-        {...props}
-        direction={direction}
-        onEntered={() => setDirection('down')}
-        onExited={() => setDirection('up')}
-      />
-    );
-  }
 
   const [user, setUser] = useState("Bob");
 
   useEffect(() => {
     // TODO: set logged in user
-    setUser("")
+    setUser("Bob")
   }, [])
 
   /**
@@ -51,7 +53,7 @@ export default function HomePage() {
       <CssBaseline />
       {user === "" ?
         <Dialog TransitionComponent={SlideUp} open={true}>
-          <LoginPage dialogClickFunction={closeDialog}></LoginPage>
+          <LoginDialog clickFunction={closeDialog}></LoginDialog>
         </Dialog> : null}
       <Container maxWidth="md" >
         <Paper className={classes.CenteredBasicCard}>
@@ -74,6 +76,15 @@ export default function HomePage() {
             fullWidth
             sx={{ mt: 3, mb: 1, p: 2 }}>
             CREATE MATCH
+          </Button>
+          <Button color={"browserColor"} onClick={() => {
+            navigatePage("/browse")
+          }}
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 3, mb: 1, p: 2 }}>
+            BROWSE VARIANTS
           </Button>
           <Button color={"editorColor"} onClick={() => {
           }}

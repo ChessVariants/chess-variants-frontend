@@ -1,6 +1,6 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
-import LoginPage from '../Components/Login/Login';
+import LoginPage from '../Components/Account/Login/LoginComponent';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.

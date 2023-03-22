@@ -1,15 +1,17 @@
 import { createTheme } from "@mui/material";
-import { amber, cyan, deepOrange, deepPurple, green, lightGreen, orange, purple, red } from "@mui/material/colors";
+import { amber, cyan, deepOrange, deepPurple, green, lightGreen, orange, purple, red, yellow } from "@mui/material/colors";
 declare module "@mui/material/styles" {
     interface Palette {
         joinColor: Palette['primary'];
         createColor: Palette['primary'];
+        browserColor: Palette['primary'];
         editorColor: Palette['primary'];
     }
 
     interface PaletteOptions {
         joinColor: PaletteOptions['primary'];
         createColor: PaletteOptions['primary'];
+        browserColor: PaletteOptions['primary'];
         editorColor: PaletteOptions['primary'];
     }
 }
@@ -18,6 +20,7 @@ declare module "@mui/material/Button" {
     interface ButtonPropsColorOverrides {
         joinColor: true;
         createColor: true;
+        browserColor: true;
         editorColor: true;
     }
 }
@@ -25,6 +28,7 @@ declare module "@mui/material/TextField" {
     interface TextFieldPropsColorOverrides {
         joinColor: true;
         createColor: true;
+        browserColor: true;
         editorColor: true;
     }
 }
@@ -37,7 +41,8 @@ const darkTheme = createTheme({
             main: '#29adef',
         },
         joinColor: createColor(cyan[500]),
-        createColor: createColor(lightGreen[500]),
+        createColor: createColor(green[500]),
+        browserColor: createColor(orange[400]),
         editorColor: createColor(deepOrange[400]),
     },
     shape: {
