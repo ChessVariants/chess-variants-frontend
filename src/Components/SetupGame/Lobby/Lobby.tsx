@@ -11,11 +11,6 @@ import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-const useStyles = makeStyles<Theme>(theme => ({
-
-}));
-
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     /**
      * Used to navigate to other pages

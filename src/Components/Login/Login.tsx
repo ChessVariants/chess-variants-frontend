@@ -41,12 +41,11 @@ async function loginGuest(url: string) {
     }
   }).then(data => data.json())
 }
-
 /**
  * RegisterPage component
  * @returns HTML
  */
-export default function LoginPage() {
+export default function LoginPage(props: { dialogClickFunction?: any }) {
   const classes = commonClasses();
   /**
   * useState used to print a label with error message if the login service returned an error
@@ -109,6 +108,9 @@ export default function LoginPage() {
     console.log(data);
     const token = data.token;
     saveTokenAsCookie(token)
+    if (props.dialogClickFunction != null) {
+      props.dialogClickFunction()
+    }
   };
 
   const loginAsGuest = async () => {
@@ -116,6 +118,9 @@ export default function LoginPage() {
     console.log(data)
     const token = data.token;
     saveTokenAsCookie(token)
+    if (props.dialogClickFunction != null) {
+      props.dialogClickFunction()
+    }
   }
 
   const saveTokenAsCookie = (token: string) => {
@@ -131,6 +136,15 @@ export default function LoginPage() {
   /**
    * Returns the HTML
    */
+  if (props.dialogClickFunction != null) {
+    return (
+      <ThemeProvider theme={CustomDarkTheme}>
+        <CssBaseline />
+        <Container maxWidth="xs" sx={{ mt: 4, mb: 4 }}>
+          <LoginComponent></LoginComponent>
+        </Container>
+      </ThemeProvider>);
+  }
   return (
     <ThemeProvider theme={CustomDarkTheme}>
       <CssBaseline />
@@ -140,79 +154,94 @@ export default function LoginPage() {
             marginTop: '10vh',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'white' }}>
-          </Avatar>
-          <Typography component="h1" variant="h5" sx={{ color: "white" }}>
-            Sign in
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{
-            mt: 1,
-          }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={(event) => {
-                validateEmail(event.target.value);
-              }}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(event) => {
-                validatePassword(event.target.value);
-              }}
-            />
-            {loginError ? <Box sx=
-              {{
-                color: "red",
-                fontSize: "12px",
-              }}>{loginError}</Box> : null}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={!isValidEmail || !isValidPassword}
-            >
-              Sign In
-            </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={false}
-              onClick={loginAsGuest}
-            >
-              Sign In As Guest
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="" variant="body2" onClick={() => navigatePage("/register")}>
-                  Click here to register
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+          <LoginComponent></LoginComponent>
         </Paper>
         <Copyright />
       </Container>
     </ThemeProvider>
   );
+
+  /**
+   * This is the inner part of the login page
+   * @returns LoginComponent HTML
+   */
+  function LoginComponent() {
+    return (
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <Avatar sx={{ m: 1, bgcolor: 'white' }}>
+        </Avatar>
+        <Typography component="h1" variant="h5" sx={{ color: "white" }}>
+          Sign in
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{
+          mt: 1,
+        }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={(event) => {
+              validateEmail(event.target.value);
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(event) => {
+              validatePassword(event.target.value);
+            }}
+          />
+          {loginError ? <Box sx=
+            {{
+              color: "red",
+              fontSize: "12px",
+            }}>{loginError}</Box> : null}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={!isValidEmail || !isValidPassword}
+          >
+            Sign In
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={false}
+            onClick={loginAsGuest}
+          >
+            Sign In As Guest
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="" variant="body2" onClick={() => navigatePage("/register")}>
+                Click here to register
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box >)
+  }
 }
