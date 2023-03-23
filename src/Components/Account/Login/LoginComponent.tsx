@@ -39,7 +39,7 @@ async function loginGuest(url: string) {
  * RegisterPage component
  * @returns HTML
  */
-export default function LoginPage(props: { clickFunction?: any }) {
+export default function LoginComponent(props: { clickFunction?: any }) {
   const classes = commonClasses();
   /**
   * useState used to print a label with error message if the login service returned an error
@@ -103,9 +103,11 @@ export default function LoginPage(props: { clickFunction?: any }) {
     const token = data.token;
     saveTokenAsCookie(token)
     saveUsernameAsCookie(data.username)
+
     if (props.clickFunction != null) {
-      props.clickFunction()
+      props.clickFunction();
     }
+
   };
 
   const loginAsGuest = async () => {
@@ -114,8 +116,9 @@ export default function LoginPage(props: { clickFunction?: any }) {
     const token = data.token;
     saveTokenAsCookie(token)
     saveUsernameAsCookie(data.username)
+
     if (props.clickFunction != null) {
-      props.clickFunction()
+      props.clickFunction();
     }
   }
 

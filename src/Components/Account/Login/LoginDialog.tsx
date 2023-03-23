@@ -12,7 +12,7 @@ export default function LoginDialog(props: { clickFunction: any }) {
         <ThemeProvider theme={CustomDarkTheme}>
             <CssBaseline />
             <Container maxWidth="xs" sx={{ mt: 4, mb: 4 }}>
-                <LoginComponent clickFunction={props.clickFunction()}></LoginComponent>
+                <LoginComponent clickFunction={props.clickFunction}></LoginComponent>
             </Container>
         </ThemeProvider>
     );

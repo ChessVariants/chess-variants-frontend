@@ -32,17 +32,18 @@ function SlideUp(props: any) {
 export default function HomePage() {
 
   const [user, setUser] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
+    console.log(user)
     const cookies = new Cookies()
     setUser(cookies.get('username') ? cookies.get('username') : "")
     console.log(user)
     if (user === "") {
-      setIsOpen(true)
+      setOpen(true)
     }
     else {
-      setIsOpen(false)
+      setOpen(false)
     }
   }, [])
 
@@ -54,16 +55,15 @@ export default function HomePage() {
     navigate(link);
   }
   const closeDialog = () => {
-    setIsOpen(false)
+    setOpen(false)
   }
   const classes = commonClasses();
   return (
     <ThemeProvider theme={CustomDarkTheme}>
       <CssBaseline />
-      {isOpen ?
-        <Dialog TransitionComponent={SlideUp} open={true}>
-          <LoginDialog clickFunction={closeDialog}></LoginDialog>
-        </Dialog> : null}
+      <Dialog open={open}>
+        <LoginDialog clickFunction={closeDialog}></LoginDialog>
+      </Dialog>
       <Container maxWidth="md" >
         <Paper className={classes.CenteredBasicCard}>
           <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>MAIN MENU</Typography>
