@@ -1,5 +1,6 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import Cookies from 'universal-cookie';
 import LoginPage from '../Components/Account/Login/LoginComponent';
 
 /**
@@ -8,24 +9,34 @@ import LoginPage from '../Components/Account/Login/LoginComponent';
 export default class GameService {
 
     public readonly hubConnection: HubConnection;
-
     private static gameService?: GameService;
 
-    constructor(url: string = "game", connection?: HubConnection) {
-        if (connection === null || connection === undefined) {
-            this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
-        }
-        else {
-            this.hubConnection = connection!;
-        }
-        this.startConnection().catch((e) => {
-            console.log("Could not connect to user hub");
-            console.log(e);
-        });
+    constructor(baseUrl: string, token: string, path: string = "game") {
+        let completePath: string = baseUrl + path;
+        this.hubConnection = new HubConnectionBuilder()
+            .withUrl(completePath, { accessTokenFactory: () => token })
+            .withAutomaticReconnect().build();
     }
-    static getInstance() {
+
+    static async createAndConnect() {
         if (this.gameService === null || this.gameService === undefined) {
-            this.gameService = new GameService();
+            const cookies = new Cookies();
+            const token = cookies.get('jwtToken')
+            console.log(token);
+            this.gameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, token);
+
+            await this.gameService.startConnection().catch((e) => {
+                console.log("Could not connect to user hub");
+                console.log(e);
+            })
+        }
+        return this.gameService;
+    }
+
+    static getInstance(): GameService {
+        if (this.gameService === null || this.gameService === undefined) {
+            console.log("Could not get GameService instance, object was null or undefined");
+            throw new ReferenceError("GameService instance does not exist");
         }
         return this.gameService;
     }
@@ -71,6 +82,7 @@ export default class GameService {
     createGame(gameId: string, variant: string = Variant.Standard): void {
         this.hubConnection.send('CreateGame', gameId, variant);
     }
+
     startGame(gameId: string) {
         this.hubConnection.send('StartGame', gameId);
     }

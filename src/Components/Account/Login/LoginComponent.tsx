@@ -102,6 +102,7 @@ export default function LoginPage(props: { clickFunction?: any }) {
     console.log(data);
     const token = data.token;
     saveTokenAsCookie(token)
+    saveUsernameAsCookie(data.username)
     if (props.clickFunction != null) {
       props.clickFunction()
     }
@@ -112,8 +113,19 @@ export default function LoginPage(props: { clickFunction?: any }) {
     console.log(data)
     const token = data.token;
     saveTokenAsCookie(token)
+    saveUsernameAsCookie(data.username)
     if (props.clickFunction != null) {
       props.clickFunction()
+    }
+  }
+
+  const saveUsernameAsCookie = (username: string) => {
+    if (typeof (username) === "string") {
+      const cookies = new Cookies();
+      cookies.set('username', username)
+    }
+    else {
+      console.log(`Could not save cookie: ${username}`);
     }
   }
 

@@ -63,9 +63,9 @@ const initialState: State = {
  * 
  * @returns HTML
  */
-export default function GameBoard(props: { gameService: GameService }) {
+export default function GameBoard(props: { gameID: string }) {
 
-
+    const gameService: GameService = GameService.getInstance()
     /**
      * An array of active squares (highlighted by green color)
      * The first element is the active square that the user clicks on
@@ -86,7 +86,7 @@ export default function GameBoard(props: { gameService: GameService }) {
     /**
      * The GameBoard requires the GameService object as a prop
      */
-    const { gameService } = props;
+    const { gameID } = props;
 
     /**
      * gameService subscriptions which only registers once via useEffect
@@ -106,7 +106,7 @@ export default function GameBoard(props: { gameService: GameService }) {
             else {
                 setColor("black");
             }
-            gameService.requestBoardState("TESTID123");
+            gameService.requestBoardState(gameID);
         })
 
         gameService.on(GameEvents.GameCreated, (color: string) => {
@@ -225,7 +225,7 @@ export default function GameBoard(props: { gameService: GameService }) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
                 console.log(active[0] + coordinate);
                 setActive(["", []]);
-                gameService.sendMove(active[0] + coordinate, "TESTID123");
+                gameService.sendMove(active[0] + coordinate, gameID);
             }
             else {
                 if (coordinate === active[0]) {

@@ -26,7 +26,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     useEffect(() => {
         gameService.on(GameEvents.GameStarted, () => {
             console.log("Game Started");
-            navigatePage("/match");
+            navigatePage("/match/" + gameID);
         })
     }, [])
 
@@ -49,8 +49,9 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
                 {isAdmin ? <Button
                     color={"createColor"}
                     onClick={() => {
-                        //set game to active
-                        // Go over to 
+                        gameService.startGame(gameID)
+                        // set game to active
+                        // Go over to match page
                     }}
                     type="submit"
                     variant="contained"

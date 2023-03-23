@@ -23,6 +23,7 @@ export default function JoinGame() {
         console.log(joinCode + "")
         gameService.joinGame(joinCode + "");
         // check if success, then join, otherwise error:
+
         return (<Lobby gameID={joinCode + ""} isAdmin={false}></Lobby>)
     }
 

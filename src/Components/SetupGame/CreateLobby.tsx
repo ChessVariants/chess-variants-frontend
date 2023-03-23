@@ -1,11 +1,13 @@
 import { Box, Button, Container, createTheme, CssBaseline, Paper, TextField, ThemeProvider, Typography } from "@mui/material";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { commonClasses } from "../Util/CommonClasses";
+import GameService from "../../Services/GameService";
 
 
 
 export default function CreateGame(props: { createGameFunction: any }) {
 
+    const gameService: GameService = GameService.getInstance()
     const classes = commonClasses();
 
     // TODO: Send request to start game with variant ID
@@ -17,6 +19,7 @@ export default function CreateGame(props: { createGameFunction: any }) {
         console.log({
             variantID: data.get('variantID'),
         });
+
         props.createGameFunction(data.get('variantID'));
     };
 

@@ -15,7 +15,6 @@ declare module "@mui/material/styles" {
         editorColor: PaletteOptions['primary'];
     }
 }
-
 declare module "@mui/material/Button" {
     interface ButtonPropsColorOverrides {
         joinColor: true;

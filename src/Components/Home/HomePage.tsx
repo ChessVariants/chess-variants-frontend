@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Slide from '@mui/material/Slide';
 import React from "react";
 import LoginDialog from "../Account/Login/LoginDialog";
+import Cookies from "universal-cookie";
 
 /**
  * Slide animation function, used by dialog window
@@ -30,11 +31,19 @@ function SlideUp(props: any) {
 
 export default function HomePage() {
 
-  const [user, setUser] = useState("Bob");
+  const [user, setUser] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    // TODO: set logged in user
-    setUser("Bob")
+    const cookies = new Cookies()
+    setUser(cookies.get('username') ? cookies.get('username') : "")
+    console.log(user)
+    if (user === "") {
+      setIsOpen(true)
+    }
+    else {
+      setIsOpen(false)
+    }
   }, [])
 
   /**
@@ -45,13 +54,13 @@ export default function HomePage() {
     navigate(link);
   }
   const closeDialog = () => {
-    console.log("dialog closed")
+    setIsOpen(false)
   }
   const classes = commonClasses();
   return (
     <ThemeProvider theme={CustomDarkTheme}>
       <CssBaseline />
-      {user === "" ?
+      {isOpen ?
         <Dialog TransitionComponent={SlideUp} open={true}>
           <LoginDialog clickFunction={closeDialog}></LoginDialog>
         </Dialog> : null}
