@@ -47,6 +47,20 @@ const darkTheme = createTheme({
     shape: {
         borderRadius: 10,
     },
-});
+    components: {
+        // Name of the component
+        MuiBackdrop: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    // Some CSS
+                    backgroundColor: "rgba(0,0,0,.2)"
+                },
+            },
+        },
+    },
+}
+
+);
 
 export default darkTheme;
