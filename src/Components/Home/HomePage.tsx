@@ -35,17 +35,15 @@ export default function HomePage() {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    console.log(user)
     const cookies = new Cookies()
     setUser(cookies.get('username') ? cookies.get('username') : "")
-    console.log(user)
     if (user === "") {
       setOpen(true)
     }
     else {
       setOpen(false)
     }
-  }, [])
+  }, [user])
 
   /**
      * Used to navigate to other pages
