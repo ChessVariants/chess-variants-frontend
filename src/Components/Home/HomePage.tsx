@@ -37,10 +37,12 @@ export default function HomePage() {
   useEffect(() => {
     const cookies = new Cookies()
     setUser(cookies.get('username') ? cookies.get('username') : "")
+  }, [])
+
+  useEffect(() => {
     if (user === "") {
       setOpen(true)
-    }
-    else {
+    } else {
       setOpen(false)
     }
   }, [user])
