@@ -4,29 +4,38 @@ import { makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from "@emotion/react";
 import CustomDarkTheme from "../../Util/CustomDarkTheme";
 import { commonClasses } from "../../Util/CommonClasses";
-import GameService, { GameEvents } from "../../../Services/GameService";
+import GameService, { Colors, GameEvents } from "../../../Services/GameService";
 import LobbyPlayers from "./LobbyPlayers";
 import LobbyVariantInfo from "./LobbyVariantInfo";
 import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     /**
      * Used to navigate to other pages
      */
     const navigate = useNavigate();
-    const navigatePage = (link: string) => {
-        navigate(link);
+    const navigatePage = (link: string, color: string) => {
+        navigate(link, {
+            state: {
+                color: color,
+            }
+        });
     }
+    const username: string = new Cookies().get('username');
+
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;
     const classes = commonClasses();
 
     useEffect(() => {
-        gameService.on(GameEvents.GameStarted, () => {
+        gameService.on(GameEvents.GameStarted, (colors: Colors) => {
+            console.log(colors);
+            let color = colors.white === username ? "white" : "black"
             console.log("Game Started");
-            navigatePage("/match/" + gameID);
+            navigatePage("/match/" + gameID, color);
         })
     }, [])
 
@@ -50,8 +59,6 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
                     color={"createColor"}
                     onClick={() => {
                         gameService.startGame(gameID)
-                        // set game to active
-                        // Go over to match page
                     }}
                     type="submit"
                     variant="contained"

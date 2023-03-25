@@ -75,6 +75,10 @@ export default class GameService {
         this.hubConnection.invoke('JoinGame', gameId).catch(e => console.log(e));
     }
 
+    async joinGameAsync(gameId: string): Promise<boolean> {
+        return this.hubConnection.invoke('JoinGame', gameId);
+    }
+
     /**
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
@@ -103,6 +107,10 @@ export default class GameService {
         this.hubConnection.send('SwapColors', gameId);
     }
 
+    async requestColorsAsync(gameId: string): Promise<Colors> {
+        return this.hubConnection.invoke('RequestColors', gameId)
+    }
+
     /**
      * Requests the server to send an event with the board state
      */
@@ -123,6 +131,11 @@ export default class GameService {
     }
 }
 
+export interface Colors {
+    white?: string,
+    black?: string,
+}
+
 
 export enum GameEvents {
     GameNotFound = "gameNotFound",
@@ -139,7 +152,10 @@ export enum GameEvents {
     WhiteWon = "whiteWon",
     BlackWon = "blackWon",
     Tie = "tie",
-    GameStarted = "GameStarted"
+    GameVariantSet = "gameVariantSet",
+    GameVariantNotSet = "gameVariantNotSet",
+    GameStarted = "gameStarted",
+    Colors = "colors",
 }
 
 export enum Variant {

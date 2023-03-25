@@ -3,8 +3,8 @@ import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from "@emotion/react";
 import CustomDarkTheme from "../../Util/CustomDarkTheme";
-import GameService from "../../../Services/GameService";
-import { useState } from "react";
+import GameService, { GameEvents, Colors } from "../../../Services/GameService";
+import { useEffect, useState } from "react";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -37,13 +37,32 @@ export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;
 
-    const [whitePlayer, setWhitePlayer] = useState("You");
-    const [blackPlayer, setBlackPlayer] = useState("Waiting...");
+    const [whitePlayer, setWhitePlayer] = useState("");
+    const [blackPlayer, setBlackPlayer] = useState("");
+
+    useEffect(() => {
+        gameService.requestColorsAsync(gameID)
+        .then((colors: Colors) => {
+            setWhitePlayer(colors.white ? colors.white : "Waiting...");
+            setBlackPlayer(colors.black ? colors.black : "Waiting...");
+        })
+
+        gameService.on(GameEvents.PlayerJoinedGame, (color: string, name: string) => {
+            if (color === "white") {
+                setWhitePlayer(name);
+            }
+            else if (color === "black") {
+                setBlackPlayer(name);
+            }
+        })
+
+        gameService.on(GameEvents.Colors, (colors: Colors) => {
+            setWhitePlayer(colors.white ? colors.white : "Waiting...");
+            setBlackPlayer(colors.black ? colors.black : "Waiting...");
+        })
+    }, [])
 
     const switchColors = () => {
-        // Maybe create a get for service?
-        setWhitePlayer("");
-        setBlackPlayer("");
         gameService.swapColors(gameID);
     }
 

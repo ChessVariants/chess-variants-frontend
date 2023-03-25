@@ -63,7 +63,7 @@ const initialState: State = {
  * 
  * @returns HTML
  */
-export default function GameBoard(props: { gameID: string }) {
+export default function GameBoard(props: { gameID: string, color: string }) {
 
     const gameService: GameService = GameService.getInstance()
     /**
@@ -75,7 +75,7 @@ export default function GameBoard(props: { gameID: string }) {
     /**
      * Color of the user, either "white" or "black"
      */
-    const [color, setColor] = useState("white");
+    const [color, setColor] = useState(props.color ? props.color : "white");
     /**
      * GameState which includes boardsize, positions, side to move and valid moves.
      */
