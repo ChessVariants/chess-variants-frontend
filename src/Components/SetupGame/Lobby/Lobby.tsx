@@ -58,7 +58,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
                 {isAdmin ? <Button
                     color={"createColor"}
                     onClick={() => {
-                        gameService.startGame(gameID)
+                        gameService.sendStartGame(gameID)
                     }}
                     type="submit"
                     variant="contained"

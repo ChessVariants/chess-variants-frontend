@@ -9,6 +9,7 @@ import LoginPage from './Components/Account/Login/LoginPage';
 import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import Cookies from 'universal-cookie';
+import Unauthorized from './Components/Util/Unauthorized';
 
 function App() {
   const [connected, setConnected] = useState(false)
@@ -40,6 +41,7 @@ function App() {
         <Route path="/new" element={<SetupGame />} />
         <Route path="/join" element={<JoinGame />} />
         <Route path="/join/:joinCode" element={<JoinGame />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </>

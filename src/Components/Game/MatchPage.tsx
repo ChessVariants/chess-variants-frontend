@@ -30,7 +30,7 @@ export default function MatchPage() {
     //<head className={classes.head}>
     <body className={classes.Body}>
       <Box className={classes.Container}>
-        <GameBoard gameID={gameID + ""} color={location.state.color}></GameBoard>
+        <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>
         <GameSideInfo gameService={gameService}></GameSideInfo>
       </Box>
     </body>

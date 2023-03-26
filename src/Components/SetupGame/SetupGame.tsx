@@ -24,7 +24,7 @@ export default function NewGame(props: { pageState?: pageStates }) {
         setGameID(gameID);
         setVariantID(variantID);
         setPageState(pageStates.Lobby);
-        gameService.createGame(gameID, variantID);
+        gameService.sendCreateGame(gameID, variantID);
     }
 
     if (pageState === pageStates.CreateGame) {

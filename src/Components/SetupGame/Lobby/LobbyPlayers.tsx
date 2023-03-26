@@ -41,7 +41,7 @@ export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }
     const [blackPlayer, setBlackPlayer] = useState("");
 
     useEffect(() => {
-        gameService.requestColorsAsync(gameID)
+        gameService.requestColors(gameID)
         .then((colors: Colors) => {
             setWhitePlayer(colors.white ? colors.white : "Waiting...");
             setBlackPlayer(colors.black ? colors.black : "Waiting...");
@@ -63,7 +63,7 @@ export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }
     }, [])
 
     const switchColors = () => {
-        gameService.swapColors(gameID);
+        gameService.sendSwapColors(gameID);
     }
 
     const classes = useStyles();

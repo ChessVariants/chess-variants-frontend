@@ -10,55 +10,48 @@ export default function JoinGame() {
     const [gameJoined, setGameJoined] = useState<Boolean>(false);
     const [joinGameLoading, setJoinGameLoading] = useState<Boolean>(false);
     const [gameId, setGameId] = useState<string>("");
+    const [joinFailed, setJoinFailed] = useState<Boolean>(false);
     
     const gameService = GameService.getInstance();
     const classes = commonClasses();
     const { joinCode } = useParams();
 
+    if (joinFailed) {
+        return (<h2>Failed to join game: {gameId}</h2>)
+    }
+
     if (gameJoined) {
         return (<Lobby gameID={gameId} isAdmin={false}></Lobby>)
+    }
+
+    const tryToJoinGame = (joinGameId: string) => {
+        setJoinGameLoading(true);
+        setGameId(joinGameId);
+        gameService.requestJoinGame(joinGameId)
+            .then((result) => {
+                if (result) {
+                    console.log("Joined game successfully");
+                    setGameJoined(true);
+                    setJoinGameLoading(false);
+                }
+                else {
+                    console.log("Error joining game");
+                    setJoinFailed(true);
+                }
+            })
+            .catch(e => console.log(e)
+            );
     }
 
     const joinLobby = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
-        let code: string = data.get('joinID') ? data.get('joinID')?.toString()! : "";
-        console.log({codeValue: code});
-        setJoinGameLoading(true);
-
-        gameService.joinGameAsync(code)
-        .then((result) => {
-            if (result) {
-                console.log("Joined game successfully");
-                setGameId(code);
-                setGameJoined(true);
-                setJoinGameLoading(false);
-            }
-            else {
-                console.log("Error joining game");
-                setJoinGameLoading(false);
-            }
-        });
+        let joinGameId: string = data.get('joinID') ? data.get('joinID')?.toString()! : "";
+        tryToJoinGame(joinGameId);
     };
 
     if (joinCode && !joinGameLoading) {
-        setJoinGameLoading(true)
-        gameService.joinGameAsync(joinCode)
-        .then((result) => {
-            if (result) {
-                console.log("Joined game successfully");
-                setGameId(joinCode);
-                setGameJoined(true);
-                setJoinGameLoading(false);
-            }
-            else {
-                console.log("Error joining game");
-                setJoinGameLoading(false);
-            }
-        })
-        .catch(e => console.log(e)
-        );
+        tryToJoinGame(joinCode);
     }
 
     return (

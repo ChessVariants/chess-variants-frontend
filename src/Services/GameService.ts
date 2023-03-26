@@ -1,10 +1,15 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import Cookies from 'universal-cookie';
-import LoginPage from '../Components/Account/Login/LoginComponent';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
+ * 
+ * Methods prefixed with "send" will merely send an RPC call to the backend, which may or may not result in
+ * the backend sending events as a response.
+ * 
+ * Methods prefixed with "request" will invoke a method on the backend and returns a {@link Promise} of the
+ * result. It may also cause the backend to send events as a response.
  */
 export default class GameService {
 
@@ -54,6 +59,8 @@ export default class GameService {
      * ```
      */
     on(methodName: string, newMethod: (...args: any[]) => any): void {
+        console.log("registered:" + methodName);
+        
         this.hubConnection.on(methodName, newMethod)
     }
 
@@ -71,11 +78,11 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    joinGame(gameId: string): void {
-        this.hubConnection.invoke('JoinGame', gameId).catch(e => console.log(e));
+    sendJoinGame(gameId: string): void {
+        this.hubConnection.send('JoinGame', gameId);
     }
 
-    async joinGameAsync(gameId: string): Promise<boolean> {
+    async requestJoinGame(gameId: string): Promise<boolean> {
         return this.hubConnection.invoke('JoinGame', gameId);
     }
 
@@ -83,11 +90,11 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    createGame(gameId: string, variant: string = Variant.Standard): void {
+    sendCreateGame(gameId: string, variant: string = Variant.Standard): void {
         this.hubConnection.send('CreateGame', gameId, variant);
     }
 
-    startGame(gameId: string) {
+    sendStartGame(gameId: string): void {
         this.hubConnection.send('StartGame', gameId);
     }
 
@@ -95,7 +102,7 @@ export default class GameService {
      * Leaves the game with the supplied gameId
      * @param gameId the gameId for the the game to leave
      */
-    leaveGame(gameId: string): void {
+    sendLeaveGame(gameId: string): void {
         this.hubConnection.send('LeaveGame', gameId);
     }
 
@@ -103,21 +110,16 @@ export default class GameService {
      * Makes a request to the server to swap colors between players
      * @param gameId the gameId for the game to swap colors between players in
      */
-    swapColors(gameId: string) {
+    sendSwapColors(gameId: string): void {
         this.hubConnection.send('SwapColors', gameId);
     }
 
-    async requestColorsAsync(gameId: string): Promise<Colors> {
+    async requestColors(gameId: string): Promise<Colors> {
         return this.hubConnection.invoke('RequestColors', gameId)
     }
 
-    /**
-     * Requests the server to send an event with the board state
-     */
-    requestBoardState(gameId: string): void {
-        console.log("Board state requested");
-
-        this.hubConnection.send('RequestState', gameId);
+    async requestBoardState(gameId: string): Promise<GameState> {
+        return this.hubConnection.invoke('RequestState', gameId);
     }
 
     /**
@@ -134,6 +136,23 @@ export default class GameService {
 export interface Colors {
     white?: string,
     black?: string,
+}
+
+export interface GameState {
+    sideToMove: string,
+    board: string[],
+    boardSize: BoardSize,
+    moves: Move[]
+}
+
+export interface BoardSize {
+    rows: number,
+    cols: number,
+}
+
+export interface Move {
+    from: string,
+    to: string[],
 }
 
 
