@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { commonClasses } from '../../Util/CommonClasses';
 import Cookies from 'universal-cookie'
+import CookieService, { Cookie } from '../../../Services/CookieService';
 
 
 async function loginUser(url: string, email?: string, password?: string) {
@@ -124,8 +125,8 @@ export default function LoginComponent(props: { clickFunction?: any }) {
 
   const saveUsernameAsCookie = (username: string) => {
     if (typeof (username) === "string") {
-      const cookies = new Cookies();
-      cookies.set('username', username)
+      const cookieService = CookieService.getInstance();
+      cookieService.set(Cookie.Username, username)
     }
     else {
       console.log(`Could not save cookie: ${username}`);
@@ -134,8 +135,8 @@ export default function LoginComponent(props: { clickFunction?: any }) {
 
   const saveTokenAsCookie = (token: string) => {
     if (typeof (token) === "string") {
-      const cookies = new Cookies();
-      cookies.set('jwtToken', token)
+      const cookieService = CookieService.getInstance();
+      cookieService.set(Cookie.JwtToken, token)
     }
     else {
       console.log(`Could not save cookie: ${token}`);

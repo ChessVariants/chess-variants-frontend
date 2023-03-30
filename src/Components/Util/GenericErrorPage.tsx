@@ -3,7 +3,7 @@ import { Container, CssBaseline, Typography } from "@mui/material";
 import { commonClasses } from "./CommonClasses";
 import CustomDarkTheme from "./CustomDarkTheme";
 
-export default function NotFound() {
+export default function NotFound(props: {text: string}) {
 
     const classes = commonClasses();
 
@@ -11,9 +11,8 @@ export default function NotFound() {
         <ThemeProvider theme={CustomDarkTheme}>
             <CssBaseline />
             <Container className={classes.CenteredBasicCard} >
-                <Typography variant="h4" sx={{ letterSpacing: '4px' }}>PAGE NOT FOUND</Typography>
+                <Typography variant="h4" sx={{ letterSpacing: '4px' }}>{props.text}</Typography>
             </Container>
         </ThemeProvider>
     );
 }
-

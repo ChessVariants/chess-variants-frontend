@@ -1,7 +1,7 @@
 import { Box, Button, Container, createTheme, CssBaseline, Paper, TextField, ThemeProvider, Typography } from "@mui/material";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { commonClasses } from "../Util/CommonClasses";
-import GameService, { GameEvents } from "../../Services/GameService";
+import GameService, { GameEvents, JoinResult } from "../../Services/GameService";
 import { useNavigate, useParams } from "react-router-dom";
 import Lobby from "./Lobby/Lobby";
 import { useEffect, useState } from "react";
@@ -28,19 +28,18 @@ export default function JoinGame() {
         setJoinGameLoading(true);
         setGameId(joinGameId);
         gameService.requestJoinGame(joinGameId)
-            .then((result) => {
-                if (result) {
+            .then((result: JoinResult) => {
+                if (result.success) {
                     console.log("Joined game successfully");
                     setGameJoined(true);
                     setJoinGameLoading(false);
                 }
                 else {
-                    console.log("Error joining game");
+                    console.log(result.failReason);
                     setJoinFailed(true);
                 }
             })
-            .catch(e => console.log(e)
-            );
+            .catch(e => console.log(e));
     }
 
     const joinLobby = (event: React.FormEvent<HTMLFormElement>) => {

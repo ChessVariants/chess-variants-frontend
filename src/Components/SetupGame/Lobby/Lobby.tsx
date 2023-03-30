@@ -11,6 +11,7 @@ import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
+import CookieService, { Cookie } from "../../../Services/CookieService";
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     /**
@@ -24,7 +25,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
             }
         });
     }
-    const username: string = new Cookies().get('username');
+    const username: string = CookieService.getInstance().get(Cookie.Username);
 
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;

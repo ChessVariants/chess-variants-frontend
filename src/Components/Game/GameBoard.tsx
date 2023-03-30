@@ -4,7 +4,6 @@ import { Theme } from "@material-ui/core";
 import Square from "./Square";
 import { useEffect, useState } from "react";
 import GameService, { GameEvents, GameState } from "../../Services/GameService";
-import Unauthorized from "../Util/Unauthorized";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -91,6 +90,10 @@ export default function GameBoard(props: { gameID: string, color: string }) {
         gameService.requestBoardState(gameID)
         .then((newGameState?: GameState) => {
             if (newGameState === null) {
+                console.log(newGameState);
+                
+                console.log("navigate to unauthorized from gameboard");
+                
                 navigate("/unauthorized")
             }
             setGameState(newGameState!);

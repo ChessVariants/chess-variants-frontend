@@ -1,6 +1,7 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import Cookies from 'universal-cookie';
+import CookieService, { Cookie } from './CookieService';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
@@ -23,28 +24,43 @@ export default class GameService {
             .withAutomaticReconnect().build();
     }
 
-    static async createAndConnect() {
-        if (this.gameService === null || this.gameService === undefined) {
-            const cookies = new Cookies();
-            const token = cookies.get('jwtToken')
-            console.log(token);
-            this.gameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, token);
-
-            await this.gameService.startConnection().catch((e) => {
-                console.log("Could not connect to user hub");
-                console.log(e);
-            })
-        }
+    static create(): GameService {
+        const cookieService = CookieService.getInstance()
+        const token = cookieService.get(Cookie.JwtToken)
+        this.gameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, token);
         return this.gameService;
+    }
+
+    static async connect(): Promise<void> {
+        if (this.gameService === undefined) {
+            this.create();
+        }
+        return this.gameService!.startConnection()
+    }
+
+    static async createAndConnect(): Promise<void> {
+        return this.connect()
     }
 
     static getInstance(): GameService {
         if (this.gameService === null || this.gameService === undefined) {
-            console.log("Could not get GameService instance, object was null or undefined");
-            throw new ReferenceError("GameService instance does not exist");
+            this.gameService = this.create();
         }
         return this.gameService;
     }
+
+    public isConnecting(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connecting || this.hubConnection.state === HubConnectionState.Reconnecting;
+    }
+
+    public isDisconnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Disconnected || this.hubConnection.state === HubConnectionState.Disconnecting;
+    }
+
+    public isConnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connected;
+    }
+
     /**
      * Forwards the event subscription to the internal {@link HubConnection}.
      * @param methodName the event to subscribe to
@@ -82,7 +98,7 @@ export default class GameService {
         this.hubConnection.send('JoinGame', gameId);
     }
 
-    async requestJoinGame(gameId: string): Promise<boolean> {
+    async requestJoinGame(gameId: string): Promise<JoinResult> {
         return this.hubConnection.invoke('JoinGame', gameId);
     }
 
@@ -127,8 +143,7 @@ export default class GameService {
      */
     async startConnection(): Promise<void> {
         if (this.hubConnection.state === HubConnectionState.Disconnected) {
-            await this.hubConnection.start();
-            console.log('Connection to user hub successful');
+            return this.hubConnection.start();
         }
     }
 }
@@ -136,6 +151,12 @@ export default class GameService {
 export interface Colors {
     white?: string,
     black?: string,
+}
+
+export interface JoinResult {
+    color?: string,
+    success?: boolean,
+    failReason?: string,
 }
 
 export interface GameState {

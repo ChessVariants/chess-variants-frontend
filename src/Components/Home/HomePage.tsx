@@ -10,6 +10,7 @@ import Slide from '@mui/material/Slide';
 import React from "react";
 import LoginDialog from "../Account/Login/LoginDialog";
 import Cookies from "universal-cookie";
+import CookieService, { Cookie } from "../../Services/CookieService";
 
 /**
  * Slide animation function, used by dialog window
@@ -35,8 +36,8 @@ export default function HomePage() {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    const cookies = new Cookies()
-    setUser(cookies.get('username') ? cookies.get('username') : "")
+    const cookieService = CookieService.getInstance();
+    setUser(cookieService.get(Cookie.Username) ? cookieService.get(Cookie.Username) : "")
   }, [])
 
   useEffect(() => {

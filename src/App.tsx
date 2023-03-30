@@ -4,34 +4,104 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from './Components/Account/Register';
 import JoinGame from './Components/SetupGame/JoinGame';
 import SetupGame from './Components/SetupGame/SetupGame';
-import PageNotFound from './Components/Util/PageNotFound';
 import LoginPage from './Components/Account/Login/LoginPage';
 import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
-import Cookies from 'universal-cookie';
-import Unauthorized from './Components/Util/Unauthorized';
+import CookieService, { Cookie } from './Services/CookieService';
+import GenericErrorPage from './Components/Util/GenericErrorPage';
+
+async function checkAuthentication(token: string): Promise<Response> {
+  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
+    method: 'GET',
+    headers: {'Authorization': `Bearer ${token}`},
+  })
+}
+
+enum AuthenticationState {
+  Uninitialized = 'uninitialized',
+  InProgress = 'in progress',
+  AuthenticationFailed = 'authentication failed',
+  Authenticated = 'authenticated',
+  NotPossible = 'not possible',
+}
 
 function App() {
-  const [connected, setConnected] = useState(false)
+  const cookieService = CookieService.getInstance()
+  const [authenticationState, setAuthenticationState] = useState<AuthenticationState>(AuthenticationState.InProgress);
+  const [username, setUsername] = useState<string>("Not logged in");
 
   useEffect(() => {
-    GameService.createAndConnect().then((res) => {
-      setConnected(true);
+    cookieService.addChangeListener((cookie) => {
+      if (cookie.value === undefined || cookie.value === null) {
+        return
+      }
+
+      if (cookie.name === Cookie.JwtToken && cookie.value !== "") {
+        GameService.create();
+        authenticate();
+      }
+
+      if (cookie.name === Cookie.Username && cookie.value !== "") {
+        setUsername(cookie.value)
+      }
     })
   }, [])
 
-  if (!connected) {
-    console.log("Not connected to hub ...");
+  const authenticate = () => {
+    setAuthenticationState(AuthenticationState.InProgress)
+    checkAuthentication(cookieService.get(Cookie.JwtToken))
+    .then(res => {
+      console.log(res.status);
+      if (res.status === 401) {        
+        cookieService.remove(Cookie.Username);
+        cookieService.remove(Cookie.JwtToken);
+      }
+      else if (res.status === 200) {
+        setUsername(cookieService.get(Cookie.Username))
+        connectHub();
+      }
+    })
+    .catch(e => {
+      console.log("Authentication check not possible");
+      console.log(e);
+    })
+  }
 
+  const connectHub = () => {
+    if (!GameService.getInstance().isDisconnected()) {
+      return;
+    }
+
+    GameService.connect()
+    .then(() => {
+      setAuthenticationState(AuthenticationState.Authenticated);
+    })
+    .catch(e => {
+      setAuthenticationState(AuthenticationState.AuthenticationFailed);
+      console.log(GameService.getInstance().hubConnection.state);
+      
+      console.log(e);
+    })
+  }
+
+  useEffect(() => {
+    authenticate();
+    connectHub();
+  }, [])
+
+  if (authenticationState === AuthenticationState.InProgress
+     || authenticationState === AuthenticationState.Uninitialized
+     || GameService.getInstance().isConnecting()) {
     return (<></>)
   }
 
-  const cookies = new Cookies()
-
+  if (authenticationState === AuthenticationState.NotPossible) {
+    return (<GenericErrorPage text={'Servers unavailable'}></GenericErrorPage>)
+  }
 
   return (
     <>
-      <h1>{cookies.get('username') ? cookies.get('username') : "Not logged in"}</h1>
+      <h1>{username}</h1>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -41,8 +111,8 @@ function App() {
         <Route path="/new" element={<SetupGame />} />
         <Route path="/join" element={<JoinGame />} />
         <Route path="/join/:joinCode" element={<JoinGame />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/*" element={<PageNotFound />} />
+        <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
+        <Route path="/*" element={<GenericErrorPage text={'Page not found'}/>} />
       </Routes>
     </>
   );
