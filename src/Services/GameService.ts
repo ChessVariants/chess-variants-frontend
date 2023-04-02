@@ -1,33 +1,64 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import Cookies from 'universal-cookie';
+import CookieService, { Cookie } from './CookieService';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
+ * 
+ * Methods prefixed with "send" will merely send an RPC call to the backend, which may or may not result in
+ * the backend sending events as a response.
+ * 
+ * Methods prefixed with "request" will invoke a method on the backend and returns a {@link Promise} of the
+ * result. It may also cause the backend to send events as a response.
  */
 export default class GameService {
-    
-    public readonly hubConnection: HubConnection;
 
+    public readonly hubConnection: HubConnection;
     private static gameService?: GameService;
 
-    constructor(url: string="game", connection?: HubConnection) {
-        if (connection === null || connection === undefined) {
-            this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
-        } 
-        else {
-            this.hubConnection = connection!;
-        }
-        this.startConnection().catch((e) => {
-            console.log("Could not connect to user hub");
-            console.log(e);
-        });
+    constructor(baseUrl: string, token: string, path: string = "game") {
+        let completePath: string = baseUrl + path;
+        this.hubConnection = new HubConnectionBuilder()
+            .withUrl(completePath, { accessTokenFactory: () => token })
+            .withAutomaticReconnect().build();
     }
 
-    static getInstance() {
+    static create(): GameService {
+        const cookieService = CookieService.getInstance()
+        const token = cookieService.get(Cookie.JwtToken)
+        this.gameService = new GameService(process.env.REACT_APP_BACKEND_BASE_URL!, token);
+        return this.gameService;
+    }
+
+    static async connect(): Promise<void> {
+        if (this.gameService === undefined) {
+            this.create();
+        }
+        return this.gameService!.startConnection()
+    }
+
+    static async createAndConnect(): Promise<void> {
+        return this.connect()
+    }
+
+    static getInstance(): GameService {
         if (this.gameService === null || this.gameService === undefined) {
-            this.gameService = new GameService();
+            this.gameService = this.create();
         }
         return this.gameService;
+    }
+
+    public isConnecting(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connecting || this.hubConnection.state === HubConnectionState.Reconnecting;
+    }
+
+    public isDisconnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Disconnected || this.hubConnection.state === HubConnectionState.Disconnecting;
+    }
+
+    public isConnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connected;
     }
 
     /**
@@ -44,6 +75,8 @@ export default class GameService {
      * ```
      */
     on(methodName: string, newMethod: (...args: any[]) => any): void {
+        console.log("registered:" + methodName);
+        
         this.hubConnection.on(methodName, newMethod)
     }
 
@@ -61,23 +94,31 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    joinGame(gameId: string): void {
+    sendJoinGame(gameId: string): void {
         this.hubConnection.send('JoinGame', gameId);
+    }
+
+    async requestJoinGame(gameId: string): Promise<JoinResult> {
+        return this.hubConnection.invoke('JoinGame', gameId);
     }
 
     /**
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    createGame(gameId: string, variant: Variant = Variant.Standard): void {
+    sendCreateGame(gameId: string, variant: string = Variant.Standard): void {
         this.hubConnection.send('CreateGame', gameId, variant);
+    }
+
+    sendStartGame(gameId: string): void {
+        this.hubConnection.send('StartGame', gameId);
     }
 
     /**
      * Leaves the game with the supplied gameId
      * @param gameId the gameId for the the game to leave
      */
-    leaveGame(gameId: string): void {
+    sendLeaveGame(gameId: string): void {
         this.hubConnection.send('LeaveGame', gameId);
     }
 
@@ -85,29 +126,56 @@ export default class GameService {
      * Makes a request to the server to swap colors between players
      * @param gameId the gameId for the game to swap colors between players in
      */
-    swapColors(gameId: string) {
+    sendSwapColors(gameId: string): void {
         this.hubConnection.send('SwapColors', gameId);
     }
 
-    /**
-     * Requests the server to send an event with the board state
-     */
-    requestBoardState(gameId: string): void {
-        console.log("Board state requested");
-        
-        this.hubConnection.send('RequestState', gameId);
+    async requestColors(gameId: string): Promise<Colors> {
+        return this.hubConnection.invoke('RequestColors', gameId)
     }
-    
+
+    async requestBoardState(gameId: string): Promise<GameState> {
+        return this.hubConnection.invoke('RequestState', gameId);
+    }
+
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
      */
     async startConnection(): Promise<void> {
         if (this.hubConnection.state === HubConnectionState.Disconnected) {
-          await this.hubConnection.start();
-          console.log('Connection to user hub successful');
+            return this.hubConnection.start();
         }
     }
 }
+
+export interface Colors {
+    white?: string,
+    black?: string,
+}
+
+export interface JoinResult {
+    color?: string,
+    success?: boolean,
+    failReason?: string,
+}
+
+export interface GameState {
+    sideToMove: string,
+    board: string[],
+    boardSize: BoardSize,
+    moves: Move[]
+}
+
+export interface BoardSize {
+    rows: number,
+    cols: number,
+}
+
+export interface Move {
+    from: string,
+    to: string[],
+}
+
 
 export enum GameEvents {
     GameNotFound = "gameNotFound",
@@ -124,6 +192,10 @@ export enum GameEvents {
     WhiteWon = "whiteWon",
     BlackWon = "blackWon",
     Tie = "tie",
+    GameVariantSet = "gameVariantSet",
+    GameVariantNotSet = "gameVariantNotSet",
+    GameStarted = "gameStarted",
+    Colors = "colors",
 }
 
 export enum Variant {

@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Color } from "@mui/material";
 import { makeStyles } from '@material-ui/core/styles';
 
 
-  const CustomButton = (props: {text: string, maxWidth?: string, height: string, color: string}) => {
+const CustomButton = (props: { text: string, maxWidth?: string, height: string, color: string }) => {
     const {
         text,
         maxWidth,
@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
         color,
     } = props;
 
-    const useStyles : any = makeStyles((theme) => ({
+    const useStyles: any = makeStyles((theme) => ({
         Container: {
             display: "inline-block",
             backgroundColor: "#555CB4",
@@ -28,7 +28,7 @@ import { makeStyles } from '@material-ui/core/styles';
                 boxShadow: "inset 200px 0 0 0 #42478E",
             }
         },
-        Icon:{
+        Icon: {
             display: "inline-block",
             backgroundColor: "#42478E",
             bottom: "0",
@@ -36,9 +36,9 @@ import { makeStyles } from '@material-ui/core/styles';
             height: "100%",
             width: height,
         },
-      }));
+    }));
     const classes = useStyles();
-    
+
     return (
         <Box className={classes.Container}>
             <Box className={classes.Icon}>

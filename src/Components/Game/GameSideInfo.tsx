@@ -36,8 +36,6 @@ export default function SideInfo(props: { gameService: GameService }) {
         <Box className={classes.Container}>
             <p>Settings</p>
             <CustomButton text={"Leave"} color={"blue"} height={"32px"}></CustomButton>
-            <Button onClick={() => { gameService.createGame("TESTID123"); console.log(gameService.requestBoardState("TESTID123"), "req") }}>Create Game</Button>
-            <Button onClick={() => { gameService.joinGame("TESTID123") }}>Join game</Button>
         </Box>
     );
 

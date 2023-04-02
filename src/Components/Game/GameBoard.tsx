@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "./Square";
 import { useEffect, useState } from "react";
-import GameService, { GameEvents } from "../../Services/GameService";
+import GameService, { GameEvents, GameState } from "../../Services/GameService";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -45,15 +46,9 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 }));
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
-type State = {
-    boardSize: { row: number, col: number };
-    board: string[];
-    sideToMove: string;
-    moves: { from: string; to: string[] }[];
-};
 
-const initialState: State = {
-    boardSize: { row: 8, col: 8 },
+const initialState: GameState = {
+    boardSize: { rows: 8, cols: 8 },
     board: [],
     sideToMove: "",
     moves: [],
@@ -63,9 +58,9 @@ const initialState: State = {
  * 
  * @returns HTML
  */
-export default function GameBoard(props: { gameService: GameService }) {
+export default function GameBoard(props: { gameID: string, color: string }) {
 
-
+    const gameService: GameService = GameService.getInstance()
     /**
      * An array of active squares (highlighted by green color)
      * The first element is the active square that the user clicks on
@@ -75,51 +70,37 @@ export default function GameBoard(props: { gameService: GameService }) {
     /**
      * Color of the user, either "white" or "black"
      */
-    const [color, setColor] = useState("white");
+    const [color, setColor] = useState(props.color ? props.color : "white");
     /**
      * GameState which includes boardsize, positions, side to move and valid moves.
      */
-    const [gameState, setGameState] = useState<State>(initialState);
-
-
+    const [gameState, setGameState] = useState<GameState>(initialState);    
 
     /**
      * The GameBoard requires the GameService object as a prop
      */
-    const { gameService } = props;
+    const { gameID } = props;
+    const navigate = useNavigate();
+    
 
     /**
      * gameService subscriptions which only registers once via useEffect
      */
     useEffect(() => {
-        gameService.on(GameEvents.UpdatedGameState, (json: string) => {
-            console.log("updatestate");
-            setGameState(JSON.parse(json));
+        gameService.requestBoardState(gameID)
+        .then((newGameState?: GameState) => {
+            if (newGameState === null) {
+                console.log(newGameState);
+                
+                console.log("navigate to unauthorized from gameboard");
+                
+                navigate("/unauthorized")
+            }
+            setGameState(newGameState!);
         })
 
-        gameService.on(GameEvents.GameJoined, (color: string) => {
-            console.log(color);
-
-            if (color === "white") {
-                setColor("white");
-            }
-            else {
-                setColor("black");
-            }
-            gameService.requestBoardState("TESTID123");
-        })
-
-        gameService.on(GameEvents.GameCreated, (color: string) => {
-            console.log("game created");
-            console.log(color);
-
-            if (color === "white") {
-                setColor("white");
-            }
-            else {
-                setColor("black");
-            }
-            console.log("game joined");
+        gameService.on(GameEvents.UpdatedGameState, (newGameState: GameState) => {
+            setGameState(newGameState);
         })
 
         gameService.on(GameEvents.Error, (errorMessage: string) => {
@@ -152,12 +133,12 @@ export default function GameBoard(props: { gameService: GameService }) {
      * CSS properties that should be set on dynamically in shape of StyleProps interface
      */
     const style = {
-        rows: "repeat(" + gameState.boardSize.row + ", auto)",
-        cols: "repeat(" + gameState.boardSize.col + ", auto)",
-        height: (gameState.boardSize.row >= gameState.boardSize.col ? "38vw" : (gameState.boardSize.row / gameState.boardSize.col) * 38 + "vw"),
-        heightSmall: (gameState.boardSize.row >= gameState.boardSize.col ? "56vw" : (gameState.boardSize.row / gameState.boardSize.col) * 56 + "vw"),
-        width: (gameState.boardSize.row >= gameState.boardSize.col ? (gameState.boardSize.col / gameState.boardSize.row) * 38 + "vw" : "38vw"),
-        widthSmall: (gameState.boardSize.row >= gameState.boardSize.col ? (gameState.boardSize.col / gameState.boardSize.row) * 56 + "vw" : "56vw"),
+        rows: "repeat(" + gameState.boardSize.rows + ", auto)",
+        cols: "repeat(" + gameState.boardSize.cols + ", auto)",
+        height: (gameState.boardSize.rows >= gameState.boardSize.cols ? "38vw" : (gameState.boardSize.rows / gameState.boardSize.cols) * 38 + "vw"),
+        heightSmall: (gameState.boardSize.rows >= gameState.boardSize.cols ? "56vw" : (gameState.boardSize.rows / gameState.boardSize.cols) * 56 + "vw"),
+        width: (gameState.boardSize.rows >= gameState.boardSize.cols ? (gameState.boardSize.cols / gameState.boardSize.rows) * 38 + "vw" : "38vw"),
+        widthSmall: (gameState.boardSize.rows >= gameState.boardSize.cols ? (gameState.boardSize.cols / gameState.boardSize.rows) * 56 + "vw" : "56vw"),
     };
     const classes = useStyles(style);
 
@@ -169,7 +150,7 @@ export default function GameBoard(props: { gameService: GameService }) {
      */
     const squareColor = (index: number) => {
         if (!(color === "white")) index = pieces.length - 1 - index;
-        if (gameState.boardSize.col % 2) {
+        if (gameState.boardSize.cols % 2) {
             if ((index + 1) % 2) {
                 return true;
             }
@@ -178,7 +159,7 @@ export default function GameBoard(props: { gameService: GameService }) {
             }
         }
         else {
-            if ((index + 1 + (Math.trunc(index / gameState.boardSize.col) % 2)) % 2) {
+            if ((index + 1 + (Math.trunc(index / gameState.boardSize.cols) % 2)) % 2) {
                 return true;
             }
             else {
@@ -198,7 +179,7 @@ export default function GameBoard(props: { gameService: GameService }) {
         let index2 = index;
         if (!(color === "white")) index = pieces.length - 1 - index;
         if (color === "white") index2 = pieces.length - 1 - index;
-        let coordinate = columnCoordinate[(index % gameState.boardSize.col)] + (Math.trunc(index2 / gameState.boardSize.col) + 1);
+        let coordinate = columnCoordinate[(index % gameState.boardSize.cols)] + (Math.trunc(index2 / gameState.boardSize.cols) + 1);
 
         return coordinate;
     }
@@ -225,7 +206,7 @@ export default function GameBoard(props: { gameService: GameService }) {
             if (active[0] !== "" && active[1].includes(coordinate)) {
                 console.log(active[0] + coordinate);
                 setActive(["", []]);
-                gameService.sendMove(active[0] + coordinate, "TESTID123");
+                gameService.sendMove(active[0] + coordinate, gameID);
             }
             else {
                 if (coordinate === active[0]) {
