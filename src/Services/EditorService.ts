@@ -1,5 +1,6 @@
 
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { BoardSize, Move } from './GameService';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
@@ -10,24 +11,46 @@ export default class EditorService {
 
     private static editorService?: EditorService;
 
-    constructor(url: string="editor", connection?: HubConnection) {
-        if (connection === null || connection === undefined) {
-            this.hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7081/' + url).withAutomaticReconnect().build();
-        } 
-        else {
-            this.hubConnection = connection!;
-        }
-        this.startConnection().catch((e) => {
-            console.log("Could not connect to user hub");
-            console.log(e);
-        });
+    constructor(baseUrl: string, path: string = "editor") {
+        let completePath: string = baseUrl + path;
+        this.hubConnection = new HubConnectionBuilder()
+            .withUrl(completePath)
+            .withAutomaticReconnect().build();
     }
 
     static getInstance() {
         if (this.editorService === null || this.editorService === undefined) {
-            this.editorService = new EditorService();
+            this.editorService = this.create();
         }
         return this.editorService;
+    }
+
+    static create(): EditorService {
+        this.editorService = new EditorService(process.env.REACT_APP_BACKEND_BASE_URL!);
+        return this.editorService;
+    }
+
+    static async connect(): Promise<void> {
+        if (this.editorService === undefined) {
+            this.create();
+        }
+        return this.editorService!.startConnection()
+    }
+
+    static async createAndConnect(): Promise<void> {
+        return this.connect()
+    }
+
+    public isConnecting(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connecting || this.hubConnection.state === HubConnectionState.Reconnecting;
+    }
+
+    public isDisconnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Disconnected || this.hubConnection.state === HubConnectionState.Disconnecting;
+    }
+
+    public isConnected(): boolean {
+        return this.hubConnection.state === HubConnectionState.Connected;
     }
 
     /**
@@ -63,9 +86,8 @@ export default class EditorService {
     /**
      * Requests the server to send an event with the board state
      */
-    requestBoardState(): void {
-        console.log("Board state requested");
-        this.hubConnection.send('RequestState');
+    async requestBoardState(): Promise<EditorState> {
+        return this.hubConnection.invoke('RequestState');
     }
     
     /**
@@ -78,6 +100,14 @@ export default class EditorService {
         }
     }
     
+}
+
+export interface EditorState {
+    sideToMove: string,
+    board: string[],
+    boardSize: BoardSize,
+    moves: Move[],
+    square: string,
 }
 
 export enum EditorEvents {

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "../Game/Square";
 import { useEffect, useState } from "react";
-import EditorService, { EditorEvents } from "../../Services/EditorService";
+import EditorService, { EditorEvents, EditorState } from "../../Services/EditorService";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -45,21 +45,21 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 }));
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
-type State = {
-    boardSize: { row: number, col: number };
-    board: string[];
-    sideToMove: string;
-    moves: { from: string; to: string[] }[];
-    captures: { from: string; to: string[] }[];
-    square: string;
-};
+//type State = {
+//    boardSize: { row: number, col: number };
+//    board: string[];
+//    sideToMove: string;
+//    moves: { from: string; to: string[] }[];
+//    //captures: { from: string; to: string[] }[];
+//    square: string;
+//};
 
-const initialState: State = {
-    boardSize: { row: 8, col: 8 },
+const initialState: EditorState = {
+    boardSize: { rows: 8, cols: 8 },
     board: [],
     sideToMove: "",
     moves: [],
-    captures: [],
+    //captures: [],
     square: "",
 };
 
@@ -77,7 +77,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
     /**
      * GameState which includes boardsize, positions, side to move and valid moves.
      */
-    const [editorState, setGameState] = useState<State>(initialState);
+    const [editorState, setEditorState] = useState<EditorState>(initialState);
 
     /**
      * An array of active squares (highlighted by green color)
@@ -95,14 +95,25 @@ export default function EditorBoard(props: { editorService: EditorService }) {
      * gameService subscriptions which only registers once via useEffect
      */
     useEffect(() => {
+
+        editorService.requestBoardState()
+        .then((newEditorState?: EditorState) => {
+            if (newEditorState === null) {
+                console.log(newEditorState);
+                console.log("Request failed");
+            }
+            console.log("updating state");
+            setEditorState(newEditorState!);
+        })
+
         editorService.on("PatternAdded", (msg: string) => {
             console.log(msg);
         })
 
         editorService.on(EditorEvents.UpdatedGameState, (json: string) => {
             console.log("updatestate");
-            setGameState(JSON.parse(json));
-            setActive([editorState.square, getValidMoves(editorState.square)])
+            setEditorState(JSON.parse(json));
+            //setActive([editorState.square, getValidMoves(editorState.square)])
         })
 
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
@@ -135,12 +146,12 @@ export default function EditorBoard(props: { editorService: EditorService }) {
      * CSS properties that should be set on dynamically in shape of StyleProps interface
      */
     const style = {
-        rows: "repeat(" + editorState.boardSize.row + ", auto)",
-        cols: "repeat(" + editorState.boardSize.col + ", auto)",
-        height: (editorState.boardSize.row >= editorState.boardSize.col ? "38vw" : (editorState.boardSize.row / editorState.boardSize.col) * 38 + "vw"),
-        heightSmall: (editorState.boardSize.row >= editorState.boardSize.col ? "56vw" : (editorState.boardSize.row / editorState.boardSize.col) * 56 + "vw"),
-        width: (editorState.boardSize.row >= editorState.boardSize.col ? (editorState.boardSize.col / editorState.boardSize.row) * 38 + "vw" : "38vw"),
-        widthSmall: (editorState.boardSize.row >= editorState.boardSize.col ? (editorState.boardSize.col / editorState.boardSize.row) * 56 + "vw" : "56vw"),
+        rows: "repeat(" + editorState.boardSize.rows + ", auto)",
+        cols: "repeat(" + editorState.boardSize.cols + ", auto)",
+        height: (editorState.boardSize.rows >= editorState.boardSize.cols ? "38vw" : (editorState.boardSize.rows / editorState.boardSize.cols) * 38 + "vw"),
+        heightSmall: (editorState.boardSize.rows >= editorState.boardSize.cols ? "56vw" : (editorState.boardSize.rows / editorState.boardSize.cols) * 56 + "vw"),
+        width: (editorState.boardSize.rows >= editorState.boardSize.cols ? (editorState.boardSize.cols / editorState.boardSize.rows) * 38 + "vw" : "38vw"),
+        widthSmall: (editorState.boardSize.rows >= editorState.boardSize.cols ? (editorState.boardSize.cols / editorState.boardSize.rows) * 56 + "vw" : "56vw"),
     };
     const classes = useStyles(style);
 
@@ -152,7 +163,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
      */
     const squareColor = (index: number) => {
         if (!(color === "white")) index = pieces.length - 1 - index;
-        if (editorState.boardSize.col % 2) {
+        if (editorState.boardSize.cols % 2) {
             if ((index + 1) % 2) {
                 return true;
             }
@@ -161,7 +172,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
             }
         }
         else {
-            if ((index + 1 + (Math.trunc(index / editorState.boardSize.col) % 2)) % 2) {
+            if ((index + 1 + (Math.trunc(index / editorState.boardSize.cols) % 2)) % 2) {
                 return true;
             }
             else {
@@ -181,7 +192,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         let index2 = index;
         if (!(color === "white")) index = pieces.length - 1 - index;
         if (color === "white") index2 = pieces.length - 1 - index;
-        let coordinate = columnCoordinate[(index % editorState.boardSize.col)] + (Math.trunc(index2 / editorState.boardSize.col) + 1);
+        let coordinate = columnCoordinate[(index % editorState.boardSize.cols)] + (Math.trunc(index2 / editorState.boardSize.cols) + 1);
 
         return coordinate;
     }
