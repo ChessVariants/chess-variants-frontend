@@ -4,6 +4,7 @@ import { Theme } from "@material-ui/core";
 import Square from "../Game/Square";
 import { useEffect, useState } from "react";
 import EditorService, { EditorEvents, EditorState } from "../../Services/EditorService";
+import { Move } from "../../Services/GameService";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -44,15 +45,6 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     },
 }));
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
-
-//type State = {
-//    boardSize: { row: number, col: number };
-//    board: string[];
-//    sideToMove: string;
-//    moves: { from: string; to: string[] }[];
-//    //captures: { from: string; to: string[] }[];
-//    square: string;
-//};
 
 const initialState: EditorState = {
     boardSize: { rows: 8, cols: 8 },
@@ -99,7 +91,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         editorService.requestBoardState()
         .then((newEditorState?: EditorState) => {
             if (newEditorState === null) {
-                console.log(newEditorState);
                 console.log("Request failed");
             }
             console.log("updating state");
@@ -110,10 +101,11 @@ export default function EditorBoard(props: { editorService: EditorService }) {
             console.log(msg);
         })
 
-        editorService.on(EditorEvents.UpdatedGameState, (json: string) => {
+        editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
             console.log("updatestate");
-            setEditorState(JSON.parse(json));
-            //setActive([editorState.square, getValidMoves(editorState.square)])
+            setEditorState(newEditorState);
+            console.log("moves: " + newEditorState.moves[0].to.length);
+            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
         })
 
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
@@ -203,10 +195,11 @@ export default function EditorBoard(props: { editorService: EditorService }) {
      * @param coordinate 
      * @returns an array of valid positions that can be clicked
      */
-    const getValidMoves = (coordinate: string) => {
+    const getValidMoves = (moves: Move[], coordinate: string) => {
         // hitta from === coordinate i JSON
-        const moves = editorState.moves.filter((item) => item.from === coordinate);
-        return moves[0] ? moves[0].to : [];
+        const moveTo = moves.filter((item) => item.from === coordinate);
+        console.log("moves length: " + moveTo.length);
+        return moveTo[0] ? moveTo[0].to : [];
     }
 
     /**
@@ -218,18 +211,17 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         if (active[0] !== "" && active[1].includes(coordinate)) {
             console.log(active[0] + coordinate);
             setActive(["", []]);
+            console.log("1");
         }
         else {
             if (coordinate === active[0]) {
                 setActive(["", []]);
+                console.log("2");
             }
             else {
-                if (getValidMoves(coordinate).length > 0) {
-                    setActive([coordinate, getValidMoves(coordinate)]);
-                }
-                else {
-                    setActive(["", []]);
-                }
+                setActive(["", []]);
+                editorService.setActiveSquare(coordinate);
+                console.log("4");
             }
         }
 

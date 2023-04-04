@@ -70,6 +70,11 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
+    setActiveSquare(square: string): void {
+        this.hubConnection.send("ActivateSquare", square);
+        this.requestBoardState();
+    }
+
     addMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
         console.log("Adding pattern pressed")
         this.hubConnection.send("AddMovementPattern", xDir, yDir, minLength, maxLength);
@@ -111,18 +116,6 @@ export interface EditorState {
 }
 
 export enum EditorEvents {
-    GameNotFound = "gameNotFound",
-    PieceMoved = "pieceMoved",
-    UpdatedGameState = "updatedGameState",
-    PlayerLeftGame = "playerLeftGame",
-    PlayerJoinedGame = "playerJoinedGame",
-    GameCreated = "gameCreated",
-    GameJoined = "gameJoined",
-    GameLeft = "gameLeft",
-    PlayerNotFound = "playerNotFound",
-    InvalidMove = "invalidMove",
+    UpdatedEditorState = "updatedEditorState",
     Error = "error",
-    WhiteWon = "whiteWon",
-    BlackWon = "blackWon",
-    Tie = "tie",
 }
