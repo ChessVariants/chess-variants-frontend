@@ -104,7 +104,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);
-            console.log("moves: " + newEditorState.moves[0].to.length);
             setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
         })
 
@@ -198,7 +197,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
     const getValidMoves = (moves: Move[], coordinate: string) => {
         // hitta from === coordinate i JSON
         const moveTo = moves.filter((item) => item.from === coordinate);
-        console.log("moves length: " + moveTo.length);
         return moveTo[0] ? moveTo[0].to : [];
     }
 
@@ -208,23 +206,8 @@ export default function EditorBoard(props: { editorService: EditorService }) {
      * @param coordinate 
      */
     const clickFunction = (coordinate: string) => {
-        if (active[0] !== "" && active[1].includes(coordinate)) {
-            console.log(active[0] + coordinate);
-            setActive(["", []]);
-            console.log("1");
-        }
-        else {
-            if (coordinate === active[0]) {
-                setActive(["", []]);
-                console.log("2");
-            }
-            else {
-                setActive(["", []]);
-                editorService.setActiveSquare(coordinate);
-                console.log("4");
-            }
-        }
-
+        setActive(["", []]);
+        editorService.setActiveSquare(coordinate);
     }
 
     return (
