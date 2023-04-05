@@ -3,8 +3,7 @@ import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import GameService, { GameEvents, JoinResult } from "../../Services/GameService";
-import Cookies from 'universal-cookie'
+import GameService, { JoinResult } from "../../Services/GameService";
 import { useLocation, useParams } from "react-router-dom";
 import RedirectLogin from "../Util/RedirectLoginPage";
 import { useEffect, useState } from "react";
@@ -60,6 +59,7 @@ export default function MatchPage() {
       console.log(e);
       setJoinState(JoinState.Fail)
     })
+    // TODO: Add listener for game ended
   }, [])
 
   if (gameService.isDisconnected()) {
@@ -77,7 +77,6 @@ export default function MatchPage() {
   }
 
   return (
-    //<head className={classes.head}>
     <div className={classes.Body}>
       <Box className={classes.Container}>
         <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>

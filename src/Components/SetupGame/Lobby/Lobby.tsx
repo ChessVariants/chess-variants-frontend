@@ -1,8 +1,4 @@
-import { Box, Button, CssBaseline, Divider, Grid, Paper, Typography } from "@mui/material";
-import { Theme } from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles';
-import { ThemeProvider } from "@emotion/react";
-import CustomDarkTheme from "../../Util/CustomDarkTheme";
+import { Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import { commonClasses } from "../../Util/CommonClasses";
 import GameService, { Colors, GameEvents } from "../../../Services/GameService";
 import LobbyPlayers from "./LobbyPlayers";
@@ -10,7 +6,6 @@ import LobbyVariantInfo from "./LobbyVariantInfo";
 import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "universal-cookie";
 import CookieService, { Cookie } from "../../../Services/CookieService";
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
@@ -41,42 +36,39 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     }, [])
 
     return (
-        <ThemeProvider theme={CustomDarkTheme}>
-            <CssBaseline />
-            <Paper className={classes.CenteredBasicCard}>
-                <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
-                <Divider style={{ width: '100%' }}></Divider>
-                <Grid container marginTop="12px" alignItems="center" justifyItems={"center"} justifyContent="center">
-                    <Grid item sm={12} md={isAdmin ? 6 : 12} marginTop="14px">
-                        <LobbyVariantInfo gameID={gameID}></LobbyVariantInfo>
-                    </Grid>
-                    <Grid item sm={12} md={isAdmin ? 6 : 12} marginTop="14px">
-                        <LobbyPlayers gameID={gameID} isAdmin={isAdmin}></LobbyPlayers>
-                        {isAdmin ? <LobbyJoinInfo gameID={gameID}></LobbyJoinInfo> : null}
-                    </Grid>
-
+        <Paper className={classes.CenteredBasicCard}>
+            <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
+            <Divider style={{ width: '100%' }}></Divider>
+            <Grid container marginTop="12px" alignItems="center" justifyItems={"center"} justifyContent="center">
+                <Grid item sm={12} md={isAdmin ? 6 : 12} marginTop="14px">
+                    <LobbyVariantInfo gameID={gameID}></LobbyVariantInfo>
                 </Grid>
-                {isAdmin ? <Button
-                    color={"createColor"}
-                    onClick={() => {
-                        gameService.sendStartGame(gameID)
-                    }}
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
-                >
-                    START MATCH
-                </Button> : <Button
-                    type="submit"
-                    variant="contained"
-                    disabled
-                    sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
-                >
-                    WAITING FOR PARTY LEADER
-                </Button>}
+                <Grid item sm={12} md={isAdmin ? 6 : 12} marginTop="14px">
+                    <LobbyPlayers gameID={gameID} isAdmin={isAdmin}></LobbyPlayers>
+                    {isAdmin ? <LobbyJoinInfo gameID={gameID}></LobbyJoinInfo> : null}
+                </Grid>
 
-            </Paper>
-        </ThemeProvider>
+            </Grid>
+            {isAdmin ? <Button
+                color={"createColor"}
+                onClick={() => {
+                    gameService.sendStartGame(gameID)
+                }}
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
+            >
+                START MATCH
+            </Button> : <Button
+                type="submit"
+                variant="contained"
+                disabled
+                sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
+            >
+                WAITING FOR PARTY LEADER
+            </Button>}
+
+        </Paper>
     );
 
 }

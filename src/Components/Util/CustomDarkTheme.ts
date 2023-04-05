@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material";
-import { amber, cyan, deepOrange, deepPurple, green, lightGreen, orange, purple, red, yellow } from "@mui/material/colors";
+import { cyan, deepOrange, green, orange } from "@mui/material/colors";
 declare module "@mui/material/styles" {
     interface Palette {
         joinColor: Palette['primary'];
