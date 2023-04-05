@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
+import PredicateEditorPage from './Components/Editor/PredicateEditorPage';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -104,6 +105,7 @@ function App() {
       <h1>{username}</h1>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/editor/predicate" element={<PredicateEditorPage/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/match" element={<MatchPage />} />
