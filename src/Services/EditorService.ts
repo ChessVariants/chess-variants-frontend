@@ -84,6 +84,11 @@ export default class EditorService {
         console.log("Removing pattern pressed")
         this.hubConnection.send("RemoveMovementPattern", xDir, yDir, minLength, maxLength);
     }
+    
+    setBoardSize(rows: number, cols: number): void {
+        console.log("Removing pattern pressed")
+        this.hubConnection.send("UpdateBoardSize", rows, cols);
+    }
 
     /**
      * Makes a request to the server to swap colors between players

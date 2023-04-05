@@ -1,7 +1,6 @@
-import { Accordion, AccordionSummary, Box, Button, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, Box, Button, Stack, Typography } from "@mui/material";
 import { AccordionDetails, FormControl, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import CustomButton from "../Util/CustomButton";
 import EditorService from "../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
@@ -81,8 +80,25 @@ export default function SideInfo(props: { editorService: EditorService }) {
         }
     };
 
+    const [rows, setRows] = useState('');
+    const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
+        const newValue = event.target.value;
+        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+            setRows(newValue);
+        }
+    };
+
+    const [cols, setCols] = useState('');
+    const handleColsChange = (event: ChangeEvent<HTMLInputElement>): void => {
+        const newValue = event.target.value;
+        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+            setCols(newValue);
+        }
+    };
+
     const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-";
     const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== "";
+    const isBoardSizeValid = rows.trim() !== "" && cols.trim() !== "";
 
     return (
         <Box className={classes.Container}>
@@ -139,6 +155,30 @@ export default function SideInfo(props: { editorService: EditorService }) {
                             </div>
                             <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add Pattern</Button>
                             <Button disabled={!isJumpPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove Pattern</Button>
+                        </Stack>
+                    </FormControl>
+
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary
+                    aria-controls="panel2a-content"
+                    id="panel2a-header"
+                >
+                    <Typography>Set board size</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <FormControl fullWidth>
+                        <Stack spacing={2} alignItems="center">
+                            <div>
+                                <label htmlFor="rows" style={{ display: "inline-block" }}>Rows:</label>
+                                <input id="rows" type="text" value={rows} onChange={handleRowsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                            </div>
+                            <div>
+                                <label htmlFor="cols" style={{ display: "inline-block" }}>Cols:</label>
+                                <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                            </div>
+                            <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(Number(rows), Number(cols)) }}>Update board size</Button>
                         </Stack>
                     </FormControl>
 
