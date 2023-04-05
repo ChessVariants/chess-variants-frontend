@@ -81,6 +81,9 @@ export default function SideInfo(props: { editorService: EditorService }) {
         }
     };
 
+    const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-";
+    const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== "";
+
     return (
         <Box className={classes.Container}>
             <h2>Create a new Piece</h2>
@@ -110,8 +113,8 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <label htmlFor="maxLength" style={{ display: "inline-block" }}>Maximum length:</label>
                                 <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
-                            <Button onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add Pattern</Button>
-                            <Button onClick={() => { editorService.removeMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove Pattern</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add Pattern</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove Pattern</Button>
                         </Stack>
                     </FormControl>
                 </AccordionDetails>
@@ -134,8 +137,8 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <label htmlFor="yOffset" style={{ display: "inline-block" }}>Y Offset:</label>
                                 <input id="yOffset" type="text" value={yOffset} onChange={handleYOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
-                            <Button onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add Pattern</Button>
-                            <Button onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove Pattern</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add Pattern</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove Pattern</Button>
                         </Stack>
                     </FormControl>
 
