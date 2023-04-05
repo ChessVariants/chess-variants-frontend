@@ -39,6 +39,9 @@ const darkTheme = createTheme({
         primary: {
             main: '#29adef',
         },
+        secondary: {
+            main: '#ff124d',
+        },
         joinColor: createColor(cyan[500]),
         createColor: createColor(green[500]),
         browserColor: createColor(orange[400]),
@@ -58,6 +61,7 @@ const darkTheme = createTheme({
                 },
             },
         },
+
     },
 }
 

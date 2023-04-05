@@ -9,8 +9,10 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import { Dialog } from '@mui/material';
+import { Dialog, Slide } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
+import React from 'react';
+import { TransitionProps } from '@mui/material/transitions';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -114,9 +116,23 @@ function App() {
     setOpen(false)
   }
 
+  /**
+ * Slide animation function, used by dialog window
+ * @param props 
+ * @returns 
+ */
+  const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>
+  ) {
+    return <Slide direction="down" ref={ref} {...props} />;
+  });
+
   return (
     <>
-      <Dialog open={open}>
+      <Dialog open={open} TransitionComponent={Transition}>
         <LoginDialog clickFunction={closeDialog}></LoginDialog>
       </Dialog>
       <Routes>

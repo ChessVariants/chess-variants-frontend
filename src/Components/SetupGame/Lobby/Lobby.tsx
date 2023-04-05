@@ -4,7 +4,7 @@ import GameService, { Colors, GameEvents } from "../../../Services/GameService";
 import LobbyPlayers from "./LobbyPlayers";
 import LobbyVariantInfo from "./LobbyVariantInfo";
 import LobbyJoinInfo from "./LobbyJoinInfo";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CookieService, { Cookie } from "../../../Services/CookieService";
 
@@ -13,10 +13,11 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
      * Used to navigate to other pages
      */
     const navigate = useNavigate();
-    const navigatePage = (link: string, color: string) => {
+    const navigatePage = (link: string, color: string, players: string[]) => {
         navigate(link, {
             state: {
                 color: color,
+                players: players,
             }
         });
     }
@@ -30,8 +31,9 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
         gameService.on(GameEvents.GameStarted, (colors: Colors) => {
             console.log(colors);
             let color = colors.white === username ? "white" : "black"
+            let opponent: string = colors.white === username ? colors.black + "" : colors.white + ""
             console.log("Game Started");
-            navigatePage("/match/" + gameID, color);
+            navigatePage("/match/" + gameID, color, [username, opponent]);
         })
     }, [])
 

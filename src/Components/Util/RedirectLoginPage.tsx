@@ -15,7 +15,7 @@ export default function RedirectLogin() {
             }}
                 variant="contained"
                 sx={{ mt: 3, mb: 1, p: 2 }}>
-                Continue to home
+                Continue to login
             </Button>
         </Container>
     );

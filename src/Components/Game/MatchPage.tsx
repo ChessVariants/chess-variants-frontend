@@ -7,8 +7,13 @@ import GameService, { JoinResult } from "../../Services/GameService";
 import { useLocation, useParams } from "react-router-dom";
 import RedirectLogin from "../Util/RedirectLoginPage";
 import { useEffect, useState } from "react";
+import EndScreen from "./EndScreen";
 
-
+export enum Result {
+  win = "You won!",
+  draw = "Draw",
+  loss = "You lost!"
+}
 const useStyles = makeStyles<Theme>(theme => ({
   Container: {
     alignContent: "center",
@@ -34,6 +39,7 @@ export default function MatchPage() {
   const [joinState, setJoinState] = useState<JoinState>(JoinState.Ongoing);
   const [failReason, setFailReason] = useState<string>("");
   let color = location.state?.color;
+  let players = location.state?.players;
 
   useEffect(() => {
     if (gameService.isDisconnected()) {
@@ -41,24 +47,24 @@ export default function MatchPage() {
     }
 
     gameService.requestJoinGame(gameID ? gameID : "")
-    .then((res: JoinResult) => {
-      console.log(res);
-      
-      if (res.success) {
-        color = res.color ? res.color : color;
-        setJoinState(JoinState.Success);
-      }
-      else {
-        setJoinState(JoinState.Fail)
-        if (res.failReason) {
-          setFailReason(res.failReason);
+      .then((res: JoinResult) => {
+        console.log(res);
+
+        if (res.success) {
+          color = res.color ? res.color : color;
+          setJoinState(JoinState.Success);
         }
-      }
-    })
-    .catch(e => {
-      console.log(e);
-      setJoinState(JoinState.Fail)
-    })
+        else {
+          setJoinState(JoinState.Fail)
+          if (res.failReason) {
+            setFailReason(res.failReason);
+          }
+        }
+      })
+      .catch(e => {
+        console.log(e);
+        setJoinState(JoinState.Fail)
+      })
     // TODO: Add listener for game ended
   }, [])
 
@@ -67,7 +73,7 @@ export default function MatchPage() {
       <RedirectLogin></RedirectLogin>
     );
   }
-  
+
   if (joinState === JoinState.Ongoing) {
     return (<p>Joining game ...</p>)
   }
@@ -78,6 +84,7 @@ export default function MatchPage() {
 
   return (
     <div className={classes.Body}>
+      <EndScreen players={players} result={Result.draw} />
       <Box className={classes.Container}>
         <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>
         <GameSideInfo gameService={gameService}></GameSideInfo>

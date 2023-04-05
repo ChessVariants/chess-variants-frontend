@@ -81,11 +81,14 @@ export default function JoinGame() {
                     >
                         JOIN GAME
                     </Button>
-                    {errorMessage ? <Box sx=
-                        {{
-                            color: CustomDarkTheme.palette.error.main,
-                            fontSize: "12px",
-                        }}>{errorMessage}</Box> : null}
+                    {
+                        errorMessage ? <Box sx=
+                            {{
+                                color: CustomDarkTheme.palette.error.main,
+                                fontSize: "12px",
+                            }}>{errorMessage}</Box>
+                            : null
+                    }
                 </Box>
             </Paper>
         </Container>
