@@ -111,6 +111,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
                             <Button onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add Pattern</Button>
+                            <Button onClick={() => { editorService.removeMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove Pattern</Button>
                         </Stack>
                     </FormControl>
                 </AccordionDetails>
@@ -134,6 +135,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <input id="yOffset" type="text" value={yOffset} onChange={handleYOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
                             <Button onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add Pattern</Button>
+                            <Button onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove Pattern</Button>
                         </Stack>
                     </FormControl>
 

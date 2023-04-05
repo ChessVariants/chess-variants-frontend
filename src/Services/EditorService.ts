@@ -80,6 +80,11 @@ export default class EditorService {
         this.hubConnection.send("AddMovementPattern", xDir, yDir, minLength, maxLength);
     }
 
+    removeMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
+        console.log("Removing pattern pressed")
+        this.hubConnection.send("RemoveMovementPattern", xDir, yDir, minLength, maxLength);
+    }
+
     /**
      * Makes a request to the server to swap colors between players
      * @param gameId the gameId for the game to swap colors between players in
