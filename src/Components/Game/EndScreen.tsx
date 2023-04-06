@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from "@mui/icons-material/Close";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { Result } from "./MatchPage";
+import { Transition } from "../Util/SlideTransition";
 
 export default function EndScreen(props: { players: string[], result: Result }) {
 
@@ -32,7 +33,7 @@ export default function EndScreen(props: { players: string[], result: Result }) 
     const classes = useStyles();
     const navigate = useNavigate();
     return (
-        <Dialog open={true} className={result === Result.win ? classes.winBackground : result === Result.loss ? classes.lossBackground : classes.drawBackground}>
+        <Dialog TransitionComponent={Transition} open={true} className={result === Result.win ? classes.winBackground : result === Result.loss ? classes.lossBackground : classes.drawBackground}>
             <IconButton
                 aria-label="close"
                 onClick={() => { navigate("/") }}

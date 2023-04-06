@@ -1,10 +1,6 @@
 import { Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { commonClasses } from "../Util/CommonClasses";
 import { useNavigate } from "react-router-dom";
-import Slide from '@mui/material/Slide';
-import React from "react";
-import EndScreen from "../Game/EndScreen";
-import { Result } from "../Game/MatchPage";
 
 export default function HomePage() {
 

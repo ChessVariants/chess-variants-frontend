@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material";
 import { cyan, deepOrange, green, orange } from "@mui/material/colors";
+
 declare module "@mui/material/styles" {
     interface Palette {
         joinColor: Palette['primary'];
@@ -32,6 +33,8 @@ declare module "@mui/material/TextField" {
     }
 }
 const { palette } = createTheme();
+
+
 const createColor = (mainColor: string) => palette.augmentColor({ color: { main: mainColor } });
 const darkTheme = createTheme({
     palette: {
@@ -57,7 +60,7 @@ const darkTheme = createTheme({
                 // Name of the slot
                 root: {
                     // Some CSS
-                    backgroundColor: "rgba(0,0,0,.2)"
+                    backgroundColor: "rgba(0,0,0,.25)"
                 },
             },
         },
@@ -66,5 +69,6 @@ const darkTheme = createTheme({
 }
 
 );
+
 
 export default darkTheme;

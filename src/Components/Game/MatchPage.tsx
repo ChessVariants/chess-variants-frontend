@@ -50,7 +50,6 @@ export default function MatchPage() {
       return;
     }
     gameService.on(GameEvents.BlackWon, () => {
-      console.log("Got here 1")
       if (location.state?.color === "black") {
         setGameResult(Result.win);
       }
@@ -59,7 +58,6 @@ export default function MatchPage() {
       }
     })
     gameService.on(GameEvents.WhiteWon, () => {
-      console.log("Got here 2")
       if (location.state?.color === "white") {
         setGameResult(Result.win);
       }
@@ -68,7 +66,6 @@ export default function MatchPage() {
       }
     })
     gameService.on(GameEvents.Tie, () => {
-      console.log("Got here 3")
       setGameResult(Result.draw);
     })
 
