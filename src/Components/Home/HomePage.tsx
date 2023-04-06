@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Slide from '@mui/material/Slide';
 import React from "react";
 import EndScreen from "../Game/EndScreen";
+import { Result } from "../Game/MatchPage";
 
 export default function HomePage() {
 
@@ -16,8 +17,9 @@ export default function HomePage() {
   const classes = commonClasses();
   return (
     <>
-      <Container maxWidth="md">
-        <Paper className={classes.CenteredBasicCard}>
+      <EndScreen players={["s", "spelare22222"]} result={Result.win} />
+      <Container>
+        <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
           <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>MAIN MENU</Typography>
           <Divider style={{ width: '100%' }}></Divider>
           <Button color={"joinColor"} onClick={() => {

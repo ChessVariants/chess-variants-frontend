@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { Result } from "./MatchPage";
 
-export default function EndScreen(props: { players: string[], result: string }) {
+export default function EndScreen(props: { players: string[], result: Result }) {
 
     const { players, result } = props;
     /**
