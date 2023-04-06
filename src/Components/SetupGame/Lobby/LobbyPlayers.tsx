@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import CustomDarkTheme from "../../Util/CustomDarkTheme";
 import GameService, { GameEvents, Colors } from "../../../Services/GameService";
 import { useEffect, useState } from "react";
+import whiteCircle from '../../../IMG/whiteCircle.svg'
+import blackCircle from '../../../IMG/blackCircle.svg'
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -71,13 +73,22 @@ export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }
             <Grid item width="80%">
                 <Grid container style={{ textAlign: 'left' }}>
                     <Grid item xs={2}>
-                        <Typography>W</Typography>
+                        <img
+                            src={whiteCircle}
+                            alt={"white"}
+                        />
                     </Grid>
                     <Grid item xs={10}>
-                        <Typography>{whitePlayer}</Typography>
+                        {whitePlayer === "Waiting..." ?
+                            <Typography fontStyle={"italic"} color={CustomDarkTheme.palette.text.secondary}>{whitePlayer}</Typography> : <Typography>{whitePlayer}</Typography>
+                        }
+
                     </Grid>
                     <Grid item xs={2}>
-                        <Typography>B</Typography>
+                        <img
+                            src={blackCircle}
+                            alt={"black"}
+                        />
                     </Grid>
                     <Grid item xs={10}>
                         {blackPlayer === "Waiting..." ?
@@ -85,7 +96,7 @@ export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item width="20%">
+            <Grid item width="20%" sx={{ margin: "auto" }}>
                 <Tooltip title={isAdmin ? "" : "Only party leader can swap colors!"}>
                     <Box className={isAdmin ? classes.SwitchButton : classes.SwitchButtonDisabled} onClick={isAdmin ? () => {
                         switchColors();
