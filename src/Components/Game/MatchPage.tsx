@@ -3,13 +3,14 @@ import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import GameService, { JoinResult } from "../../Services/GameService";
+import GameService, { GameEvents, JoinResult } from "../../Services/GameService";
 import { useLocation, useParams } from "react-router-dom";
 import RedirectLogin from "../Util/RedirectLoginPage";
 import { useEffect, useState } from "react";
 import EndScreen from "./EndScreen";
 
 export enum Result {
+  ongoing = "Match is ongoing",
   win = "You won!",
   draw = "Draw",
   loss = "You lost!"
@@ -41,10 +42,35 @@ export default function MatchPage() {
   let color = location.state?.color;
   let players = location.state?.players;
 
+  const [gameResult, setGameResult] = useState(Result.ongoing);
+
+
   useEffect(() => {
     if (gameService.isDisconnected()) {
       return;
     }
+    gameService.on(GameEvents.BlackWon, () => {
+      console.log("Got here 1")
+      if (location.state?.color === "black") {
+        setGameResult(Result.win);
+      }
+      else {
+        setGameResult(Result.loss);
+      }
+    })
+    gameService.on(GameEvents.WhiteWon, () => {
+      console.log("Got here 2")
+      if (location.state?.color === "white") {
+        setGameResult(Result.win);
+      }
+      else {
+        setGameResult(Result.loss);
+      }
+    })
+    gameService.on(GameEvents.Tie, () => {
+      console.log("Got here 3")
+      setGameResult(Result.draw);
+    })
 
     gameService.requestJoinGame(gameID ? gameID : "")
       .then((res: JoinResult) => {
@@ -65,7 +91,6 @@ export default function MatchPage() {
         console.log(e);
         setJoinState(JoinState.Fail)
       })
-    // TODO: Add listener for game ended
   }, [])
 
   if (gameService.isDisconnected()) {
@@ -84,7 +109,7 @@ export default function MatchPage() {
 
   return (
     <div className={classes.Body}>
-      <EndScreen players={players} result={Result.draw} />
+      {gameResult === Result.ongoing ? null : <EndScreen players={players} result={gameResult} />}
       <Box className={classes.Container}>
         <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>
         <GameSideInfo gameService={gameService}></GameSideInfo>

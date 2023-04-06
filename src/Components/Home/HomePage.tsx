@@ -16,50 +16,47 @@ export default function HomePage() {
 
   const classes = commonClasses();
   return (
-    <>
-      <EndScreen players={["s", "spelare22222"]} result={Result.win} />
-      <Container>
-        <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
-          <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>MAIN MENU</Typography>
-          <Divider style={{ width: '100%' }}></Divider>
-          <Button color={"joinColor"} onClick={() => {
-            navigate("/join");
-          }}
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3, mb: 1, p: 2 }}>
-            &#9654; JOIN
-          </Button>
-          <Button color={"createColor"} onClick={() => {
-            navigate("/new");
-          }}
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3, mb: 1, p: 2 }}>
-            CREATE MATCH
-          </Button>
-          <Button color={"browserColor"} onClick={() => {
-            navigate("/browse");
-          }}
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3, mb: 1, p: 2 }}>
-            BROWSE VARIANTS
-          </Button>
-          <Button color={"editorColor"} onClick={() => {
-          }}
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3, mb: 1, p: 2 }}>
-            &#9998; CREATE VARIANT
-          </Button>
-        </Paper>
-      </Container>
-    </>
+    <Container>
+      <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
+        <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>MAIN MENU</Typography>
+        <Divider style={{ width: '100%' }}></Divider>
+        <Button color={"joinColor"} onClick={() => {
+          navigate("/join");
+        }}
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 3, mb: 1, p: 2 }}>
+          &#9654; JOIN
+        </Button>
+        <Button color={"createColor"} onClick={() => {
+          navigate("/new");
+        }}
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 3, mb: 1, p: 2 }}>
+          CREATE MATCH
+        </Button>
+        <Button color={"browserColor"} onClick={() => {
+          navigate("/browse");
+        }}
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 3, mb: 1, p: 2 }}>
+          BROWSE VARIANTS
+        </Button>
+        <Button color={"editorColor"} onClick={() => {
+        }}
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 3, mb: 1, p: 2 }}>
+          &#9998; CREATE VARIANT
+        </Button>
+      </Paper>
+    </Container>
   );
 }
 

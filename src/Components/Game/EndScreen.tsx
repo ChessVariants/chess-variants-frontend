@@ -17,12 +17,12 @@ export default function EndScreen(props: { players: string[], result: Result }) 
                 background: "linear-gradient(45deg, " + hexToRgb(CustomDarkTheme.palette.primary.main) + "50%, " + CustomDarkTheme.palette.primary.dark + "50%)",
             },
         },
-        drawBackground: {
+        lossBackground: {
             '& .MuiDialog-paper': {
                 background: "linear-gradient(45deg, " + hexToRgb(CustomDarkTheme.palette.secondary.main) + "50%, " + CustomDarkTheme.palette.secondary.dark + "50%)",
             },
         },
-        lossBackground: {
+        drawBackground: {
             '& .MuiDialog-paper': {
                 background: "linear-gradient(45deg, " + hexToRgb(CustomDarkTheme.palette.primary.main) + "50%, " + hexToRgb(CustomDarkTheme.palette.secondary.main) + "50%)",
             },
@@ -32,7 +32,7 @@ export default function EndScreen(props: { players: string[], result: Result }) 
     const classes = useStyles();
     const navigate = useNavigate();
     return (
-        <Dialog open={true} className={result === Result.win ? classes.winBackground : classes.lossBackground}>
+        <Dialog open={true} className={result === Result.win ? classes.winBackground : result === Result.loss ? classes.lossBackground : classes.drawBackground}>
             <IconButton
                 aria-label="close"
                 onClick={() => { navigate("/") }}
