@@ -1,8 +1,8 @@
-import { Accordion, AccordionSummary, Box, Button, FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, Stack, Switch, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, Box, Button, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Switch, Typography } from "@mui/material";
 import { AccordionDetails, FormControl, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import EditorService from "../../Services/EditorService";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -51,7 +51,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [minLength, setMinLength] = useState('');
     const handleMinLengthChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
             setMinLength(newValue);
         }
     };
@@ -59,7 +59,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [maxLength, setMaxLength] = useState('');
     const handleMaxLengthChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
             setMaxLength(newValue);
         }
     };
@@ -67,7 +67,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [xOffset, setXOffset] = useState('');
     const handleXOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || /^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || newValue === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20)) {
             setXOffset(newValue);
         }
     };
@@ -75,7 +75,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [yOffset, setYOffset] = useState('');
     const handleYOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || /^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || newValue === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20)) {
             setYOffset(newValue);
         }
     };
@@ -83,7 +83,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [rows, setRows] = useState('');
     const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
             setRows(newValue);
         }
     };
@@ -91,7 +91,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [cols, setCols] = useState('');
     const handleColsChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || /^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20) {
+        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
             setCols(newValue);
         }
     };
@@ -100,11 +100,25 @@ export default function SideInfo(props: { editorService: EditorService }) {
         editorService.setSameCaptureAsMovement(event.target.checked);
     };
 
+    const handleCanBeCaptured = (event: ChangeEvent<HTMLInputElement>) => {
+        editorService.canBeCaptured(event.target.checked);
+    };
+
     const handleShowMovement = (event: ChangeEvent<HTMLInputElement>) => {
         var showMovement = true;
         if(event.target.value === "captures")
             showMovement = false;
         editorService.showMovement(showMovement);
+    };
+
+    const handleBelongsToPlayer = (event: ChangeEvent<HTMLInputElement>) => {
+        editorService.belongsToPlayer(event.target.value);
+    };
+
+    const [repeat, setRepeat] = useState('');
+    const handleRepeatChange = (event: SelectChangeEvent) => {
+        setRepeat(event.target.value);
+        editorService.setRepeat(Number(event.target.value));
     };
 
     const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-";
@@ -201,6 +215,33 @@ export default function SideInfo(props: { editorService: EditorService }) {
             </Accordion>
             <FormGroup>
                 <FormControlLabel control={<Switch defaultChecked onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
+                <FormControlLabel control={<Switch defaultChecked onChange={handleCanBeCaptured} />} label="Can be captured" />
+                <FormControl>
+                    <FormLabel id="movement-display-radio">Belongs to: </FormLabel>
+                    <RadioGroup
+                        row
+                        name="row-radio-buttons-group"
+                        defaultValue="white"
+                    >
+                        <FormControlLabel value="white" control={<Radio onChange={handleBelongsToPlayer} />} label="White" />
+                        <FormControlLabel value="black" control={<Radio onChange={handleBelongsToPlayer}/>} label="Black" />
+                        <FormControlLabel value="shared" control={<Radio onChange={handleBelongsToPlayer} />} label="Shared" />
+                    </RadioGroup>
+                </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel id="repeat-label">Repeat movement: </InputLabel>
+                    <Select
+                        id="repeat-select"
+                        value={repeat}
+                        label="Age"
+                        onChange={handleRepeatChange}
+                    >
+                        <MenuItem value={0}>0</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                    </Select>
+                </FormControl>
                 <FormControl>
                     <FormLabel id="movement-display-radio">Display patterns: </FormLabel>
                     <RadioGroup

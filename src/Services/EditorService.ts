@@ -110,6 +110,21 @@ export default class EditorService {
         this.hubConnection.send("ShowMovement", enable);
     }
 
+    canBeCaptured(enable: boolean): void {
+        console.log("Set can be captured");
+        this.hubConnection.send("PieceCanBeCaptured", enable);
+    }
+
+    belongsToPlayer(player: string): void {
+        console.log("Set belongs to player");
+        this.hubConnection.send("BelongsToPlayer", player);
+    }
+
+    setRepeat(repeat: number): void {
+        console.log("Set repeat");
+        this.hubConnection.send("AmountRepeat", repeat);
+    }
+
     /**
      * Makes a request to the server to swap colors between players
      * @param gameId the gameId for the game to swap colors between players in
