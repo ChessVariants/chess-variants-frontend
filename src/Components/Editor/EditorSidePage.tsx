@@ -140,8 +140,10 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <label htmlFor="maxLength" style={{ display: "inline-block" }}>Maximum length:</label>
                                 <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
-                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add Pattern</Button>
-                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove Pattern</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Movement</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addCapturePattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Captures</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove from Movement</Button>
+                            <Button disabled={!isRegularPatternValid} onClick={() => { editorService.removeCapturePattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Remove from Captures</Button>
                         </Stack>
                     </FormControl>
                 </AccordionDetails>
@@ -164,8 +166,10 @@ export default function SideInfo(props: { editorService: EditorService }) {
                                 <label htmlFor="yOffset" style={{ display: "inline-block" }}>Y Offset:</label>
                                 <input id="yOffset" type="text" value={yOffset} onChange={handleYOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
                             </div>
-                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add Pattern</Button>
-                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove Pattern</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Movement</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addCapturePattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Captures</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.removeMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove from Movement</Button>
+                            <Button disabled={!isJumpPatternValid} onClick={() => { editorService.removeCapturePattern(Number(xOffset), Number(yOffset), -1, -1) }}>Remove from Captures</Button>
                         </Stack>
                     </FormControl>
 
