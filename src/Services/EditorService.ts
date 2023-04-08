@@ -76,18 +76,28 @@ export default class EditorService {
     }
 
     addMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
-        console.log("Adding pattern pressed")
+        console.log("Adding pattern pressed");
         this.hubConnection.send("AddMovementPattern", xDir, yDir, minLength, maxLength);
     }
 
     removeMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
-        console.log("Removing pattern pressed")
+        console.log("Removing pattern pressed");
         this.hubConnection.send("RemoveMovementPattern", xDir, yDir, minLength, maxLength);
     }
     
     setBoardSize(rows: number, cols: number): void {
-        console.log("Removing pattern pressed")
+        console.log("Removing pattern pressed");
         this.hubConnection.send("UpdateBoardSize", rows, cols);
+    }
+
+    setSameCaptureAsMovement(enable: boolean): void {
+        console.log("Same Capture as movement pattern");
+        this.hubConnection.send("SetCaptureSameAsMovement", enable);
+    }
+
+    showMovement(enable: boolean): void {
+        console.log("Show movement or captures");
+        this.hubConnection.send("ShowMovement", enable);
     }
 
     /**

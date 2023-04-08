@@ -1,8 +1,8 @@
-import { Accordion, AccordionSummary, Box, Button, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, Box, Button, FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, Stack, Switch, Typography } from "@mui/material";
 import { AccordionDetails, FormControl, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import EditorService from "../../Services/EditorService";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
@@ -96,6 +96,17 @@ export default function SideInfo(props: { editorService: EditorService }) {
         }
     };
 
+    const handleSameCaptureAndMovement = (event: ChangeEvent<HTMLInputElement>) => {
+        editorService.setSameCaptureAsMovement(event.target.checked);
+    };
+
+    const handleShowMovement = (event: ChangeEvent<HTMLInputElement>) => {
+        var showMovement = true;
+        if(event.target.value === "captures")
+            showMovement = false;
+        editorService.showMovement(showMovement);
+    };
+
     const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-";
     const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== "";
     const isBoardSizeValid = rows.trim() !== "" && cols.trim() !== "";
@@ -184,6 +195,20 @@ export default function SideInfo(props: { editorService: EditorService }) {
 
                 </AccordionDetails>
             </Accordion>
+            <FormGroup>
+                <FormControlLabel control={<Switch defaultChecked onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
+                <FormControl>
+                    <FormLabel id="movement-display-radio">Display patterns: </FormLabel>
+                    <RadioGroup
+                        row
+                        name="row-radio-buttons-group"
+                        defaultValue="movement"
+                    >
+                        <FormControlLabel value="movement" control={<Radio onChange={handleShowMovement} />} label="Movements" />
+                        <FormControlLabel value="captures" control={<Radio onChange={handleShowMovement}/>} label="Captures" />
+                    </RadioGroup>
+                </FormControl>
+            </FormGroup>
 
         </Box>
     );
