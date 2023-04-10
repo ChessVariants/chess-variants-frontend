@@ -231,7 +231,6 @@ export default function SideInfo(props: { editorService: EditorService }) {
                 <FormControl>
                     <FormLabel id="movement-display-radio">Belongs to: </FormLabel>
                     <RadioGroup
-                        row
                         name="row-radio-buttons-group"
                         defaultValue="white"
                     >

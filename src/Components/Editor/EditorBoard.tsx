@@ -97,10 +97,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
             setEditorState(newEditorState!);
         })
 
-        editorService.on("PatternAdded", (msg: string) => {
-            console.log(msg);
-        })
-
         editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);

@@ -160,6 +160,17 @@ export interface EditorState {
     square: string,
 }
 
+export interface Pattern {
+    xDir: number,
+    yDir: number,
+    minLength: number,
+    maxLength: number,
+}
+
+export interface Patterns {
+    patterns: Pattern[],
+}
+
 export enum EditorEvents {
     UpdatedEditorState = "updatedEditorState",
     Error = "error",

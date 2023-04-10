@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditorService, { EditorEvents } from "../../Services/EditorService";
 import EditorBoard from "../Editor/EditorBoard";
 import EditorSidePage from "./EditorSidePage";
+import Pattern from "./Pattern";
 
 const useStyles = makeStyles<Theme>(theme => ({
   Container: {
@@ -25,6 +26,7 @@ export default function EditorPage() {
     //<head className={classes.head}>
     <body className={classes.Body}>
       <Box className={classes.Container}>
+        <Pattern editorService={editorService} ></Pattern>
         <EditorBoard editorService={editorService}></EditorBoard>
         <EditorSidePage editorService={editorService}></EditorSidePage>
       </Box>
