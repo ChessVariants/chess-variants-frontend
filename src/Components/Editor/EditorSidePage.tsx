@@ -35,7 +35,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [xDir, setXDir] = useState('');
     const handleXDirChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || /^-?([01])$/.test(newValue)) {
+        if (validateDirectionInput(newValue)) {
             setXDir(newValue);
         }
     };
@@ -43,15 +43,27 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [yDir, setYDir] = useState('');
     const handleYDirChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || /^-?([01])$/.test(newValue)) {
+        if (validateDirectionInput(newValue)) {
             setYDir(newValue);
         }
     };
 
+    const validateDirectionInput = (input: string): boolean => {
+        return input === "" || input === "-" || /^-?([01])$/.test(input);
+    }
+
+    const validateLengthInput = (input: string): boolean => {
+        return input === "" || (/^([1-9]|1[0-9]|20)$/.test(input) && parseInt(input) <= 20);
+    }
+
+    const validateOffsetInput = (input: string): boolean => {
+        return input === "" || input === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(input) && parseInt(input) <= 20) && parseInt(input) >= -20;
+    }
+
     const [minLength, setMinLength] = useState('');
     const handleMinLengthChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateLengthInput(newValue)) {
             setMinLength(newValue);
         }
     };
@@ -59,7 +71,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [maxLength, setMaxLength] = useState('');
     const handleMaxLengthChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateLengthInput(newValue)) {
             setMaxLength(newValue);
         }
     };
@@ -67,7 +79,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [xOffset, setXOffset] = useState('');
     const handleXOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateOffsetInput(newValue)) {
             setXOffset(newValue);
         }
     };
@@ -75,7 +87,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [yOffset, setYOffset] = useState('');
     const handleYOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || newValue === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateOffsetInput(newValue)) {
             setYOffset(newValue);
         }
     };
@@ -83,7 +95,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [rows, setRows] = useState('');
     const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateLengthInput(newValue)) {
             setRows(newValue);
         }
     };
@@ -91,7 +103,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [cols, setCols] = useState('');
     const handleColsChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (newValue === "" || (/^(1?[1-9]|20)$/.test(newValue) && parseInt(newValue) <= 20)) {
+        if (validateLengthInput(newValue)) {
             setCols(newValue);
         }
     };
@@ -121,8 +133,8 @@ export default function SideInfo(props: { editorService: EditorService }) {
         editorService.setRepeat(Number(event.target.value));
     };
 
-    const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-";
-    const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== "";
+    const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-" && (Number(xOffset.trim()) !== 0 || Number(yOffset.trim()) !== 0);
+    const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== ""  && (Number(xDir.trim()) !== 0 || Number(yDir.trim()) !== 0) && (Number(minLength) <= Number(maxLength));
     const isBoardSizeValid = rows.trim() !== "" && cols.trim() !== "";
 
     return (
