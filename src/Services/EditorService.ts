@@ -89,11 +89,6 @@ export default class EditorService {
         console.log("Adding pattern pressed");
         this.hubConnection.send("AddCapturePattern", xDir, yDir, minLength, maxLength);
     }
-
-    removeCapturePattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
-        console.log("Removing pattern pressed");
-        this.hubConnection.send("RemoveCapturePattern", xDir, yDir, minLength, maxLength);
-    }
     
     setBoardSize(rows: number, cols: number): void {
         console.log("Removing pattern pressed");

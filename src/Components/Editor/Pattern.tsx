@@ -8,27 +8,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import EditorService, { Patterns } from "../../Services/EditorService";
-import { Box, Theme } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 
 const useStyles = makeStyles<Theme>(theme => ({
     Container: {
         backgroundColor: "#2C2D2F",
         boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
         display: "inline-block",
-        marginLeft: "10px",
-        marginRight: "10px",
-        width: "400px",
-        minWidth: "120px",
-        height: "36vW",
-        minHeight: "320px",
-        margin: "0",
-        [theme.breakpoints.down('xs')]: {
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
-            minWidth: "200px",
-            minHeight: "280px",
-        },
+        marginRight: "20px",
+        width: "400",
     },
 
 }));
@@ -58,8 +46,9 @@ export default function Pattern(props: { editorService: EditorService }) {
 
     return (
         <Box className={classes.Container}>
+            <h3>Movement patterns</h3>
             <TableContainer component={Paper}>
-                <Table size="small" aria-label="a dense table">
+                <Table size="small">
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">X direction </TableCell>
@@ -77,6 +66,7 @@ export default function Pattern(props: { editorService: EditorService }) {
                                 <TableCell align="center">{pattern.yDir}</TableCell>
                                 <TableCell align="center">{pattern.minLength}</TableCell>
                                 <TableCell align="center">{pattern.maxLength}</TableCell>
+                                <TableCell align="center">{<Button onClick={() => {editorService.removeMovementPattern(pattern.xDir, pattern.yDir, pattern.minLength, pattern.maxLength)}} >Remove</Button>}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
