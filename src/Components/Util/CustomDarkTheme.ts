@@ -16,6 +16,14 @@ declare module "@mui/material/styles" {
         editorColor: PaletteOptions['primary'];
     }
 }
+declare module "@mui/material/InputBase" {
+    interface InputBasePropsColorOverrides {
+        joinColor: true;
+        createColor: true;
+        browserColor: true;
+        editorColor: true;
+    }
+}
 declare module "@mui/material/Button" {
     interface ButtonPropsColorOverrides {
         joinColor: true;
@@ -32,6 +40,7 @@ declare module "@mui/material/TextField" {
         editorColor: true;
     }
 }
+
 const { palette } = createTheme();
 
 

@@ -32,7 +32,6 @@ const useStyles = makeStyles<Theme>(theme => ({
         marginLeft: "auto",
         marginRight: "auto",
     },
-
 }));
 export default function LobbyPlayers(props: { gameID: string, isAdmin: boolean }) {
     const gameService = GameService.getInstance();
