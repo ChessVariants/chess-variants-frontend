@@ -1,8 +1,8 @@
-import { Box, Button, Container, createTheme, CssBaseline, Paper, TextField, ThemeProvider, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import { commonClasses } from "../Util/CommonClasses";
-import GameService, { GameEvents, JoinResult } from "../../Services/GameService";
-import { useNavigate, useParams } from "react-router-dom";
+import GameService, { JoinResult } from "../../Services/GameService";
+import { useParams } from "react-router-dom";
 import Lobby from "./Lobby/Lobby";
 import { useEffect, useState } from "react";
 
@@ -11,14 +11,18 @@ export default function JoinGame() {
     const [joinGameLoading, setJoinGameLoading] = useState<Boolean>(false);
     const [gameId, setGameId] = useState<string>("");
     const [joinFailed, setJoinFailed] = useState<Boolean>(false);
-    
+    const [errorMessage, setErrorMessage] = useState("");
+
     const gameService = GameService.getInstance();
     const classes = commonClasses();
     const { joinCode } = useParams();
 
-    if (joinFailed) {
-        return (<h2>Failed to join game: {gameId}</h2>)
-    }
+    useEffect(() => {
+        console.log("hej")
+        if (joinFailed) {
+            setErrorMessage("Please enter a valid code!")
+        }
+    }, [joinFailed])
 
     if (gameJoined) {
         return (<Lobby gameID={gameId} isAdmin={false}></Lobby>)
@@ -54,35 +58,40 @@ export default function JoinGame() {
     }
 
     return (
-        <ThemeProvider theme={CustomDarkTheme}>
-            <CssBaseline />
-            <Container maxWidth="xs" >
-                <Paper className={classes.CenteredBasicCard}>
-                    <Box component="form" onSubmit={joinLobby} noValidate sx={{ mt: 2 }}>
-                        <Typography sx={{ letterSpacing: '2px', mb: 1 }}>ENTER JOIN CODE</Typography>
-                        <TextField
-                            color={"joinColor"}
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="joinID"
-                            name="joinID"
-                            autoComplete="joinID"
-                            autoFocus
-                        />
-                        <Button
-                            color={"joinColor"}
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 1, p: 1 }}
-                        >
-                            JOIN GAME
-                        </Button>
-                    </Box>
-                </Paper>
-            </Container>
-        </ThemeProvider>
+        <Container maxWidth="xs" >
+            <Paper className={classes.CenteredBasicCard}>
+                <Box component="form" onSubmit={joinLobby} noValidate sx={{ mt: 2 }}>
+                    <Typography sx={{ letterSpacing: '2px', mb: 1 }}>ENTER JOIN CODE</Typography>
+                    <TextField
+                        color={"joinColor"}
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="joinID"
+                        name="joinID"
+                        autoComplete="joinID"
+                        autoFocus
+                    />
+                    <Button
+                        color={"joinColor"}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 1, p: 1 }}
+                    >
+                        JOIN GAME
+                    </Button>
+                    {
+                        errorMessage ? <Box sx=
+                            {{
+                                color: CustomDarkTheme.palette.error.main,
+                                fontSize: "12px",
+                            }}>{errorMessage}</Box>
+                            : null
+                    }
+                </Box>
+            </Paper>
+        </Container>
     );
 }
 

@@ -11,11 +11,14 @@ import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
 import EditorPage from './Components/Editor/EditorPage';
 import EditorService from './Services/EditorService';
+import { Dialog } from '@mui/material';
+import LoginDialog from './Components/Account/Login/LoginDialog';
+import { Transition } from './Components/Util/SlideTransition'
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
     method: 'GET',
-    headers: {'Authorization': `Bearer ${token}`},
+    headers: { 'Authorization': `Bearer ${token}` },
   })
 }
 
@@ -30,7 +33,8 @@ enum AuthenticationState {
 function App() {
   const cookieService = CookieService.getInstance()
   const [authenticationState, setAuthenticationState] = useState<AuthenticationState>(AuthenticationState.InProgress);
-  const [username, setUsername] = useState<string>("Not logged in");
+  const [username, setUsername] = useState<string>("");
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     cookieService.addChangeListener((cookie) => {
@@ -48,25 +52,32 @@ function App() {
       }
     })
   }, [])
+  useEffect(() => {
+    if (username === "") {
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
+  }, [username])
 
   const authenticate = () => {
     setAuthenticationState(AuthenticationState.InProgress)
     checkAuthentication(cookieService.get(Cookie.JwtToken))
-    .then(res => {
-      console.log(res.status);
-      if (res.status === 401) {        
-        cookieService.remove(Cookie.Username);
-        cookieService.remove(Cookie.JwtToken);
-      }
-      else if (res.status === 200) {
-        setUsername(cookieService.get(Cookie.Username))
-        connectHub();
-      }
-    })
-    .catch(e => {
-      console.log("Authentication check not possible");
-      console.log(e);
-    })
+      .then(res => {
+        console.log(res.status);
+        if (res.status === 401) {
+          cookieService.remove(Cookie.Username);
+          cookieService.remove(Cookie.JwtToken);
+        }
+        else if (res.status === 200) {
+          setUsername(cookieService.get(Cookie.Username))
+          connectHub();
+        }
+      })
+      .catch(e => {
+        console.log("Authentication check not possible");
+        console.log(e);
+      })
   }
 
   const connectHub = () => {
@@ -75,15 +86,15 @@ function App() {
     }
 
     GameService.connect()
-    .then(() => {
-      setAuthenticationState(AuthenticationState.Authenticated);
-    })
-    .catch(e => {
-      setAuthenticationState(AuthenticationState.AuthenticationFailed);
-      console.log(GameService.getInstance().hubConnection.state);
-      
-      console.log(e);
-    })
+      .then(() => {
+        setAuthenticationState(AuthenticationState.Authenticated);
+      })
+      .catch(e => {
+        setAuthenticationState(AuthenticationState.AuthenticationFailed);
+        console.log(GameService.getInstance().hubConnection.state);
+
+        console.log(e);
+      })
   }
 
   // Guessing this is not the way to do it as it results in it being constantly being a ws with the editor.
@@ -110,8 +121,8 @@ function App() {
   }, [])
 
   if (authenticationState === AuthenticationState.InProgress
-     || authenticationState === AuthenticationState.Uninitialized
-     || GameService.getInstance().isConnecting()) {
+    || authenticationState === AuthenticationState.Uninitialized
+    || GameService.getInstance().isConnecting()) {
     return (<></>)
   }
 
@@ -119,9 +130,16 @@ function App() {
     return (<GenericErrorPage text={'Servers unavailable'}></GenericErrorPage>)
   }
 
+
+  const closeDialog = () => {
+    setOpen(false)
+  }
+
   return (
     <>
-      <h1>{username}</h1>
+      <Dialog open={open} TransitionComponent={Transition}>
+        <LoginDialog clickFunction={closeDialog}></LoginDialog>
+      </Dialog>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -133,7 +151,7 @@ function App() {
         <Route path="/join" element={<JoinGame />} />
         <Route path="/join/:joinCode" element={<JoinGame />} />
         <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
-        <Route path="/*" element={<GenericErrorPage text={'Page not found'}/>} />
+        <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
       </Routes>
     </>
   );

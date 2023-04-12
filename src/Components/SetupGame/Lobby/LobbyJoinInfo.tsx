@@ -1,7 +1,5 @@
-import { Button, CssBaseline, InputAdornment, Popover, TextField, Typography } from "@mui/material";
-import { ThemeProvider } from "@emotion/react";
+import { Button, InputAdornment, Popover, TextField, Typography } from "@mui/material";
 import CustomDarkTheme from "../../Util/CustomDarkTheme";
-import GameService from "../../../Services/GameService";
 import React from "react";
 
 
@@ -16,51 +14,44 @@ export default function Lobby(props: { gameID: string }) {
         console.log(gameID);
         navigator.clipboard.writeText("localhost:3000/join/" + gameID);
         setAnchorEl(event.currentTarget);
-        handleClose();
     };
-
     const handleClose = () => {
-        setTimeout(function () {
-            setAnchorEl(null);
-        }, 3000);
+        setAnchorEl(null);
     };
-
     return (
-        <ThemeProvider theme={CustomDarkTheme}>
-            <CssBaseline />
-            <TextField
-                sx={{
-                    width: "100%", maxWidth: '200px', marginTop: '10px',
-                    webkitUserSelect: 'all',
-                    mozUserSelect: 'all', /* Firefox */
-                    msUserSelect: 'all', /* IE10+/Edge */
-                    userSelect: 'all', /* Standard */
-                    color: CustomDarkTheme.palette.primary.light,
-                }}
-                defaultValue={gameID}
-                required
-                id="outlined-required"
-                InputProps={{
-                    disabled: true,
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <Button color={"createColor"} onClick={handleClick}>
-                                COPY URL</Button>
-                            <Popover
-                                open={open}
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                            >
-                                <Typography sx={{ p: 2 }}>Link copied to clipboard</Typography>
-                            </Popover>
-                        </InputAdornment>
-                    ),
-                }}
-            />
-        </ThemeProvider>
+        <TextField
+            sx={{
+                width: "100%", maxWidth: '200px', marginTop: '10px',
+                webkitUserSelect: 'all',
+                mozUserSelect: 'all', /* Firefox */
+                msUserSelect: 'all', /* IE10+/Edge */
+                userSelect: 'all', /* Standard */
+                color: CustomDarkTheme.palette.primary.light,
+            }}
+            defaultValue={gameID}
+            required
+            id="outlined-required"
+            InputProps={{
+                disabled: true,
+                endAdornment: (
+                    <InputAdornment position="end">
+                        <Button color={"createColor"} onClick={handleClick}>
+                            COPY URL</Button>
+                        <Popover
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                        >
+                            <Typography sx={{ p: 2 }}>Link copied to clipboard</Typography>
+                        </Popover>
+                    </InputAdornment>
+                ),
+            }}
+        />
     );
 
 }
