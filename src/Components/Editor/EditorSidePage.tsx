@@ -1,30 +1,20 @@
-import { Accordion, AccordionSummary, Box, Button, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Switch, Typography } from "@mui/material";
-import { AccordionDetails, FormControl, Theme } from "@material-ui/core";
+import { Box, Button, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Switch, ThemeProvider } from "@mui/material";
+import { FormControl, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import EditorService from "../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
-
+import CustomDarkTheme from "../Util/CustomDarkTheme";
 
 const useStyles = makeStyles<Theme>(theme => ({
     Container: {
         backgroundColor: "#2C2D2F",
         boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
         display: "inline-block",
-        marginLeft: "20px",
+        marginLeft: "2vw",
         width: "14vw",
         minWidth: "120px",
-        height: "36vw",
-        minHeight: "320px",
-        margin: "0",
-        [theme.breakpoints.down('xs')]: {
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
-            minWidth: "200px",
-            minHeight: "280px",
-        },
+        color: "white",
     },
-
 }));
 
 export default function SideInfo(props: { editorService: EditorService }) {
@@ -127,7 +117,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
         editorService.belongsToPlayer(event.target.value);
     };
 
-    const [repeat, setRepeat] = useState('');
+    const [repeat, setRepeat] = useState('0');
     const handleRepeatChange = (event: SelectChangeEvent) => {
         setRepeat(event.target.value);
         editorService.setRepeat(Number(event.target.value));
@@ -138,125 +128,116 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const isBoardSizeValid = rows.trim() !== "" && cols.trim() !== "";
 
     return (
-        <Box className={classes.Container}>
-            <h2>Create a new Piece</h2>
-            <Accordion>
-                <AccordionSummary
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography>Regular Pattern</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <FormControl fullWidth>
-                        <Stack spacing={2} alignItems="center">
-                            <div>
-                                <label htmlFor="xDir">X direction:</label>
-                                <input id="xDir" type="text" value={xDir} onChange={handleXDirChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <div>
-                                <label htmlFor="yDir">Y direction:</label>
-                                <input id="yDir" type="text" value={yDir} onChange={handleYDirChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <div>
-                                <label htmlFor="minLength">Minimum length:</label>
-                                <input id="minLength" type="text" value={minLength} onChange={handleMinLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <div>
-                                <label htmlFor="maxLength">Maximum length:</label>
-                                <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
+        <ThemeProvider theme={CustomDarkTheme}>
+            <Box className={classes.Container} sx={{ width: "450px" }}>
+                <h2>Create a new Piece</h2>
+                <Stack direction="column" spacing={2}>
+                    <FormGroup style={{ alignItems: "center" }}>
+                        <FormLabel>Regular pattern</FormLabel>
+                        <div>
+                            <label htmlFor="yDir">X direction:</label>
+                            <input id="yDir" type="text" value={yDir} onChange={handleYDirChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <div>
+                            <label htmlFor="xDir">Y direction:</label>
+                            <input id="xDir" type="text" value={xDir} onChange={handleXDirChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <div>
+                            <label htmlFor="minLength">Minimum length:</label>
+                            <input id="minLength" type="text" value={minLength} onChange={handleMinLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <div>
+                            <label htmlFor="maxLength">Maximum length:</label>
+                            <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <FormGroup row>
                             <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Movement</Button>
                             <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addCapturePattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Captures</Button>
-                        </Stack>
-                    </FormControl>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion>
-                <AccordionSummary>
-                    <Typography>Jump pattern</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <FormControl fullWidth>
-                        <Stack spacing={2} alignItems="center">
-                            <div>
-                                <label htmlFor="xOffset">X Offset:</label>
-                                <input id="xOffset" type="text" value={xOffset} onChange={handleXOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <div>
-                                <label htmlFor="yOffset">Y Offset:</label>
-                                <input id="yOffset" type="text" value={yOffset} onChange={handleYOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
+                        </FormGroup>
+                    </FormGroup>
+                    <FormGroup style={{ alignItems: "center" }}>
+                        <FormLabel>Jump pattern</FormLabel>
+                        <div>
+                            <label htmlFor="yOffset">X Offset:</label>
+                            <input id="yOffset" type="text" value={yOffset} onChange={handleYOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <div>
+                            <label htmlFor="xOffset">Y Offset:</label>
+                            <input id="xOffset" type="text" value={xOffset} onChange={handleXOffsetChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <FormGroup row>
                             <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Movement</Button>
                             <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addCapturePattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Captures</Button>
-                        </Stack>
+                        </FormGroup>
+                    </FormGroup>
+                    <FormGroup >
+                        <FormLabel>Board size: </FormLabel>
+                        <div>
+                            <label htmlFor="rows">Rows:</label>
+                            <input id="rows" type="text" value={rows} onChange={handleRowsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                        <div>
+                            <label htmlFor="cols">Cols:</label>
+                            <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
+                        </div>
+                    </FormGroup>
+                </Stack>
+                <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(Number(rows), Number(cols)) }}>Update board size</Button>
+                <FormGroup style={{ alignItems: "center" }} >
+                    <FormGroup style={{ alignItems: "left" }} >
+                        <FormControlLabel control={<Switch defaultChecked onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
+                        <FormControlLabel control={<Switch defaultChecked onChange={handleCanBeCaptured} />} label="Can be captured" />
+                    </FormGroup>
+                    <FormControl>
+                        <FormLabel id="movement-display-radio">Belongs to: </FormLabel>
+                        <RadioGroup
+                            row
+                            name="row-radio-buttons-group"
+                            defaultValue="white"
+                        >
+                            <FormControlLabel value="white" control={<Radio onChange={handleBelongsToPlayer} />} label="White" />
+                            <FormControlLabel value="black" control={<Radio onChange={handleBelongsToPlayer} />} label="Black" />
+                            <FormControlLabel value="shared" control={<Radio onChange={handleBelongsToPlayer} />} label="Shared" />
+                        </RadioGroup>
                     </FormControl>
-
-                </AccordionDetails>
-            </Accordion>
-            <Accordion >
-                <AccordionSummary>
-                    <Typography>Set board size</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <FormControl fullWidth>
-                        <Stack spacing={2} alignItems="center">
-                            <div>
-                                <label htmlFor="rows">Rows:</label>
-                                <input id="rows" type="text" value={rows} onChange={handleRowsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <div>
-                                <label htmlFor="cols">Cols:</label>
-                                <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
-                            </div>
-                            <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(Number(rows), Number(cols)) }}>Update board size</Button>
-                        </Stack>
+                    <FormControl>
+                        <InputLabel id="repeat-label">Repeat movement: </InputLabel>
+                        <Select
+                            id="repeat-select"
+                            value={repeat}
+                            label="Age"
+                            onChange={handleRepeatChange}
+                            autoWidth={true}
+                        >
+                            <MenuItem value={0}>0</MenuItem>
+                            <MenuItem value={1}>1</MenuItem>
+                            <MenuItem value={2}>2</MenuItem>
+                            <MenuItem value={3}>3</MenuItem>
+                        </Select>
                     </FormControl>
-
-                </AccordionDetails>
-            </Accordion>
-            <FormGroup>
-                <FormControlLabel control={<Switch defaultChecked onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
-                <FormControlLabel control={<Switch defaultChecked onChange={handleCanBeCaptured} />} label="Can be captured" />
-                <FormControl>
-                    <FormLabel id="movement-display-radio">Belongs to: </FormLabel>
-                    <RadioGroup
-                        name="row-radio-buttons-group"
-                        defaultValue="white"
-                    >
-                        <FormControlLabel value="white" control={<Radio onChange={handleBelongsToPlayer} />} label="White" />
-                        <FormControlLabel value="black" control={<Radio onChange={handleBelongsToPlayer}/>} label="Black" />
-                        <FormControlLabel value="shared" control={<Radio onChange={handleBelongsToPlayer} />} label="Shared" />
-                    </RadioGroup>
-                </FormControl>
-                <FormControl fullWidth>
-                    <InputLabel id="repeat-label">Repeat movement: </InputLabel>
-                    <Select
-                        id="repeat-select"
-                        value={repeat}
-                        label="Age"
-                        onChange={handleRepeatChange}
-                    >
-                        <MenuItem value={0}>0</MenuItem>
-                        <MenuItem value={1}>1</MenuItem>
-                        <MenuItem value={2}>2</MenuItem>
-                        <MenuItem value={3}>3</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl>
-                    <FormLabel id="movement-display-radio">Display patterns: </FormLabel>
-                    <RadioGroup
-                        row
-                        name="row-radio-buttons-group"
-                        defaultValue="movement"
-                    >
-                        <FormControlLabel value="movement" control={<Radio onChange={handleShowMovement} />} label="Movements" />
-                        <FormControlLabel value="captures" control={<Radio onChange={handleShowMovement}/>} label="Captures" />
-                    </RadioGroup>
-                </FormControl>
-            </FormGroup>
-
-        </Box>
+                    <FormControl>
+                        <FormLabel id="movement-display-radio">Display patterns: </FormLabel>
+                        <RadioGroup
+                            row
+                            name="row-radio-buttons-group"
+                            defaultValue="movement"
+                        >
+                            <FormControlLabel value="movement" control={<Radio onChange={handleShowMovement} />} label="Movements" />
+                            <FormControlLabel value="captures" control={<Radio onChange={handleShowMovement} />} label="Captures" />
+                        </RadioGroup>
+                    </FormControl>
+                </FormGroup>
+                <Button
+                    color={"createColor"}
+                    onClick={() => {}}
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
+                >
+                    Build Piece
+                </Button>
+            </Box>
+        </ThemeProvider>
     );
 
 }

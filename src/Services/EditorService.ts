@@ -1,4 +1,3 @@
-
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { BoardSize, Move } from './GameService';
 
@@ -53,19 +52,6 @@ export default class EditorService {
         return this.hubConnection.state === HubConnectionState.Connected;
     }
 
-    /**
-     * Forwards the event subscription to the internal {@link HubConnection}.
-     * @param methodName the event to subscribe to
-     * @param newMethod a function on what to do with the event information received
-     * 
-     * @example
-     * Subscribes to the event "playerJoinedGame" and logs the received value.
-     * ```ts
-     * gameService.on('playerJoinedGame', (value: string) => {
-     *   console.log(value);
-     * });
-     * ```
-     */
     on(methodName: string, newMethod: (...args: any[]) => any): void {
         this.hubConnection.on(methodName, newMethod)
     }
@@ -121,19 +107,15 @@ export default class EditorService {
     }
 
     /**
-     * Makes a request to the server to swap colors between players
-     * @param gameId the gameId for the game to swap colors between players in
-     */
-    swapColors(gameId: string) {
-        this.hubConnection.send('SwapColors', gameId);
-    }
-
-    /**
      * Requests the server to send an event with the board state
-     */
-    async requestBoardState(): Promise<EditorState> {
-        return this.hubConnection.invoke('RequestState');
-    }
+    */
+   async requestBoardState(): Promise<EditorState> {
+       return this.hubConnection.invoke('RequestState');
+   }
+
+   async requestPatternState(): Promise<PatternState> {
+       return this.hubConnection.invoke('RequestPatternState');
+   }
     
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
@@ -148,7 +130,6 @@ export default class EditorService {
 }
 
 export interface EditorState {
-    sideToMove: string,
     board: string[],
     boardSize: BoardSize,
     moves: Move[],
@@ -162,7 +143,7 @@ export interface Pattern {
     maxLength: number,
 }
 
-export interface Patterns {
+export interface PatternState {
     patterns: Pattern[],
 }
 

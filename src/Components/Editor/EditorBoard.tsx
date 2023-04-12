@@ -18,9 +18,6 @@ interface StyleProps {
     widthSmall: string;
 }
 
-/**
- * MUI styles
- */
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
         verticalAlign: "top",
@@ -47,45 +44,20 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
 const initialState: EditorState = {
-    boardSize: { rows: 8, cols: 8 },
     board: [],
-    sideToMove: "",
+    boardSize: { rows: 8, cols: 8 },
     moves: [],
-    //captures: [],
     square: "",
 };
 
-/**
- * The GameBoard componenet
- * 
- * @returns HTML
- */
 export default function EditorBoard(props: { editorService: EditorService }) {
 
-    /**
-     * Color of the user, either "white" or "black"
-     */
-    const [color, setColor] = useState("white");
-    /**
-     * GameState which includes boardsize, positions, side to move and valid moves.
-     */
     const [editorState, setEditorState] = useState<EditorState>(initialState);
 
-    /**
-     * An array of active squares (highlighted by green color)
-     * The first element is the active square that the user clicks on
-     * The second is an array of active squares that the user can afterwards click on
-     */
     const [active, setActive] = useState(["", [""]]);
 
-    /**
-     * The GameBoard requires the GameService object as a prop
-     */
     const { editorService } = props;
 
-    /**
-     * gameService subscriptions which only registers once via useEffect
-     */
     useEffect(() => {
 
         editorService.requestBoardState()
@@ -95,6 +67,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
             }
             console.log("updating state");
             setEditorState(newEditorState!);
+            setActive([newEditorState!.square, getValidMoves(newEditorState!.moves, newEditorState!.square)])
         })
 
         editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
@@ -108,11 +81,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         })
     }, [])
 
-
-    /**
-     * Changes the positions data (string) to an array to be able to iterate over the positions
-     * Will reverse if the other player is black
-     */
     let tempPositions = editorState.board;
     let pieces: string[] = [];
 
@@ -127,7 +95,6 @@ export default function EditorBoard(props: { editorService: EditorService }) {
             pieces.push(tempPositions[index]);
         }
     }
-    if (!(color === "white")) pieces.reverse();
 
     /**
      * CSS properties that should be set on dynamically in shape of StyleProps interface
@@ -142,14 +109,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
     };
     const classes = useStyles(style);
 
-    /**
-     * Calculates which color the square should be based on the position, first white, then black, etc.
-     * 
-     * @param index of the position list
-     * @returns a boolean where represents true white
-     */
     const squareColor = (index: number) => {
-        if (!(color === "white")) index = pieces.length - 1 - index;
         if (editorState.boardSize.cols % 2) {
             if ((index + 1) % 2) {
                 return true;
@@ -168,39 +128,17 @@ export default function EditorBoard(props: { editorService: EditorService }) {
         }
     }
 
-    /**
-     * Takes a square and returns the corresponding coordinate
-     * The first square would return "a1"
-     * 
-     * @param index of the position list
-     * @returns coordinate
-     */
     const squareCoordinate = (index: number) => {
-        let index2 = index;
-        if (!(color === "white")) index = pieces.length - 1 - index;
-        if (color === "white") index2 = pieces.length - 1 - index;
+        let index2 = pieces.length - 1 - index;
         let coordinate = columnCoordinate[(index % editorState.boardSize.cols)] + (Math.trunc(index2 / editorState.boardSize.cols) + 1);
-
         return coordinate;
     }
 
-    /**
-     * Gets all the valid moves for the selected square
-     * 
-     * @param coordinate 
-     * @returns an array of valid positions that can be clicked
-     */
     const getValidMoves = (moves: Move[], coordinate: string) => {
-        // hitta from === coordinate i JSON
         const moveTo = moves.filter((item) => item.from === coordinate);
         return moveTo[0] ? moveTo[0].to : [];
     }
 
-    /**
-     * ClickFunction is called when a square is clicked
-     * 
-     * @param coordinate 
-     */
     const clickFunction = (coordinate: string) => {
         setActive(["", []]);
         editorService.setActiveSquare(coordinate);

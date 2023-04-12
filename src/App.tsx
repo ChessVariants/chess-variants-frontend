@@ -126,7 +126,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/editor" element={<EditorPage />} />
+        <Route path="/pieceEditor" element={<EditorPage />} />
         <Route path="/match" element={<MatchPage />} />
         <Route path="/match/:gameID" element={<MatchPage />} />
         <Route path="/new" element={<SetupGame />} />
