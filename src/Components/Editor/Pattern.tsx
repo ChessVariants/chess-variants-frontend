@@ -22,10 +22,7 @@ const useStyles = makeStyles<Theme>(theme => ({
 }));
 
 const initialState: Patterns = {
-    patterns: [
-        {xDir: 1, yDir: 2, minLength: 3, maxLength: 4 },
-        {xDir: 5, yDir: 6, minLength: 7, maxLength: 8 },
-    ],
+    patterns: [],
 };
 
 export default function Pattern(props: { editorService: EditorService }) {

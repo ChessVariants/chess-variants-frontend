@@ -22,6 +22,7 @@ export default function EditorPage() {
   const editorService: EditorService = EditorService.getInstance();
   const classes = useStyles();
 
+  // The Pattern thingy is for some reason dependent on some alignment of EditorSidePage which makes it jump around :(
   return (
     //<head className={classes.head}>
     <body className={classes.Body}>
