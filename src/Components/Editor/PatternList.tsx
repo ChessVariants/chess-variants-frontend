@@ -71,8 +71,8 @@ export default function PatternList(props: { editorService: EditorService }) {
                                 <TableRow
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                    <TableCell align="center">{pattern.xDir}</TableCell>
                                     <TableCell align="center">{pattern.yDir}</TableCell>
+                                    <TableCell align="center">{pattern.xDir}</TableCell>
                                     <TableCell align="center">{pattern.minLength}</TableCell>
                                     <TableCell align="center">{pattern.maxLength}</TableCell>
                                     <TableCell align="center">{<Button onClick={() => { editorService.removeMovementPattern(pattern.xDir, pattern.yDir, pattern.minLength, pattern.maxLength) }} >Remove</Button>}</TableCell>
