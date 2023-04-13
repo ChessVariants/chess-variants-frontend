@@ -11,6 +11,8 @@ import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
 import ConditionEditorPage from './Components/Editor/ConditionEditorPage';
 import RuleSetEditorPage from './Components/Editor/RuleSetEditorPage';
+import EventEditorPage from './Components/Editor/EventEditorPage';
+import MoveEditorPage from './Components/Editor/MoveEditorPage';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -107,6 +109,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/editor/condition" element={<ConditionEditorPage/>} />
+        <Route path="/editor/event" element={<EventEditorPage/>} />
+        <Route path="/editor/move" element={<MoveEditorPage/>} />
         <Route path="/editor/ruleset" element={<RuleSetEditorPage/>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />

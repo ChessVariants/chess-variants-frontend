@@ -6,12 +6,12 @@ import { commonClasses } from "../Util/CommonClasses";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { useNavigate } from "react-router-dom";
-import MyPopup from "../Editor/Popup";
-
+import MyPopup from "./Popup";
+import MyDropdown from "./Dropdown";
+import ListWithPopup from "./ListWithPopup";
 import React, { useEffect, useState, useRef } from "react";
 
 export default function RuleSetEditorPage() {
-
 
   const classes = commonClasses();
 
@@ -26,7 +26,13 @@ export default function RuleSetEditorPage() {
   const navigatePage = (link: string) => {
     navigate(link);
   }
+  const doNothing = () => {
 
+  }
+
+  const [specialMoves, setSpecialMoves] = useState(['En Passant', 'Castle King Side', 'Castle Queen Side', 'Double Pawn Move']);
+  const [events, setEvents] = useState(['Promotion', 'Explosion']);
+  const [stalemateEvents, setStalemateEvents] = useState(['Win If King Checked', 'Tie If King Not Checked']);
 
   return (
     <div>
@@ -62,13 +68,22 @@ export default function RuleSetEditorPage() {
             </Grid>
             <Grid container marginTop="12px" alignItems="left" justifyItems={"left"} justifyContent="center" >
               <Grid>
-                <ListWithPopup title={"Special Moves"} type={"Move"}></ListWithPopup>
+                <ListWithPopup title={"Special Moves"} type={"Move"} singleton={true} width="200px" height="200px" listComponent={MyList} items={specialMoves} setItems={setSpecialMoves}/>
+                <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/move")}>
+                  Create Move
+                </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Events"} type={"Event"}></ListWithPopup>
+                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={events} setItems={setEvents}/>
+                <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
+                  Create Event
+                </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Stalemate Events"} type={"Event"}></ListWithPopup>
+                <ListWithPopup title={"Stalemate Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={stalemateEvents} setItems={setStalemateEvents}/>
+                <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
+                  Create Event
+                </Button>
               </Grid>
             </Grid>
 
@@ -86,152 +101,39 @@ export default function RuleSetEditorPage() {
 }
 
 
-interface ListWithPopupProps {
-  title: string;
-  type: string;
-}
-
-
-function ListWithPopup({ title, type }: ListWithPopupProps) {
-
-  const [items, setItems] = useState([] as string[]);
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleAddItem = (newItem: string) => {
-    setItems([...items, newItem]);
-  };
-
-  const handleRemoveItem = (newItem: string) => {
-    setItems(items.filter((item) => item !== newItem));
-  };
-
-
-  const handleClickItem = (itemClicked: string) => {
-    if (!(items.some((item) => item === itemClicked))) {
-      handleAddItem(itemClicked);
-      setIsOpen(false);
-    }
-  };
-
-
-  return (
-    <div>
-      <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 1, mt: 2 }}>{title}:</Typography>
-      <MyList items={items} onRemoveItem={handleRemoveItem} />
-
-      <div>
-      <Button variant="contained" color="joinColor" style={{ height: '40px', width: '200px' }} onClickCapture={() => setIsOpen(true)} sx={{mt: 1, mr: 2, ml: 2}}>
-        Add {type}
-      </Button>
-      </div>
-      <div>
-      <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px'}} sx={{mt: 1}}>
-        Create {type}
-      </Button>
-      </div>
-      <MyPopup isOpen={isOpen} setIsOpen={setIsOpen} type={type} onClickItem={(item) => handleClickItem(item)} addedItems={items}></MyPopup>
-    </div>
-  );
-}
-
 interface MyListProps {
-  items: string[];
-  onRemoveItem: (newItem: string) => void;
+  items: { name: string, id: number }[];
+  onRemoveItem: (newItem: { name: string, id: number }) => void;
+  width: string | number;
+  height: string | number;
 }
 
-function MyList({ items, onRemoveItem }: MyListProps) {
+function MyList({ items, onRemoveItem, width, height }: MyListProps) {
 
-  const handleRemoveItem = (item: string) => {
-    onRemoveItem(item);
-  };
 
-  return (<Paper variant="outlined" style={{ height: '200px', overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ml: 2, mr: 2}}>
-    <List>
-      {items.map((item) => (
-        <ListItem key={item}>
-          <ListItemText primary={item} />
-          <Button variant="contained" color="editorColor" style={{ height: '25px', width: '10px' }} onClickCapture={() => handleRemoveItem(item)}>
-            -
-          </Button>
-        </ListItem>
-      ))}
-    </List>
+  return (<Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
+      <List>
+          {items.map((item) => (
+              <DefaultListItem item={item} onRemoveItem={onRemoveItem} />
+          ))}
+      </List>
   </Paper>);
 }
 
 
-
-
-interface MyDropdownProps {
-  options: string[];
-  defaultValue: string;
-  onChange: (selectedOption: string) => void;
+interface DefaultListItemProps {
+  item: { name: string, id: number };
+  onRemoveItem: (newItem: { name: string, id: number }) => void;
 }
-
-function MyDropdown({ options, defaultValue, onChange }: MyDropdownProps) {
-  const [selectedOption, setSelectedOption] = useState(defaultValue);
-
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const newSelectedOption = event.target.value as string;
-    setSelectedOption(newSelectedOption);
-    onChange(newSelectedOption);
+function DefaultListItem({ item, onRemoveItem }: DefaultListItemProps) {
+  const handleRemoveItem = (item: { name: string, id: number }) => {
+      onRemoveItem(item);
   };
 
-
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      formControl: {
-        margin: theme.spacing(1),
-        minWidth: 200,
-      },
-      whiteText: {
-        color: 'white',
-        minWidth: 200,
-        borderColor: 'white',
-        '&:before': {
-          borderColor: 'white',
-          backgroundColor: '#505050',
-          zIndex: -1,
-          top: -5, // move the background color up
-          left: -10, // extend the background color to the left
-          right: -10, // extend the background color to the right
-          bottom: -5, // move the background color down
-        },
-        '&:after': {
-          borderColor: 'white',
-        },
-
-      },
-      icon: {
-        fill: 'white',
-      },
-    })
-  );
-
-  const classes = useStyles();
-
-
-  return (
-    <FormControl>
-      <Select
-        labelId="my-dropdown-label"
-        id="my-dropdown"
-        value={selectedOption}
-        onChange={handleChange}
-        className={classes.whiteText}
-        inputProps={{
-          classes: {
-            icon: classes.icon,
-          },
-        }}
-      >
-        {options.map((option) => (
-          <MenuItem key={option} value={option} className={classes.formControl} style={{ whiteSpace: 'normal' }}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
+  return (<ListItem key={item.id}>
+      <ListItemText primary={item.name + ", id: " + item.id} />
+      <Button variant="contained" color="editorColor" style={{ height: '25px', width: '10px' }} onClickCapture={() => handleRemoveItem(item)}>
+          -
+      </Button>
+  </ListItem>);
 }

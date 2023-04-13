@@ -110,6 +110,8 @@ export default function ConditionEditorPage() {
   const loadCondition = (itemClicked: string) =>
   {
   };
+  
+  const [predicates, setPredicates] = useState(['Standard Chess Move Rule', 'Duck Chess Move Rule']);
 
   return (
     <div>
@@ -162,7 +164,7 @@ export default function ConditionEditorPage() {
 
             </Grid>
 
-            <MyPopup isOpen={isLoadPopupOpen} setIsOpen={setIsLoadPopupOpen} type={"Predicate"} onClickItem={(item : string) => loadCondition(item)} addedItems={[] as string[]}></MyPopup>
+            <MyPopup isOpen={isLoadPopupOpen} setIsOpen={setIsLoadPopupOpen} type={"Predicate"} onClickItem={(item : string) => loadCondition(item)} addedItems={[] as  {name:string, id:number}[]} singleton={true} items={predicates} setItems={setPredicates}></MyPopup>
           </Paper>
         </Container>
 
