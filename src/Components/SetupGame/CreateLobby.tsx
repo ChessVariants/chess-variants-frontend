@@ -4,7 +4,7 @@ import { commonClasses } from "../Util/CommonClasses";
 import CustomDarkTheme from "../Util/CustomDarkTheme";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ClearIcon from "@mui/icons-material/Clear";
-import GameService from "../../Services/GameService";
+import GameService, { CreateGameResult } from "../../Services/GameService";
 
 
 
@@ -24,23 +24,22 @@ export default function CreateGame(props: { createGameFunction: any }) {
 
     // Placeholder
     const tryCreateLobby = () => {
-        if ("success") {
-            if (textFieldVariant === "") {
-                createLobby(selectVariant);
+        const gameID = (Math.random() + 1).toString(36).substring(5);
+        const variantId = textFieldVariant === "" ? selectVariant : textFieldVariant
+
+        gameService.sendCreateGame(gameID, variantId).then((result: CreateGameResult) => {
+            if (result.success) {
+                console.log("Lobby created successfully");
+                props.createGameFunction(variantId);
             }
             else {
-                createLobby(textFieldVariant);
+                console.log(result.failReason);
+                setErrorMessage("Please enter a valid variant code!");
             }
-        }
-        else {
-            setErrorMessage("Please enter a valid variant code!");
-        }
+        })
+            .catch(e => console.log(e));
+
     };
-    const createLobby = (variantId: string) => {
-        const gameID = (Math.random() + 1).toString(36).substring(5);
-        gameService.sendCreateGame(gameID, variantId);
-        props.createGameFunction(variantId);
-    }
 
     const selectSetVariant = (event: SelectChangeEvent) => {
         setSelectVariant(event.target.value as string);

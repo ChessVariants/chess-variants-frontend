@@ -9,7 +9,6 @@ enum pageStates {
 };
 
 export default function NewGame(props: { pageState?: pageStates }) {
-    let gameService: GameService = GameService.getInstance();
 
     const [pageState, setPageState] = useState(props.pageState ? props.pageState : pageStates.CreateGame);
     const [gameID, setGameID] = useState("initial_gameid");
