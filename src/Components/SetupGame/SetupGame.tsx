@@ -1,5 +1,4 @@
 import { useState } from "react";
-import GameService from "../../Services/GameService";
 import CreateGame from "./CreateLobby";
 import Lobby from "./Lobby/Lobby";
 

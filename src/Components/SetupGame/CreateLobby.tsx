@@ -6,8 +6,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import ClearIcon from "@mui/icons-material/Clear";
 import GameService, { CreateGameResult } from "../../Services/GameService";
 
-
-
 export default function CreateGame(props: { createGameFunction: any }) {
 
     const classes = commonClasses();
@@ -22,15 +20,14 @@ export default function CreateGame(props: { createGameFunction: any }) {
         setSelectVariant("standard");
     };
 
-    // Placeholder
     const tryCreateLobby = () => {
-        const gameID = (Math.random() + 1).toString(36).substring(5);
+        const gameId = (Math.random() + 1).toString(36).substring(5);
         const variantId = textFieldVariant === "" ? selectVariant : textFieldVariant
 
-        gameService.sendCreateGame(gameID, variantId).then((result: CreateGameResult) => {
+        gameService.sendCreateGame(gameId, variantId).then((result: CreateGameResult) => {
             if (result.success) {
                 console.log("Lobby created successfully");
-                props.createGameFunction(variantId);
+                props.createGameFunction(gameId);
             }
             else {
                 console.log(result.failReason);
