@@ -1,0 +1,73 @@
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="45.2"
+      height="45.2"
+      version="1"
+    >
+      <g
+        strokeDasharray="none"
+        strokeMiterlimit="4"
+        transform="translate(113.169 87.666)"
+      >
+        <path
+          fill="#ffdc00"
+          fillOpacity="1"
+          fillRule="nonzero"
+          stroke="#000"
+          strokeDashoffset="0"
+          strokeLinecap="round"
+          strokeLinejoin="miter"
+          strokeOpacity="1"
+          strokeWidth="1.5"
+          d="M-104.846-55.153l28.179.063s.69-.206.747-.25c5.426-4.263 5.034-8.545 5.034-8.545l-5.096 4.046H-99.31l-.861-2.384h-10.767v2.384h3.948l2.01 4.624"
+        ></path>
+        <path
+          fill="none"
+          fillOpacity="1"
+          fillRule="nonzero"
+          stroke="#000"
+          strokeDashoffset="0"
+          strokeLinecap="round"
+          strokeLinejoin="miter"
+          strokeOpacity="1"
+          strokeWidth="0.8"
+          d="M-105.626-62.457h0l17.442-17.077 14.857 17.672"
+        ></path>
+        <path
+          fill="none"
+          fillOpacity="1"
+          fillRule="nonzero"
+          stroke="#000"
+          strokeDashoffset="0"
+          strokeLinecap="round"
+          strokeLinejoin="miter"
+          strokeOpacity="1"
+          strokeWidth="1.5"
+          d="M-88.184-79.463v19.169"
+        ></path>
+        <path
+          fill="#ffdc00"
+          fillOpacity="1"
+          fillRule="nonzero"
+          stroke="#000"
+          strokeDashoffset="0"
+          strokeLinecap="round"
+          strokeLinejoin="miter"
+          strokeOpacity="1"
+          strokeWidth="1.5"
+          d="M-78.782-63.218s2.03-6.635-1.774-12.545h-.072-17.76c3.804 5.91 1.866 12.49 2.005 12.545l.836-.007 16.765.007z"
+        ></path>
+        <path
+          fill="#fff"
+          stroke="#fff"
+          strokeWidth="0.313"
+          d="M-95.286-66.587c.08-3.354-.225-5.032-1.475-8.118-.118-.291.32-.309 7.756-.309h7.882l.271.415c.432.658 1.095 2.468 1.406 3.838.303 1.332.381 4.877.133 6l-.137.619-7.948.046-7.948.046z"
+        ></path>
+        <path
+          fill="#fff"
+          stroke="#fff"
+          strokeWidth="0.313"
+          d="M-104.588-56.408c-.095-.268-.549-1.341-1.008-2.387l-.836-1.9h-1.837c-1.72 0-1.838-.023-1.838-.354 0-.344.118-.353 4.66-.353h4.66l.438 1.193.437 1.193 12.094.044 12.094.044 1.761-1.406c.969-.773 1.792-1.376 1.829-1.338.037.037-.237.65-.609 1.362-.467.894-1.147 1.773-2.197 2.841l-1.522 1.547H-104.415z"
+        ></path>
+      </g>
+    </svg>

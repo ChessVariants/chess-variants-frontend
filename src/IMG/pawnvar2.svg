@@ -1,0 +1,24 @@
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+      <path
+        fill="#FFF"
+        stroke="#000"
+        strokeLinecap="round"
+        d="M10 15c-2 1-3.5 1.95-3.5 7.5h13C19.5 17 18 16 16 15c0-7-6-7-6 0z"
+      ></path>
+      <path
+        fill="#FFF"
+        stroke="#000"
+        strokeLinejoin="round"
+        d="M7.5 12.5h11l-5.5-5z"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+      <path
+        fill="#FFF"
+        stroke="#000"
+        strokeLinejoin="round"
+        d="M7.5 9.5h11l-5.5-5z"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+    </svg>
