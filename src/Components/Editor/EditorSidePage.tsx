@@ -38,15 +38,11 @@ export default function SideInfo(props: { editorService: EditorService }) {
         }
     };
 
-    const validateDirectionInput = (input: string): boolean => {
-        return input === "" || input === "-" || /^-?([01])$/.test(input);
-    }
-
     const validateLengthInput = (input: string): boolean => {
         return input === "" || (/^([1-9]|1[0-9]|20)$/.test(input) && parseInt(input) <= 20);
     }
 
-    const validateOffsetInput = (input: string): boolean => {
+    const validateDirectionInput = (input: string): boolean => {
         return input === "" || input === "-" || (/^-?(0|[1-9][0-9]?)?$/.test(input) && parseInt(input) <= 20) && parseInt(input) >= -20;
     }
 
@@ -69,7 +65,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [xOffset, setXOffset] = useState('');
     const handleXOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (validateOffsetInput(newValue)) {
+        if (validateDirectionInput(newValue)) {
             setXOffset(newValue);
         }
     };
@@ -77,7 +73,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     const [yOffset, setYOffset] = useState('');
     const handleYOffsetChange = (event: ChangeEvent<HTMLInputElement>): void => {
         const newValue = event.target.value;
-        if (validateOffsetInput(newValue)) {
+        if (validateDirectionInput(newValue)) {
             setYOffset(newValue);
         }
     };
