@@ -76,7 +76,7 @@ export default class GameService {
      */
     on(methodName: string, newMethod: (...args: any[]) => any): void {
         console.log("registered:" + methodName);
-        
+
         this.hubConnection.on(methodName, newMethod)
     }
 
@@ -106,8 +106,8 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    sendCreateGame(gameId: string, variant: string = Variant.Standard): void {
-        this.hubConnection.send('CreateGame', gameId, variant);
+    async sendCreateGame(gameId: string, variant: string = Variant.Standard): Promise<CreateGameResult> {
+        return this.hubConnection.invoke('CreateGame', gameId, variant);
     }
 
     sendStartGame(gameId: string): void {
@@ -155,6 +155,11 @@ export interface Colors {
 
 export interface JoinResult {
     color?: string,
+    success?: boolean,
+    failReason?: string,
+}
+
+export interface CreateGameResult {
     success?: boolean,
     failReason?: string,
 }
