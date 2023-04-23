@@ -130,6 +130,10 @@ export default class GameService {
         this.hubConnection.send('SwapColors', gameId);
     }
 
+    sendAddAI(gameId: string): void {
+        this.hubConnection.send('AssignAI', gameId);
+    }
+
     async requestColors(gameId: string): Promise<Colors> {
         return this.hubConnection.invoke('RequestColors', gameId)
     }

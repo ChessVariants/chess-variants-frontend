@@ -7,6 +7,7 @@ import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CookieService, { Cookie } from "../../../Services/CookieService";
+import { log } from "console";
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     /**
@@ -22,6 +23,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
         });
     }
     const username: string = CookieService.getInstance().get(Cookie.Username);
+    const [lobbyFull, setLobbyFull] = useState<boolean>(false);
 
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;
@@ -35,6 +37,19 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
             console.log("Game Started");
             navigatePage("/match/" + gameID, color, [username, opponent]);
         })
+
+        gameService.on(GameEvents.PlayerJoinedGame, (_: string, name: string) => {
+            if (name != username) {
+                setLobbyFull(true)
+            }
+        })
+
+        gameService.on(GameEvents.PlayerLeftGame, (name: string) => {
+            if (name != username) {
+                setLobbyFull(false)
+            }
+        })
+
     }, [])
 
     return (
@@ -51,6 +66,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
                 </Grid>
 
             </Grid>
+            <AddAIButton isAdmin={isAdmin} available={!lobbyFull} gameService={gameService} gameId={gameID}></AddAIButton>
             {isAdmin ? <Button
                 color={"createColor"}
                 onClick={() => {
@@ -69,9 +85,24 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
             >
                 WAITING FOR PARTY LEADER
             </Button>}
-
         </Paper>
     );
+}
 
+function AddAIButton(props: {isAdmin: boolean, available: boolean, gameService: GameService, gameId: string}) {
+    if (props.isAdmin && props.available) {
+        return (
+            <Button
+                color={"browserColor"}
+                onClick={() => props.gameService.sendAddAI(props.gameId)}
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
+                >
+                ADD AI
+            </Button>
+        )
+    }
+    return <></>
 }
 
