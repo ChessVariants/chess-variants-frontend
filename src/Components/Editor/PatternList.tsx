@@ -8,16 +8,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import EditorService, { PatternState } from "../../Services/EditorService";
-import { Box, Button, Theme, ThemeProvider } from "@mui/material";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
+import { Button, Container, Theme } from "@mui/material";
+
 
 const useStyles = makeStyles<Theme>(theme => ({
     Container: {
         backgroundColor: "#2C2D2F",
         boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
         display: "inline-block",
-        marginRight: "20px",
-        width: "400",
         color: "white",
     },
 
@@ -53,8 +51,8 @@ export default function PatternList(props: { editorService: EditorService }) {
 
 
     return (
-        <ThemeProvider theme={CustomDarkTheme}>
-            <Box className={classes.Container} sx={{ width: "450px" }}>
+        <Container>
+            <Paper className={classes.Container} >
                 <h3>Movement patterns</h3>
                 <TableContainer component={Paper}>
                     <Table size="small">
@@ -64,6 +62,7 @@ export default function PatternList(props: { editorService: EditorService }) {
                                 <TableCell align="center">Y direction</TableCell>
                                 <TableCell align="center">Min length</TableCell>
                                 <TableCell align="center">Max length</TableCell>
+                                <TableCell align="center">{<Button disabled={true}>Remove all</Button>}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -81,8 +80,8 @@ export default function PatternList(props: { editorService: EditorService }) {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </Box>
-        </ThemeProvider>
+            </Paper>
+        </Container>
     );
 
 }
