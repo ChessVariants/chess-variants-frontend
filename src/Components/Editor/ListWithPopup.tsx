@@ -23,12 +23,14 @@ interface ListWithPopupProps {
             onRemoveItem: (newItem: { name: string, id: number }) => void;
             width: string | number;
             height: string | number;
+            setJSON: (json: string) => void
         }>;
     items: string[]
     setItems: (items: string[]) => void
+    setListJSON: (json: string) => void
 }
 
-export default function ListWithPopup({ title, type, singleton, width = "200px", height = "200px", listComponent: ListComponent, items, setItems }: ListWithPopupProps) {
+export default function ListWithPopup({ title, type, singleton, width = "200px", height = "200px", listComponent: ListComponent, items, setItems, setListJSON }: ListWithPopupProps) {
 
     const [itemsAdded, setItemsAdded] = useState([] as { name: string, id: number }[]);
 
@@ -72,7 +74,7 @@ export default function ListWithPopup({ title, type, singleton, width = "200px",
     return (
         <div>
             <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 1, mt: 2 }}>{title}:</Typography>
-            <ListComponent items={itemsAdded} onRemoveItem={handleRemoveItem} width={width} height={height} />
+            <ListComponent items={itemsAdded} onRemoveItem={handleRemoveItem} width={width} height={height} setJSON={setListJSON} />
 
             <div>
                 <Button variant="contained" color="joinColor" style={{ height: '40px', width: '200px' }} onClickCapture={() => setIsOpen(true)} sx={{ mt: 1, mr: 2, ml: 2 }}>
