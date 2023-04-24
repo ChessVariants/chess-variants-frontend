@@ -91,10 +91,12 @@ export default function SideInfo(props: { editorService: EditorService }) {
     };
 
     const handleSameCaptureAndMovement = (event: ChangeEvent<HTMLInputElement>) => {
+        setSameCapMove(event.target.checked);
         editorService.setSameCaptureAsMovement(event.target.checked);
     };
 
     const handleCanBeCaptured = (event: ChangeEvent<HTMLInputElement>) => {
+        setCanBeCaptured(false);
         editorService.canBeCaptured(event.target.checked);
     };
 
@@ -106,6 +108,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
     };
 
     const handleBelongsToPlayer = (event: ChangeEvent<HTMLInputElement>) => {
+        setBelongsTo(event.target.value);
         editorService.belongsToPlayer(event.target.value);
     };
 
@@ -114,6 +117,10 @@ export default function SideInfo(props: { editorService: EditorService }) {
         setRepeat(event.target.value);
         editorService.setRepeat(Number(event.target.value));
     };
+
+    const [sameCapMove, setSameCapMove] = useState(true);
+    const [canBeCaptured, setCanBeCaptured] = useState(true);
+    const [belongsTo, setBelongsTo] = useState("white");
 
     const isJumpPatternValid = xOffset.trim() !== "" && xOffset.trim() !== "-" && yOffset.trim() !== "" && yOffset.trim() !== "-" && (Number(xOffset.trim()) !== 0 || Number(yOffset.trim()) !== 0);
     const isRegularPatternValid = xDir.trim() !== "" && xDir.trim() !== "-" && yDir.trim() !== "" && yDir.trim() !== "-" && minLength.trim() !== "" && maxLength.trim() !== "" && (Number(xDir.trim()) !== 0 || Number(yDir.trim()) !== 0) && (Number(minLength) <= Number(maxLength));
@@ -124,7 +131,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
 
                 <Stack direction="column" spacing={1}>
-                    <FormGroup style={{ alignItems: "center"}}>
+                    <FormGroup style={{ alignItems: "center" }}>
                         <FormLabel>
                             <Typography sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 20 }}>
                                 Regular pattern
@@ -173,7 +180,11 @@ export default function SideInfo(props: { editorService: EditorService }) {
                     </FormGroup>
                     <Divider style={{ width: '80%', alignSelf: 'center' }}></Divider>
                     <FormGroup >
-                        <FormLabel>Board size </FormLabel>
+                        <FormLabel>
+                            <Typography sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 20 }}>
+                                Board size
+                            </Typography>
+                        </FormLabel>
                         <div>
                             <label htmlFor="rows">Rows:</label>
                             <input id="rows" type="text" value={rows} onChange={handleRowsChange} style={{ width: "20px", position: "relative", marginLeft: "10px" }} />
@@ -186,32 +197,32 @@ export default function SideInfo(props: { editorService: EditorService }) {
                     <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(Number(rows), Number(cols)) }}>Update board size</Button>
                     <Divider style={{ width: '80%', alignSelf: 'center' }}></Divider>
                     <FormControl>
-                            <InputLabel id="repeat-label">Repeat movement: </InputLabel>
-                            <Select
-                                id="repeat-select"
-                                value={repeat}
-                                label="Age"
-                                onChange={handleRepeatChange}
-                                autoWidth={true}
-                                sx={{ width: 75, height: 40, alignSelf: 'center' }}
-                            >
-                                <MenuItem value={0}>0</MenuItem>
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <InputLabel id="repeat-label">Repeat movement</InputLabel>
+                        <Select
+                            id="repeat-select"
+                            value={repeat}
+                            label="Age"
+                            onChange={handleRepeatChange}
+                            autoWidth={true}
+                            sx={{ width: 75, height: 40, alignSelf: 'center' }}
+                        >
+                            <MenuItem value={0}>0</MenuItem>
+                            <MenuItem value={1}>1</MenuItem>
+                            <MenuItem value={2}>2</MenuItem>
+                            <MenuItem value={3}>3</MenuItem>
+                        </Select>
+                    </FormControl>
                     <FormGroup style={{ alignItems: "center" }} >
                         <FormGroup style={{ alignItems: "left" }} >
-                            <FormControlLabel control={<Switch defaultChecked onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
-                            <FormControlLabel control={<Switch defaultChecked onChange={handleCanBeCaptured} />} label="Can be captured" />
+                            <FormControlLabel control={<Switch checked={sameCapMove} onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
+                            <FormControlLabel control={<Switch checked={canBeCaptured} onChange={handleCanBeCaptured} />} label="Can be captured" />
                         </FormGroup>
                         <FormControl>
                             <FormLabel id="movement-display-radio">Belongs to </FormLabel>
                             <RadioGroup
                                 row
                                 name="row-radio-buttons-group"
-                                defaultValue="white"
+                                value={belongsTo}
                             >
                                 <FormControlLabel value="white" control={<Radio onChange={handleBelongsToPlayer} />} label="White" />
                                 <FormControlLabel value="black" control={<Radio onChange={handleBelongsToPlayer} />} label="Black" />
@@ -219,7 +230,7 @@ export default function SideInfo(props: { editorService: EditorService }) {
                             </RadioGroup>
                         </FormControl>
                         <FormControl>
-                            <FormLabel id="movement-display-radio">Display patterns: </FormLabel>
+                            <FormLabel id="movement-display-radio">Display patterns</FormLabel>
                             <RadioGroup
                                 row
                                 name="row-radio-buttons-group"
@@ -231,15 +242,32 @@ export default function SideInfo(props: { editorService: EditorService }) {
                         </FormControl>
                     </FormGroup>
                 </Stack>
-                <Button
-                    color={"createColor"}
-                    onClick={() => { }}
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
-                >
-                    Build Piece
-                </Button>
+                <FormGroup row style={{ justifyContent: "center" }}>
+                    <Button
+                        color={"editorColor"}
+                        onClick={() => {
+                            editorService.resetPiece();
+                            setSameCapMove(true);
+                            setCanBeCaptured(true);
+                            setRepeat("0");
+                            setBelongsTo("white");
+                        }}
+                        variant="contained"
+                        sx={{ mt: 2, mb: 2, mr:2, p: 2, width: "40%" }}
+                    >
+                        Reset Piece
+                    </Button>
+                    <Button
+                        color={"createColor"}
+                        onClick={() => { }}
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 2, mb: 2, p: 2, width: "40%" }}
+                    >
+                        Build Piece
+                    </Button>
+                </FormGroup>
+
             </Paper>
         </Container>
     );

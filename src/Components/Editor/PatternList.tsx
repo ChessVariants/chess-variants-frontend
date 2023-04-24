@@ -62,7 +62,7 @@ export default function PatternList(props: { editorService: EditorService }) {
                                 <TableCell align="center">Y direction</TableCell>
                                 <TableCell align="center">Min length</TableCell>
                                 <TableCell align="center">Max length</TableCell>
-                                <TableCell align="center">{<Button disabled={true}>Remove all</Button>}</TableCell>
+                                <TableCell align="center">{<Button onClick={() => editorService.removeAllMovementPatterns() } >Remove all</Button>}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

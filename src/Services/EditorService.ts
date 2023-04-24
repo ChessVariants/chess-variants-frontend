@@ -70,6 +70,10 @@ export default class EditorService {
         console.log("Removing pattern pressed");
         this.hubConnection.send("RemoveMovementPattern", xDir, yDir, minLength, maxLength);
     }
+    
+    removeAllMovementPatterns(): void {
+        this.hubConnection.send("ClearMovementPatterns");
+    }
 
     addCapturePattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
         console.log("Adding pattern pressed");
@@ -104,6 +108,11 @@ export default class EditorService {
     setRepeat(repeat: number): void {
         console.log("Set repeat");
         this.hubConnection.send("AmountRepeat", repeat);
+    }
+
+    resetPiece(): void {
+        console.log("Reset piece");
+        this.hubConnection.send("ResetPiece");
     }
 
     /**
