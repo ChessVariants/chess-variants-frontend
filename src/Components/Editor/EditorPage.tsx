@@ -1,13 +1,13 @@
 import { Box } from "@mui/system";
-import { Container, Theme } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import EditorService from "../../Services/EditorService";
 import EditorBoard from "../Editor/EditorBoard";
 import EditorSidePage from "./EditorSidePage";
 import PatternList from "./PatternList";
-import { Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import EditorService from "../../Services/EditorService";
 
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles<Theme>(({
   Container: {
     alignContent: "center",
     justifyContent: "center",
@@ -20,16 +20,29 @@ const useStyles = makeStyles<Theme>(theme => ({
 export default function EditorPage() {
 
   const editorService: EditorService = EditorService.getInstance();
+
+  useEffect(() => {
+    createEditorFunction();
+  }, [])
+
   const classes = useStyles();
 
-  // The Pattern thingy is for some reason dependent on some alignment of EditorSidePage which makes it jump around :(
+  const [editorID, setEditorID] = useState("initial_editorid");
+
+  const createEditorFunction = () => {
+
+    console.log("creating editor");
+    const editorID = (Math.random() + 1).toString(36).substring(5);
+    setEditorID(editorID);
+    editorService.sendCreateEditor(editorID);
+  }
+
   return (
-    //<head className={classes.head}>
-    <body className={classes.Body} style={{paddingTop: 50}}>
+    <body className={classes.Body} style={{ paddingTop: 50 }}>
       <Box className={classes.Container} >
-        <PatternList editorService={editorService} ></PatternList>
-        <EditorBoard editorService={editorService}></EditorBoard>
-        <EditorSidePage editorService={editorService}></EditorSidePage>
+        <PatternList editorID={editorID} ></PatternList>
+        <EditorBoard editorID={editorID}></EditorBoard>
+        <EditorSidePage editorID={editorID}></EditorSidePage>
       </Box>
     </body>
   );

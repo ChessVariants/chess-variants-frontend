@@ -50,25 +50,17 @@ const initialState: EditorState = {
     square: "",
 };
 
-export default function EditorBoard(props: { editorService: EditorService }) {
+export default function EditorBoard(props: { editorID: string }) {
+
+    const editorService: EditorService = EditorService.getInstance();
 
     const [editorState, setEditorState] = useState<EditorState>(initialState);
 
     const [active, setActive] = useState(["", [""]]);
 
-    const { editorService } = props;
+    const { editorID: editorID } = props;
 
     useEffect(() => {
-
-        editorService.requestBoardState()
-        .then((newEditorState?: EditorState) => {
-            if (newEditorState === null) {
-                console.log("Request failed");
-            }
-            console.log("updating state");
-            setEditorState(newEditorState!);
-            setActive([newEditorState!.square, getValidMoves(newEditorState!.moves, newEditorState!.square)])
-        })
 
         editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
             console.log("updatestate");
@@ -141,7 +133,7 @@ export default function EditorBoard(props: { editorService: EditorService }) {
 
     const clickFunction = (coordinate: string) => {
         setActive(["", []]);
-        editorService.setActiveSquare(coordinate);
+        editorService.setActiveSquare(editorID, coordinate);
     }
 
     return (

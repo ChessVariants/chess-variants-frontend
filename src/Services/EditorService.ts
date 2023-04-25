@@ -1,5 +1,6 @@
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { BoardSize, Move } from './GameService';
+import CookieService, { Cookie } from './CookieService';
 
 /**
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
@@ -10,10 +11,10 @@ export default class EditorService {
 
     private static editorService?: EditorService;
 
-    constructor(baseUrl: string, path: string = "editor") {
+    constructor(baseUrl: string, token: string, path: string = "editor") {
         let completePath: string = baseUrl + path;
         this.hubConnection = new HubConnectionBuilder()
-            .withUrl(completePath)
+            .withUrl(completePath, { accessTokenFactory: () => token})
             .withAutomaticReconnect().build();
     }
 
@@ -25,7 +26,9 @@ export default class EditorService {
     }
 
     static create(): EditorService {
-        this.editorService = new EditorService(process.env.REACT_APP_BACKEND_BASE_URL!);
+        const cookieService = CookieService.getInstance()
+        const token = cookieService.get(Cookie.JwtToken)
+        this.editorService = new EditorService(process.env.REACT_APP_BACKEND_BASE_URL!, token);
         return this.editorService;
     }
 
@@ -56,74 +59,78 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
-    setActiveSquare(square: string): void {
-        this.hubConnection.send("ActivateSquare", square);
-        this.requestBoardState();
+    sendCreateEditor(editorId: string): void {
+        this.hubConnection.send('CreateEditor', editorId);
     }
 
-    addMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
+    setActiveSquare(editorId: string, square: string): void {
+        this.hubConnection.send("ActivateSquare", editorId, square);
+        this.requestBoardState(editorId);
+    }
+
+    addMovementPattern(editorId: string, xDir: number, yDir: number, minLength: number, maxLength: number): void {
         console.log("Adding pattern pressed");
-        this.hubConnection.send("AddMovementPattern", xDir, yDir, minLength, maxLength);
+        this.hubConnection.send("AddMovementPattern", editorId, xDir, yDir, minLength, maxLength);
     }
 
-    removeMovementPattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
+    removeMovementPattern(editorId: string, xDir: number, yDir: number, minLength: number, maxLength: number): void {
         console.log("Removing pattern pressed");
-        this.hubConnection.send("RemoveMovementPattern", xDir, yDir, minLength, maxLength);
+        this.hubConnection.send("RemoveMovementPattern", editorId, xDir, yDir, minLength, maxLength);
     }
     
-    removeAllMovementPatterns(): void {
-        this.hubConnection.send("ClearMovementPatterns");
+    removeAllMovementPatterns(editorId: string): void {
+        this.hubConnection.send("ClearMovementPatterns", editorId);
     }
 
-    addCapturePattern(xDir: number, yDir: number, minLength: number, maxLength: number): void {
+    addCapturePattern(editorId: string, xDir: number, yDir: number, minLength: number, maxLength: number): void {
         console.log("Adding pattern pressed");
-        this.hubConnection.send("AddCapturePattern", xDir, yDir, minLength, maxLength);
+        this.hubConnection.send("AddCapturePattern", editorId, xDir, yDir, minLength, maxLength);
     }
     
-    setBoardSize(rows: number, cols: number): void {
+    setBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("Removing pattern pressed");
-        this.hubConnection.send("UpdateBoardSize", rows, cols);
+        this.hubConnection.send("UpdateBoardSize", editorId, rows, cols);
     }
 
-    setSameCaptureAsMovement(enable: boolean): void {
+    setSameCaptureAsMovement(editorId: string, enable: boolean): void {
         console.log("Same Capture as movement pattern");
-        this.hubConnection.send("SetCaptureSameAsMovement", enable);
+        this.hubConnection.send("SetCaptureSameAsMovement", editorId, enable);
     }
 
-    showMovement(enable: boolean): void {
+    showMovement(editorId: string, enable: boolean): void {
         console.log("Show movement or captures");
-        this.hubConnection.send("ShowMovement", enable);
+        this.hubConnection.send("ShowMovement", editorId, enable);
     }
 
-    canBeCaptured(enable: boolean): void {
+    canBeCaptured(editorId: string, enable: boolean): void {
         console.log("Set can be captured");
-        this.hubConnection.send("PieceCanBeCaptured", enable);
+        this.hubConnection.send("PieceCanBeCaptured", editorId, enable);
     }
 
-    belongsToPlayer(player: string): void {
+    belongsToPlayer(editorId: string, player: string): void {
         console.log("Set belongs to player");
-        this.hubConnection.send("BelongsToPlayer", player);
+        this.hubConnection.send("BelongsToPlayer", editorId, player);
     }
 
-    setRepeat(repeat: number): void {
+    setRepeat(editorId: string, repeat: number): void {
         console.log("Set repeat");
-        this.hubConnection.send("AmountRepeat", repeat);
+        this.hubConnection.send("AmountRepeat", editorId, repeat);
     }
 
-    resetPiece(): void {
+    resetPiece(editorId: string, ): void {
         console.log("Reset piece");
-        this.hubConnection.send("ResetPiece");
+        this.hubConnection.send("ResetPiece", editorId);
     }
 
     /**
      * Requests the server to send an event with the board state
     */
-   async requestBoardState(): Promise<EditorState> {
-       return this.hubConnection.invoke('RequestState');
+   async requestBoardState(editorId: string): Promise<EditorState> {
+       return this.hubConnection.invoke('RequestState', editorId);
    }
 
-   async requestPatternState(): Promise<PatternState> {
-       return this.hubConnection.invoke('RequestPatternState');
+   async requestPatternState(editorId: string): Promise<PatternState> {
+       return this.hubConnection.invoke('RequestPatternState', editorId);
    }
     
     /**

@@ -3,36 +3,38 @@ import { FormControl } from "@material-ui/core";
 import EditorService from "../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
-export default function PieceSettings(props: { editorService: EditorService }) {
+export default function PieceSettings(props: { editorID: string }) {
 
-    const { editorService } = props;
+    const editorService: EditorService = EditorService.getInstance()
+
+    const { editorID } = props;
 
     const handleSameCaptureAndMovement = (event: ChangeEvent<HTMLInputElement>) => {
         setSameCapMove(event.target.checked);
-        editorService.setSameCaptureAsMovement(event.target.checked);
+        editorService.setSameCaptureAsMovement(editorID, event.target.checked);
     };
 
     const handleCanBeCaptured = (event: ChangeEvent<HTMLInputElement>) => {
-        setCanBeCaptured(false);
-        editorService.canBeCaptured(event.target.checked);
+        setCanBeCaptured(event.target.checked);
+        editorService.canBeCaptured(editorID, event.target.checked);
     };
 
     const handleShowMovement = (event: ChangeEvent<HTMLInputElement>) => {
         var showMovement = true;
         if (event.target.value === "captures")
             showMovement = false;
-        editorService.showMovement(showMovement);
+        editorService.showMovement(editorID, showMovement);
     };
 
     const handleBelongsToPlayer = (event: ChangeEvent<HTMLInputElement>) => {
         setBelongsTo(event.target.value);
-        editorService.belongsToPlayer(event.target.value);
+        editorService.belongsToPlayer(editorID, event.target.value);
     };
 
     const [repeat, setRepeat] = useState('0');
     const handleRepeatChange = (event: SelectChangeEvent) => {
         setRepeat(event.target.value);
-        editorService.setRepeat(Number(event.target.value));
+        editorService.setRepeat(editorID, Number(event.target.value));
     };
 
     const [sameCapMove, setSameCapMove] = useState(true);
@@ -91,7 +93,7 @@ export default function PieceSettings(props: { editorService: EditorService }) {
                     <Button
                         color={"browserColor"}
                         onClick={() => {
-                            editorService.resetPiece();
+                            editorService.resetPiece(editorID);
                             setSameCapMove(true);
                             setCanBeCaptured(true);
                             setRepeat("0");

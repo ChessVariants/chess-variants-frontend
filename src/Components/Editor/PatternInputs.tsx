@@ -2,9 +2,11 @@ import { Box, Button, Divider, FormGroup, FormLabel, Stack, Typography } from "@
 import EditorService from "../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
-export default function PatternInputs(props: { editorService: EditorService }) {
+export default function PatternInputs(props: { editorID: string }) {
 
-    const { editorService } = props;
+    const editorService: EditorService = EditorService.getInstance();
+
+    const { editorID } = props;
 
     const [xDir, setXDir] = useState('');
     const handleXDirChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -108,8 +110,8 @@ export default function PatternInputs(props: { editorService: EditorService }) {
                         <input id="maxLength" type="text" value={maxLength} onChange={handleMaxLengthChange} style={{ width: "25px", position: "relative", marginLeft: "10px" }} />
                     </div>
                     <FormGroup row>
-                        <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Movement</Button>
-                        <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addCapturePattern(Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Captures</Button>
+                        <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addMovementPattern(editorID, Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Movement</Button>
+                        <Button disabled={!isRegularPatternValid} onClick={() => { editorService.addCapturePattern(editorID, Number(xDir), Number(yDir), Number(minLength), Number(maxLength)) }}>Add to Captures</Button>
                     </FormGroup>
                     <Divider style={{ width: '80%' }}></Divider>
                 </FormGroup>
@@ -128,8 +130,8 @@ export default function PatternInputs(props: { editorService: EditorService }) {
                         <input id="xOffset" type="text" value={xOffset} onChange={handleXOffsetChange} style={{ width: "25px", position: "relative", marginLeft: "10px" }} />
                     </div>
                     <FormGroup row>
-                        <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Movement</Button>
-                        <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addCapturePattern(Number(xOffset), Number(yOffset), -1, -1) }}>Add to Captures</Button>
+                        <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addMovementPattern(editorID, Number(xOffset), Number(yOffset), -1, -1) }}>Add to Movement</Button>
+                        <Button disabled={!isJumpPatternValid} onClick={() => { editorService.addCapturePattern(editorID, Number(xOffset), Number(yOffset), -1, -1) }}>Add to Captures</Button>
                     </FormGroup>
                     <Divider style={{ width: '80%' }}></Divider>
                 </FormGroup>
@@ -147,7 +149,7 @@ export default function PatternInputs(props: { editorService: EditorService }) {
                         <label htmlFor="cols">Cols:</label>
                         <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "25px", position: "relative", marginLeft: "10px" }} />
                     </div>
-                    <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(Number(rows), Number(cols)) }}>Update board size</Button>
+                    <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(editorID, Number(rows), Number(cols)) }}>Update board size</Button>
                     <Divider style={{ width: '80%', alignSelf: 'center' }}></Divider>
                 </FormGroup>
             </Stack>

@@ -25,24 +25,17 @@ const initialState: PatternState = {
     patterns: [],
 };
 
-export default function PatternList(props: { editorService: EditorService }) {
+export default function PatternList(props: { editorID: string }) {
+
+    const editorService: EditorService = EditorService.getInstance()
 
     const classes = useStyles();
 
     const [patternState, setPatternState] = useState<PatternState>(initialState);
 
-    const { editorService } = props;
+    const { editorID } = props;
 
     useEffect(() => {
-
-        editorService.requestPatternState()
-        .then((newPatternState?: PatternState) => {
-            if (newPatternState === null) {
-                console.log("Request failed");
-            }
-            console.log("updating state");
-            setPatternState(newPatternState!);
-        })
 
         editorService.on("PatternAdded", (patternState: PatternState) => {
             setPatternState(patternState);
@@ -62,7 +55,7 @@ export default function PatternList(props: { editorService: EditorService }) {
                                 <TableCell align="center">Y direction</TableCell>
                                 <TableCell align="center">Min length</TableCell>
                                 <TableCell align="center">Max length</TableCell>
-                                <TableCell align="center">{<Button onClick={() => editorService.removeAllMovementPatterns() } >Remove all</Button>}</TableCell>
+                                <TableCell align="center">{<Button onClick={() => editorService.removeAllMovementPatterns(editorID) } >Remove all</Button>}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -74,7 +67,7 @@ export default function PatternList(props: { editorService: EditorService }) {
                                     <TableCell align="center">{pattern.xDir}</TableCell>
                                     <TableCell align="center">{pattern.minLength}</TableCell>
                                     <TableCell align="center">{pattern.maxLength}</TableCell>
-                                    <TableCell align="center">{<Button onClick={() => { editorService.removeMovementPattern(pattern.xDir, pattern.yDir, pattern.minLength, pattern.maxLength) }} >Remove</Button>}</TableCell>
+                                    <TableCell align="center">{<Button onClick={() => { editorService.removeMovementPattern(editorID, pattern.xDir, pattern.yDir, pattern.minLength, pattern.maxLength) }} >Remove</Button>}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

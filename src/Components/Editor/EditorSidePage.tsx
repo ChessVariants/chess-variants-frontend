@@ -1,7 +1,6 @@
 import {  Container, Paper} from "@mui/material";
 import {  Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import EditorService from "../../Services/EditorService";
 import PatternInputs from "./PatternInputs";
 import PieceSettings from "./PieceSettings";
 
@@ -14,16 +13,16 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function SideInfo(props: { editorService: EditorService }) {
+export default function SideInfo(props: { editorID: string }) {
 
-    const { editorService } = props;
+    const { editorID } = props;
     const classes = useStyles();
 
     return (
         <Container>
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
-                <PatternInputs editorService={editorService}></PatternInputs>
-                <PieceSettings editorService={editorService}></PieceSettings>
+                <PatternInputs editorID={editorID}></PatternInputs>
+                <PieceSettings editorID={editorID}></PieceSettings>
             </Paper>
         </Container>
     );
