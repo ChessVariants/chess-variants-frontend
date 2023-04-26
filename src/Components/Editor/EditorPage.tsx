@@ -38,12 +38,10 @@ export default function EditorPage() {
   }
 
   return (
-    <body className={classes.Body} style={{ paddingTop: 50 }}>
-      <Box className={classes.Container} >
-        <PatternList editorID={editorID} ></PatternList>
-        <EditorBoard editorID={editorID}></EditorBoard>
-        <EditorSidePage editorID={editorID}></EditorSidePage>
-      </Box>
-    </body>
+    <Box className={classes.Container} style={{ paddingTop: 50 }} >
+      <PatternList editorID={editorID} ></PatternList>
+      <EditorBoard editorID={editorID}></EditorBoard>
+      <EditorSidePage editorID={editorID}></EditorSidePage>
+    </Box>
   );
 }
