@@ -26,6 +26,7 @@ import ship from './ship.svg'
 import supertower from './supertower.svg'
 import telescope from './telescope.svg'
 import tower from './tower.svg'
+import duck from './duck.svg'
 
 
 /**

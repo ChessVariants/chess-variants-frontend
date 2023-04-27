@@ -12,6 +12,7 @@ import GenericErrorPage from './Components/Util/GenericErrorPage';
 import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
+import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -129,6 +130,7 @@ function App() {
         <Route path="/new" element={<SetupGame />} />
         <Route path="/join" element={<JoinGame />} />
         <Route path="/join/:joinCode" element={<JoinGame />} />
+        <Route path="/browse" element={<VariantBrowser />} />
         <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
         <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
       </Routes>

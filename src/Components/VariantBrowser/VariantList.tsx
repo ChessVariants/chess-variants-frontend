@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Button, Popover, TablePagination, Typography } from '@mui/material';
 import CustomDarkTheme from '../Util/CustomDarkTheme';
 import StarIcon from '@mui/icons-material/Star';
+import { useNavigate } from 'react-router-dom';
 
 export function createData(
     creator: string,
@@ -40,6 +41,17 @@ function Row(props: { row: ReturnType<typeof createData>, index: number }) {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const navigate = useNavigate();
+    const navigatePage = (link: string, variantId: string) => {
+        navigate(link, {
+            state: {
+                variantId: variantId,
+            }
+        });
+    }
+
+
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'none' } }} style={index % 2 ? { background: CustomDarkTheme.palette.background.default } : { background: CustomDarkTheme.palette.background.paper[300] }}>
@@ -68,6 +80,7 @@ function Row(props: { row: ReturnType<typeof createData>, index: number }) {
                 <TableCell>
                     <Button
                         color={"createColor"}
+                        onClick={() => { navigatePage("/new", row.code) }}
                         type="submit"
                         variant="contained">Play</Button>
                 </TableCell>
