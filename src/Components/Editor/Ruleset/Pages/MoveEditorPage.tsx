@@ -1,18 +1,15 @@
 import { ThemeProvider } from "@emotion/react";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Button, Container, CssBaseline, Grid, ListItemButton, Paper, TextField, Typography } from "@mui/material";
-import { FormControl, InputLabel, Select, MenuItem, List, ListItem, ListItemText } from "@material-ui/core"
-import { commonClasses } from "../Util/CommonClasses";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { Button, Container, CssBaseline, Grid, Paper, TextField, Typography } from "@mui/material";
+import { commonClasses } from "../../../Util/CommonClasses";
+import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 import { useNavigate } from "react-router-dom";
-import MyPopup from "../Editor/Popup";
-import MyDropdown from "./Dropdown";
-import ListWithPopup from "./ListWithPopup";
-import PositionCreatorPopup from "./PositionCreatorPopup";
-import ActionList from "./ActionList"
+import MyDropdown from "../Components/Dropdown";
+import ListWithPopup from "../Components/ListWithPopup";
+import PositionCreatorPopup from "../Components/PositionCreatorPopup";
+import ActionList from "../Components/ActionList";
+import SavePopup from "../Components/SavePopup";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 
 type PositionInfo = AbsoluteInfo | RelativeInfo;
 
@@ -45,9 +42,11 @@ type ActionWin = {
 
 type MoveInfo = {
   posInfo: PositionInfo;
-  actionDict: ActionDict
+  actionDict: ActionDict;
   identifier: string;
   predicate: string;
+  name: string;
+  description: string;
 }
 
 export default function MoveEditorPage() {
@@ -62,6 +61,7 @@ export default function MoveEditorPage() {
   };
 
   const [isPositionCreatorOpen, setIsPositionCreatorOpen] = useState(false);
+  const [saveWindowOpen, setSaveWindowOpen] = useState(false)
 
   const loadCondition = (itemClicked: string) => {
   };
@@ -80,11 +80,12 @@ export default function MoveEditorPage() {
 
   const [identifier, setIdentifier] = useState("")
 
-  const logInfo = () => {
 
-    var info: MoveInfo = { posInfo: positionCreatorInfo.posInfo, actionDict: JSON.parse(listJSON), identifier: identifier, predicate: selectedOption }
+  const saveEvent = (name: string, description: string) => {
+    var info: MoveInfo = { posInfo: positionCreatorInfo.posInfo, actionDict: JSON.parse(listJSON), identifier: identifier, predicate: selectedOption, name, description }
     console.log(info)
-  }
+}
+
 
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
     setPositionCreatorInfo({ posInfo: { coord: "a1" }, id: 0, editingFrom: true })
@@ -160,9 +161,10 @@ export default function MoveEditorPage() {
             </Grid>
             <PositionCreatorPopup positionCreatorInfo={positionCreatorInfo} onSavePosition={() => savePositionCreatorToAction(positionCreatorInfo.posInfo)} isOpen={isOpen} resetPositionCreatorPopup={() => resetPositionCreatorPopup(0, true)} setIsOpen={setIsOpen} fixed={true} />
             <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
-            <Button onClickCapture={() => logInfo()}>
+            <Button onClickCapture={() => saveEvent("","")}>
               Print
             </Button>
+            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent}></SavePopup>
           </Paper>
         </Container>
       </ThemeProvider>

@@ -1,16 +1,12 @@
 import { ThemeProvider } from "@emotion/react";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Button, Container, CssBaseline, Grid, ListItemButton, Paper, TextField, Typography } from "@mui/material";
-import { FormControl, InputLabel, Select, MenuItem, List, ListItem, ListItemText } from "@material-ui/core"
-import { commonClasses } from "../Util/CommonClasses";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { Button, Container, CssBaseline, Paper, Typography } from "@mui/material";
+import { commonClasses } from "../../../Util/CommonClasses";
+import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 import { useNavigate } from "react-router-dom";
-import MyPopup from "../Editor/Popup";
-import MyDropdown from "./Dropdown";
-import ListWithPopup from "./ListWithPopup";
-import ActionList from "./ActionList";
-import PositionCreatorPopup from "./PositionCreatorPopup";
+import MyDropdown from "../Components/Dropdown";
+import ListWithPopup from "../Components/ListWithPopup";
+import ActionList from "../Components/ActionList";
+import SavePopup from "../Components/SavePopup";
 
 import React, { useEffect, useState, useRef } from "react";
 
@@ -18,6 +14,8 @@ import React, { useEffect, useState, useRef } from "react";
 type EventInfo = {
     actionDict: ActionDict
     predicate: string
+    name: string
+    description: string
 }
 
 export default function EventEditorPage() {
@@ -26,6 +24,7 @@ export default function EventEditorPage() {
 
     const [selectedOption, setSelectedOption] = useState("Standard Chess");
     const [listJSON, setListJSON] = useState("");
+    const [saveWindowOpen, setSaveWindowOpen] = useState(false)
 
     const handleDropdownChange = (newSelectedOption: string) => {
         setSelectedOption(newSelectedOption);
@@ -43,11 +42,10 @@ export default function EventEditorPage() {
     }
 
 
-    const logInfo = () => {
-        var info: EventInfo = { actionDict: JSON.parse(listJSON), predicate: selectedOption }
+    const saveEvent = (name: string, description: string) => {
+        var info: EventInfo = { actionDict: JSON.parse(listJSON), predicate: selectedOption, name, description }
         console.log(info)
     }
-
 
     const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece']);
 
@@ -65,9 +63,18 @@ export default function EventEditorPage() {
                             onChange={handleDropdownChange}
                         />
                         <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
-                        <Button onClickCapture={() => logInfo()}>
+                        <Button onClickCapture={() => saveEvent("","")}>
                             Print
                         </Button>
+                    <Button color={"browserColor"} onClick={() => { }}
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 0, mb: 0, width: 150, p: 1 }}
+                        onClickCapture={() => setSaveWindowOpen(true)}>
+                        Save
+                    </Button>
+                    <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent}></SavePopup>
+                    
                     </Paper>
                 </Container>
             </ThemeProvider>

@@ -1,15 +1,12 @@
 import { ThemeProvider } from "@emotion/react";
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Button, Container, CssBaseline, Grid, ListItemButton, Paper, TextField, Typography } from "@mui/material";
-import { FormControl, InputLabel, Select, MenuItem, List, ListItem, ListItemText } from "@material-ui/core"
-import { commonClasses } from "../Util/CommonClasses";
-import CustomDarkTheme from "../Util/CustomDarkTheme";
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { Button, Container, CssBaseline, Grid, Paper, Typography } from "@mui/material";
+import { List, ListItem, ListItemText } from "@material-ui/core"
+import { commonClasses } from "../../../Util/CommonClasses";
+import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 import { useNavigate } from "react-router-dom";
-import MyPopup from "./Popup";
-import MyDropdown from "./Dropdown";
-import ListWithPopup from "./ListWithPopup";
-import React, { useEffect, useState, useRef } from "react";
+import MyDropdown from "../Components/Dropdown";
+import ListWithPopup from "../Components/ListWithPopup";
+import { useState } from "react";
 
 export default function RuleSetEditorPage() {
 
@@ -68,19 +65,19 @@ export default function RuleSetEditorPage() {
             </Grid>
             <Grid container marginTop="12px" alignItems="left" justifyItems={"left"} justifyContent="center" >
               <Grid>
-                <ListWithPopup title={"Special Moves"} type={"Move"} singleton={true} width="200px" height="200px" listComponent={MyList} items={specialMoves} setItems={setSpecialMoves} setListJSON={() => {}}/>
+                <ListWithPopup title={"Special Moves"} type={"Move"} singleton={true} width="200px" height="200px" listComponent={MyList} items={specialMoves} setItems={setSpecialMoves} setListJSON={() => { }} />
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/move")}>
                   Create Move
                 </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={events} setItems={setEvents} setListJSON={() => {}}/>
+                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={events} setItems={setEvents} setListJSON={() => { }} />
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
                   Create Event
                 </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Stalemate Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={stalemateEvents} setItems={setStalemateEvents} setListJSON={() => {}}/>
+                <ListWithPopup title={"Stalemate Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={stalemateEvents} setItems={setStalemateEvents} setListJSON={() => { }} />
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
                   Create Event
                 </Button>
@@ -112,11 +109,11 @@ function MyList({ items, onRemoveItem, width, height }: MyListProps) {
 
 
   return (<Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
-      <List>
-          {items.map((item) => (
-              <DefaultListItem item={item} onRemoveItem={onRemoveItem} />
-          ))}
-      </List>
+    <List>
+      {items.map((item) => (
+        <DefaultListItem item={item} onRemoveItem={onRemoveItem} />
+      ))}
+    </List>
   </Paper>);
 }
 
@@ -127,13 +124,13 @@ interface DefaultListItemProps {
 }
 function DefaultListItem({ item, onRemoveItem }: DefaultListItemProps) {
   const handleRemoveItem = (item: { name: string, id: number }) => {
-      onRemoveItem(item);
+    onRemoveItem(item);
   };
 
   return (<ListItem key={item.id}>
-      <ListItemText primary={item.name + ", id: " + item.id} />
-      <Button variant="contained" color="editorColor" style={{ height: '25px', width: '10px' }} onClickCapture={() => handleRemoveItem(item)}>
-          -
-      </Button>
+    <ListItemText primary={item.name + ", id: " + item.id} />
+    <Button variant="contained" color="editorColor" style={{ height: '25px', width: '10px' }} onClickCapture={() => handleRemoveItem(item)}>
+      -
+    </Button>
   </ListItem>);
 }

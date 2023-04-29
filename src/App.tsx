@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import ConditionEditorPage from './Components/Editor/ConditionEditorPage';
-import RuleSetEditorPage from './Components/Editor/RuleSetEditorPage';
-import EventEditorPage from './Components/Editor/EventEditorPage';
-import MoveEditorPage from './Components/Editor/MoveEditorPage';
+import ConditionEditorPage from './Components/Editor/Ruleset/Pages/ConditionEditorPage';
+import RuleSetEditorPage from './Components/Editor/Ruleset/Pages/RuleSetEditorPage';
+import EventEditorPage from './Components/Editor/Ruleset/Pages/EventEditorPage';
+import MoveEditorPage from './Components/Editor/Ruleset/Pages/MoveEditorPage';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
