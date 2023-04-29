@@ -7,14 +7,8 @@ export default function VariantBrowser() {
         createData("", "CaptureTheKing", "Capture the king is variant based on standard", "captureTheKing", true),
         createData("", "AntiChess", "In this variant, you have to take the opponents pieces. First player to lose their pieces win", "antiChess", true),
         createData("", "DuckChess", "A chess variant where there is a piece that both players can move.", "duckChess", true),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move. Piece", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move. Piece", "h1jpas8", false),
-        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move. Piece", "h1jpas8", false),
+        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas1", false),
+        createData("user1", "Duckchess", "A chess variant where there is a piece that both players can move.", "h1jpas2", false),
     ];
 
     return (

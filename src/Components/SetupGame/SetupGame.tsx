@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import GameService, { CreateGameResult } from "../../Services/GameService";
 import CreateGame from "./CreateLobby";
@@ -21,21 +21,24 @@ export default function NewGame(props: { pageState?: pageStates }) {
         setGameID(gameID);
         setPageState(pageStates.Lobby);
     }
-    if (variantId !== undefined && gameID === "initial_gameid") {
-        const id = (Math.random() + 1).toString(36).substring(5);
-        gameService.sendCreateGame(id, variantId).then((result: CreateGameResult) => {
-            if (result.success) {
-                console.log("Lobby created successfully");
-                setGameID(id);
-                setPageState(pageStates.Lobby);
-                console.log(id)
-            }
-            else {
-                console.log(result.failReason);
-            }
-        })
-            .catch(e => console.log(e));
-    }
+    useEffect(() => {
+        if (variantId !== undefined && gameID === "initial_gameid") {
+            const game = (Math.random() + 1).toString(36).substring(5);
+            gameService.sendCreateGame(game, variantId).then((result: CreateGameResult) => {
+                if (result.success) {
+                    console.log("Lobby created successfully");
+                    setGameID(game);
+                    setPageState(pageStates.Lobby);
+                    console.log(game)
+                }
+                else {
+                    console.log(result.failReason);
+                }
+            })
+                .catch(e => console.log(e));
+        }
+    }, [])
+
     if (pageState === pageStates.CreateGame) {
         return (<CreateGame createGameFunction={createGameFunction}></CreateGame>);
     }
