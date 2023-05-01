@@ -5,13 +5,13 @@ import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 import MyPopup from "../Components/Popup";
 import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
+import CookieService, { Cookie } from "../../../../Services/CookieService";
 
 type ConditionInfo = {
   name: string;
   description: string;
-  conditionCode: string;
+  code: string;
 }
-
 
 
 export default function ConditionEditorPage() {
@@ -24,7 +24,7 @@ export default function ConditionEditorPage() {
 
   const [predicates, setPredicates] = useState(['Standard Chess Move Rule', 'Duck Chess Move Rule']);
 
-  const [conditionInfo, setConditionInfo] = useState({name: "", description: "", conditionCode: ""} as ConditionInfo)
+  const [conditionInfo, setConditionInfo] = useState({ name: "", description: "", code: "" } as ConditionInfo)
 
   const classes = commonClasses();
 
@@ -107,8 +107,20 @@ export default function ConditionEditorPage() {
   };
 
   const saveCondition = (name: string, description: string) => {
-    setConditionInfo({name: name, description: description, conditionCode: conditionCode})
-    console.log(conditionInfo)
+    setConditionInfo({ name: name, description: description, code: conditionCode })
+   
+    let token = CookieService.getInstance().get(Cookie.JwtToken)
+    console.log(JSON.stringify(conditionInfo))
+    fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
+      method: "POST",
+      headers: {
+        'Accept': "application/json",
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify(conditionInfo),
+    }).then(o => console.log(o));
   }
 
 

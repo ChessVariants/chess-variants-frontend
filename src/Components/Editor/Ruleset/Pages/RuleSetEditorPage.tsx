@@ -20,8 +20,8 @@ type RuleSetInfo = {
   stalemateEvents: ItemInfo[];
 }
 
-type ItemInfo = { name: string, id: number }
 
+type ItemInfo = { name: string, id: number }
 
 export default function RuleSetEditorPage() {
 
