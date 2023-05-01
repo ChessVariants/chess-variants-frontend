@@ -7,12 +7,25 @@ import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
 
+async function getPredicates(token: string) : Promise<ConditionInfo[]>{
+  
+
+  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
+    method: "GET",
+    headers: {
+      'Accept': "application/json",
+      'Authorization': `Bearer ${token}`,
+    },
+  }).then(o => o.json().then(o => o.predicates));
+
+}
+
+
 type ConditionInfo = {
   name: string;
   description: string;
   code: string;
 }
-
 
 export default function ConditionEditorPage() {
 
@@ -22,7 +35,7 @@ export default function ConditionEditorPage() {
 
   const [conditionCode, setConditionCode] = useState("");
 
-  const [predicates, setPredicates] = useState(['Standard Chess Move Rule', 'Duck Chess Move Rule']);
+  const [predicates, setPredicates] = useState<ConditionInfo[]>([]);
 
   const [conditionInfo, setConditionInfo] = useState({ name: "", description: "", code: "" } as ConditionInfo)
 
@@ -47,7 +60,6 @@ export default function ConditionEditorPage() {
     resize: 'none' as const,
     userSelect: 'none' as const,
   };
-
 
   const codeEditorStyle = {
     fontFamily: 'Cascadia Code',
@@ -101,15 +113,30 @@ export default function ConditionEditorPage() {
       </div>
     );
   });
+  let token = CookieService.getInstance().get(Cookie.JwtToken)
+
+  const openLoadPopup = async () => {
+    
+
+    const predicates2 : ConditionInfo[] = (await getPredicates(token));
+    
+    console.log(predicates2)
+    console.log(typeof(predicates2))
+    console.log(predicates2.at(0))
+
+    setPredicates(predicates2)
+    setIsLoadPopupOpen(true)
+
+
+  }
 
   const loadCondition = (itemClicked: string) => {
-
+    
   };
 
   const saveCondition = (name: string, description: string) => {
     setConditionInfo({ name: name, description: description, code: conditionCode })
-   
-    let token = CookieService.getInstance().get(Cookie.JwtToken)
+
     console.log(JSON.stringify(conditionInfo))
     fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
       method: "POST",
@@ -118,7 +145,6 @@ export default function ConditionEditorPage() {
         'Authorization': `Bearer ${token}`,
         'Content-Type': "application/json",
       },
-      mode: "cors",
       body: JSON.stringify(conditionInfo),
     }).then(o => console.log(o));
   }
@@ -160,7 +186,7 @@ export default function ConditionEditorPage() {
                   &#9654; Compile
                 </Button>
               </Grid><Grid>
-                <Button color={"createColor"} onClick={() => { setIsLoadPopupOpen(true) }}
+                <Button color={"createColor"} onClick={openLoadPopup}
                   type="submit"
                   variant="contained"
                   sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}>
@@ -178,7 +204,7 @@ export default function ConditionEditorPage() {
               </Grid>
             </Grid>
 
-            <MyPopup isOpen={isLoadPopupOpen} setIsOpen={setIsLoadPopupOpen} type={"Predicate"} onClickItem={(item: string) => loadCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={predicates} setItems={setPredicates}></MyPopup>
+            <MyPopup isOpen={isLoadPopupOpen} setIsOpen={setIsLoadPopupOpen} type={"Predicate"} onClickItem={(item: string) => loadCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={predicates.map((item) => item.name)} setItems={() => {}}></MyPopup>
           </Paper>
         </Container>
 
