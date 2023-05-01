@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
+import EditorPage from './Components/Editor/EditorPage';
+import EditorService from './Services/EditorService';
 import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
@@ -95,9 +97,27 @@ function App() {
       })
   }
 
+  // Guessing this is not the way to do it as it results in it being constantly being a ws with the editor.
+  // As I don't know what to do else, I'll use this for now.
+  const connectEditorHub = () => {
+    if (!EditorService.getInstance().isDisconnected()) {
+      return;
+    }
+  
+    EditorService.connect()
+    .then(() => {
+      console.log("connected");
+    })
+    .catch(e => {
+      console.log(e);
+      console.log("Not connected");
+    })
+  }
+  
   useEffect(() => {
     authenticate();
     connectHub();
+    connectEditorHub();
   }, [])
 
   if (authenticationState === AuthenticationState.InProgress
@@ -124,6 +144,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/pieceEditor" element={<EditorPage />} />
         <Route path="/match" element={<MatchPage />} />
         <Route path="/match/:gameID" element={<MatchPage />} />
         <Route path="/new" element={<SetupGame />} />
