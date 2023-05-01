@@ -71,7 +71,7 @@ export default function MoveEditorPage() {
   const navigatePage = (link: string) => {
     navigate(link);
   }
-  const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece']);
+  const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
 
   const [isOpen, setIsOpen] = useState(false);
   const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { coord: "a1" }, id: 0, editingFrom: true });
@@ -81,10 +81,10 @@ export default function MoveEditorPage() {
   const [identifier, setIdentifier] = useState("")
 
 
-  const saveEvent = (name: string, description: string) => {
+  const saveMove = (name: string, description: string) => {
     var info: MoveInfo = { posInfo: positionCreatorInfo.posInfo, actionDict: JSON.parse(listJSON), identifier: identifier, predicate: selectedOption, name, description }
     console.log(info)
-}
+  }
 
 
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
@@ -161,10 +161,14 @@ export default function MoveEditorPage() {
             </Grid>
             <PositionCreatorPopup positionCreatorInfo={positionCreatorInfo} onSavePosition={() => savePositionCreatorToAction(positionCreatorInfo.posInfo)} isOpen={isOpen} resetPositionCreatorPopup={() => resetPositionCreatorPopup(0, true)} setIsOpen={setIsOpen} fixed={true} />
             <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
-            <Button onClickCapture={() => saveEvent("","")}>
-              Print
+            <Button color={"browserColor"} onClick={() => { }}
+              type="submit"
+              variant="contained"
+              sx={{ mt: 2, mb: 0, width: 150, p: 1 }}
+              onClickCapture={() => setSaveWindowOpen(true)}>
+              Save
             </Button>
-            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent}></SavePopup>
+            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveMove}></SavePopup>
           </Paper>
         </Container>
       </ThemeProvider>

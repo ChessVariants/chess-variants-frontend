@@ -47,7 +47,7 @@ export default function EventEditorPage() {
         console.log(info)
     }
 
-    const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece']);
+    const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
 
     return (
         <div>
@@ -63,13 +63,10 @@ export default function EventEditorPage() {
                             onChange={handleDropdownChange}
                         />
                         <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
-                        <Button onClickCapture={() => saveEvent("","")}>
-                            Print
-                        </Button>
                     <Button color={"browserColor"} onClick={() => { }}
                         type="submit"
                         variant="contained"
-                        sx={{ mt: 0, mb: 0, width: 150, p: 1 }}
+                        sx={{ mt: 2, mb: 0, width: 150, p: 1 }}
                         onClickCapture={() => setSaveWindowOpen(true)}>
                         Save
                     </Button>

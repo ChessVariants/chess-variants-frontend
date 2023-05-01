@@ -6,6 +6,14 @@ import MyPopup from "../Components/Popup";
 import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
 
+type ConditionInfo = {
+  name: string;
+  description: string;
+  conditionCode: string;
+}
+
+
+
 export default function ConditionEditorPage() {
 
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +23,8 @@ export default function ConditionEditorPage() {
   const [conditionCode, setConditionCode] = useState("");
 
   const [predicates, setPredicates] = useState(['Standard Chess Move Rule', 'Duck Chess Move Rule']);
+
+  const [conditionInfo, setConditionInfo] = useState({name: "", description: "", conditionCode: ""} as ConditionInfo)
 
   const classes = commonClasses();
 
@@ -97,7 +107,8 @@ export default function ConditionEditorPage() {
   };
 
   const saveCondition = (name: string, description: string) => {
-    console.log("name: " + name + ", description: " + description + ", code: " + conditionCode);
+    setConditionInfo({name: name, description: description, conditionCode: conditionCode})
+    console.log(conditionInfo)
   }
 
 

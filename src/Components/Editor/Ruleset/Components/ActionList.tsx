@@ -33,7 +33,7 @@ type ItemInfo = { name: string, id: number }
 
 type ActionItemInfo = { itemInfo: ItemInfo, actionInfo: ActionInfo }
 
-type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo;
+type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo | ActionTie;
 
 type ActionMoveInfo = {
   from: PositionInfo;
@@ -46,12 +46,15 @@ type ActionSetPieceInfo = {
 type ActionWin = {
   whiteWins: boolean;
 }
+type ActionTie = {
+  null:null
+}
 
 
 type ActionDict = { [id: number]: ActionInfo }
 
 interface ActionListProps {
-  items: ItemInfo[];
+  itemsAdded: ItemInfo[];
   onRemoveItem: (newItem: ItemInfo) => void;
   width: string | number;
   height: string | number;
@@ -60,7 +63,7 @@ interface ActionListProps {
 
 
 
-export default function ActionList({ items, onRemoveItem, width, height, setJSON }: ActionListProps) {
+export default function ActionList({ itemsAdded, onRemoveItem, width, height, setJSON }: ActionListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { coord: "a1" }, id: 0, editingFrom: true } as PositionCreatorInfo);
 
@@ -75,8 +78,6 @@ export default function ActionList({ items, onRemoveItem, width, height, setJSON
   }, [actionInfo]);
 
   useEffect(() => {
-    // This code will run only once, on mount,
-    // and will retrieve the previous value of `data`
     const savedData = localStorage.getItem('actionInfo');
     if (savedData !== null) {
       updateJSON();
@@ -107,29 +108,23 @@ export default function ActionList({ items, onRemoveItem, width, height, setJSON
         to: { coord: "a1" }
       } as ActionMoveInfo;
     }
-    else {
+    else if (item.name == "Set Piece") {
       return { at: { coord: "a1" } } as ActionSetPieceInfo;
     }
+    else
+      return {null: null} as ActionTie;
   }
 
-  const getActionInfo2 = (id: number) => {
-    //console.log("rerendered!")
-    return getActionInfo(id);
-  }
   const getActionInfo = (id: number) => {
     if (actionInfo[id] === undefined) {
-      actionInfo[id] = fromItemToActionInfo(items[id])
+      actionInfo[id] = fromItemToActionInfo(itemsAdded[id])
       updateJSON();
-      //console.log("-----IS NULL----- id: " + id)
     }
-    //console.log(actionInfo[id])
     return actionInfo[id];
   }
 
   const savePositionCreatorToAction = (posInfo: PositionInfo) => {
-    //console.log("currentPosInfo: " + JSON.stringify(positionCreatorInfo.posInfo))
     positionCreatorInfo.posInfo = posInfo;
-    //console.log("newPosInfo: " + JSON.stringify(positionCreatorInfo.posInfo))
 
     let id = positionCreatorInfo.id;
     let currentInfo = getActionInfo(id);
@@ -150,8 +145,8 @@ export default function ActionList({ items, onRemoveItem, width, height, setJSON
     <div>
       <Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
         <List>
-          {items.map((item) => (
-            <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo2(item.id) }} onRemoveItem={onRemoveItem} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
+          {itemsAdded.map((item) => (
+            <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={onRemoveItem} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
           ))}
         </List>
       </Paper>
@@ -184,7 +179,7 @@ function ActionListItem({ item, onRemoveItem, onOpen }: ActionListItemProps) {
             ? <ActionMovePiece onOpen={onOpen} actionInfo={item.actionInfo}></ActionMovePiece>
             : ('at' in item.actionInfo
               ? <ActionSetPiece onOpen={onOpen} actionInfo={item.actionInfo}></ActionSetPiece>
-              : <div></div>))}
+              : <ActionTie></ActionTie>))}
 
 
 
@@ -209,6 +204,13 @@ function ActionWin() {
       defaultValue=""
       onChange={handleDropdownChange}
     />);
+}
+
+
+function ActionTie() {
+
+  return (
+    <div></div>);
 }
 
 
