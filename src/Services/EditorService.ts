@@ -127,9 +127,9 @@ export default class EditorService {
         this.hubConnection.send('CreateBoardEditor', editorId);
     }
 
-    setBoardEditorBoardSize(editorId: string): void {
+    setBoardEditorBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("setting board editor size");
-        this.hubConnection.send("SetBoardEditorSize", editorId, 10, 10);
+        this.hubConnection.send("SetBoardEditorSize", editorId, rows, cols);
     }
 
     /**

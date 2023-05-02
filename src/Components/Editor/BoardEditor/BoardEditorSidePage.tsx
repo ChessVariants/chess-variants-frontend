@@ -23,8 +23,7 @@ export default function BoardSideInfo(props: { editorID: string }) {
     return (
         <Container>
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
-                <SizeInput editorID={editorID} ></SizeInput>
-                <Button style={{color: "#FFFFFF"}} onClick={() => editorService.setBoardEditorBoardSize(editorID)} >Klick</Button>
+                <SizeInput editorID={editorID} context="BoardEditor"></SizeInput>
             </Paper>
         </Container>
     );

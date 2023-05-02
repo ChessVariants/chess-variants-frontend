@@ -119,7 +119,7 @@ export default function PatternInputs(props: { editorID: string }) {
                     </FormGroup>
                     <Divider style={{ width: '80%' }}></Divider>
                 </FormGroup>
-                <SizeInput editorID={editorID}></SizeInput>
+                <SizeInput editorID={editorID} context="PieceEditor"></SizeInput>
                 <Divider style={{ width: '80%', alignSelf: 'center' }}></Divider>
             </Stack>
         </Box>

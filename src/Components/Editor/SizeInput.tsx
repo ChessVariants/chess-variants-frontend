@@ -14,11 +14,11 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function SizeInput(props: { editorID: string }) {
+export default function SizeInput(props: { editorID: string, context: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { editorID } = props;
+    const { editorID, context } = props;
     const classes = useStyles();
 
     const validateLengthInput = (input: string): boolean => {
@@ -58,7 +58,12 @@ export default function SizeInput(props: { editorID: string }) {
                 <label htmlFor="cols">Cols:</label>
                 <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "25px", position: "relative", marginLeft: "10px" }} />
             </div>
-            <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setPieceEditorBoardSize(editorID, Number(rows), Number(cols)) }}>Update board size</Button>
+            <Button disabled={!isBoardSizeValid} onClick={() => {
+                if(context === "PieceEditor")
+                    editorService.setPieceEditorBoardSize(editorID, Number(rows), Number(cols))
+                else
+                    editorService.setBoardEditorBoardSize(editorID, Number(rows), Number(cols))
+                }}>Update board size</Button>
         </FormGroup>
     );
 
