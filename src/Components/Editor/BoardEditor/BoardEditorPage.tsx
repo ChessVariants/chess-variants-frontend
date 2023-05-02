@@ -34,7 +34,7 @@ export default function BoardEditorPage() {
         console.log("creating editor");
         const editorID = (Math.random() + 1).toString(36).substring(5);
         setEditorID(editorID);
-        editorService.sendCreateEditor(editorID);
+        editorService.sendCreatePieceEditor(editorID);
     }
 
     return (

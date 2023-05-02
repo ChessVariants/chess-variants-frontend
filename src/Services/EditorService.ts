@@ -59,8 +59,8 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
-    sendCreateEditor(editorId: string): void {
-        this.hubConnection.send('CreateEditor', editorId);
+    sendCreatePieceEditor(editorId: string): void {
+        this.hubConnection.send('CreatePieceEditor', editorId);
     }
 
     setActiveSquare(editorId: string, square: string): void {
@@ -89,8 +89,9 @@ export default class EditorService {
     
     setBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("Removing pattern pressed");
-        this.hubConnection.send("UpdateBoardSize", editorId, rows, cols);
+        this.hubConnection.send("UpdatePieceEditorBoardSize", editorId, rows, cols);
     }
+y
 
     setSameCaptureAsMovement(editorId: string, enable: boolean): void {
         console.log("Same Capture as movement pattern");
@@ -164,6 +165,7 @@ export interface PatternState {
 }
 
 export enum EditorEvents {
-    UpdatedEditorState = "updatedEditorState",
+    UpdatedPieceEditorState = "updatedPieceEditorState",
+    UpdatedBoardEditorState = "updatedBoardEditorState",
     Error = "error",
 }

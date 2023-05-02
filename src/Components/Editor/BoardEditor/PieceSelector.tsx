@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from "react";
 import EditorService from "../../../Services/EditorService";
 import Grid from '@mui/material/Grid';
-import Square from "../../Game/Square";
 import PieceItem from "./PieceItem";
 
 const useStyles = makeStyles<Theme>(({
@@ -13,9 +12,8 @@ const useStyles = makeStyles<Theme>(({
         justifyContent: "center",
         textAlign: "center",
         display: "inline-block",
-        height: "auto",
         width: "60%",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#adaca8",
     },
 }));
 
@@ -26,13 +24,13 @@ export default function PieceSelector(props: { color: string } ) {
     const classes = useStyles();
 
     const clickFunction = () => {
-        //        setActive(["", []]);
-        //        editorService.setActiveSquare(editorID, coordinate);
+        //setActive(["", []]);
+        //editorService.setActiveSquare(editorID, coordinate);
     }
 
     return (
         <Box className={classes.Container}>
-            <Grid container spacing={1} columns={6}>
+            <Grid container spacing={1} columns={6} >
                 <Grid item xs={1}>
                     <PieceItem piece={"ro"} color={props.color} ></PieceItem>
                 </Grid>

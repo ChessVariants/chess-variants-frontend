@@ -63,7 +63,7 @@ export default function BoardEditorBoard(props: { editorID: string }) {
 
     useEffect(() => {
 
-        editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
+        editorService.on(EditorEvents.UpdatedPieceEditorState, (newEditorState: EditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);
             setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
