@@ -4,7 +4,6 @@ import { Theme } from "@material-ui/core";
 import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
 import EditorService, { EditorEvents, BoardEditorState } from "../../../Services/EditorService";
-import { Move } from "../../../Services/GameService";
 import PieceSelector from "./PieceSelector";
 
 /**
@@ -122,19 +121,13 @@ export default function BoardEditorBoard(props: { editorID: string }) {
         return coordinate;
     }
 
-    const getValidMoves = (moves: Move[], coordinate: string) => {
-        const moveTo = moves.filter((item) => item.from === coordinate);
-        return moveTo[0] ? moveTo[0].to : [];
-    }
-
     const clickFunction = (coordinate: string) => {
-        //        setActive(["", []]);
-        //        editorService.setActiveSquare(editorID, coordinate);
+        editorService.insertPiece(editorID, coordinate);
     }
 
     return (
         <Box className={classes.Container}>
-            <PieceSelector color="white" ></PieceSelector>
+            <PieceSelector editorID={editorID} color="black" ></PieceSelector>
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
@@ -143,7 +136,7 @@ export default function BoardEditorBoard(props: { editorID: string }) {
                     ))
                 }
             </Box>
-            <PieceSelector color="black" ></PieceSelector>
+            <PieceSelector editorID={editorID} color="white" ></PieceSelector>
         </Box>
     );
 }

@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import { Paper, Theme, styled } from "@material-ui/core";
+import { Button, Paper, Theme, styled } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from "react";
 import EditorService from "../../../Services/EditorService";
@@ -14,21 +14,26 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
 }));
 
-export default function PieceItem(props: { piece: string, color: string }) {
+export default function PieceItem(props: { editorID: string, piece: string, color: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { piece: piece, color: color } = props;
+    const { editorID: editorID, piece: piece, color: color } = props;
 
     const classes = useStyles();
 
     return (
         <Box >
-            <Box >
+            <Button onClick={() => {
+                var pieceColor = piece;
+                if (color === "white")
+                    pieceColor = pieceColor.toUpperCase();
+                editorService.setActivePiece(editorID, pieceColor);
+            }}>
                 <img src={PieceImageAdapter.getImageRef(piece)}
                     className={`${classes.Icon} ${ color === "white" ? classes.WhitePiece: classes.BlackPiece}`}
                 />
-            </Box>
+            </Button>
         </Box>
     );
 }

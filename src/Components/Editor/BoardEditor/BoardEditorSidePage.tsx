@@ -1,5 +1,6 @@
-import {  Container, Paper} from "@mui/material";
-import {  Button, Theme } from "@material-ui/core";
+import { Container, Paper } from "@mui/material";
+import { Theme } from "@material-ui/core";
+import { Button, Stack } from "@mui/material";
 import { makeStyles } from '@material-ui/core/styles';
 import SizeInput from "../SizeInput";
 import EditorService from "../../../Services/EditorService";
@@ -24,6 +25,15 @@ export default function BoardSideInfo(props: { editorID: string }) {
         <Container>
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
                 <SizeInput editorID={editorID} context="BoardEditor"></SizeInput>
+                <Stack>
+                    <Button onClick={() => {
+                        editorService.clearBoardEditorBoard(editorID);
+                    }}>Clear Board</Button>
+                    <Button onClick={() => {
+                        editorService.resetStartingPosition(editorID);
+                    }}>Reset starting position</Button>
+
+                </Stack>
             </Paper>
         </Container>
     );

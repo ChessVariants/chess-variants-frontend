@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import EditorService from "../../../Services/EditorService";
 import Grid from '@mui/material/Grid';
 import PieceItem from "./PieceItem";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles<Theme>(({
     Container: {
@@ -17,37 +20,41 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function PieceSelector(props: { color: string } ) {
+export default function PieceSelector(props: { editorID: string, color: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
     const classes = useStyles();
 
-    const clickFunction = () => {
-        //setActive(["", []]);
-        //editorService.setActiveSquare(editorID, coordinate);
-    }
+    const { editorID: editorID, color: color } = props;
 
     return (
         <Box className={classes.Container}>
-            <Grid container spacing={1} columns={6} >
+            <Grid container spacing={1} columns={7} >
                 <Grid item xs={1}>
-                    <PieceItem piece={"ro"} color={props.color} ></PieceItem>
+                    <PieceItem editorID={editorID} piece={"ro"} color={color} ></PieceItem>
                 </Grid>
                 <Grid item xs={1}>
-                    <PieceItem piece={"kn"}  color={props.color}></PieceItem>
+                    <PieceItem editorID={editorID} piece={"kn"} color={color}></PieceItem>
                 </Grid>
                 <Grid item xs={1}>
-                    <PieceItem piece={"bi"}  color={props.color}></PieceItem>
+                    <PieceItem editorID={editorID} piece={"bi"} color={color}></PieceItem>
                 </Grid>
                 <Grid item xs={1}>
-                    <PieceItem piece={"ki"} color={props.color}></PieceItem>
+                    <PieceItem editorID={editorID} piece={"ki"} color={color}></PieceItem>
                 </Grid>
                 <Grid item xs={1}>
-                    <PieceItem piece={"qu"} color={props.color}></PieceItem>
+                    <PieceItem editorID={editorID} piece={"qu"} color={color}></PieceItem>
                 </Grid>
                 <Grid item xs={1}>
-                    <PieceItem piece={"pa"} color={props.color}></PieceItem>
+                    <PieceItem editorID={editorID} piece={"pa"} color={color}></PieceItem>
+                </Grid>
+                <Grid item xs={1}>
+                    <Box >
+                        <IconButton onClick={() => { editorService.setActivePiece(editorID, "remove")}}>
+                            <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                    </Box>
                 </Grid>
             </Grid>
         </Box>

@@ -132,6 +132,22 @@ export default class EditorService {
         this.hubConnection.send("SetBoardEditorSize", editorId, rows, cols);
     }
 
+    clearBoardEditorBoard(editorId: string): void {
+        this.hubConnection.send("ClearBoard", editorId);
+    }
+
+    resetStartingPosition(editorId: string): void {
+        this.hubConnection.send("ResetStartingPosition", editorId);
+    }
+
+    setActivePiece(editorId: string, piece: string): void {
+        this.hubConnection.send("SetActivePiece", editorId, piece);
+    }
+
+    insertPiece(editorId: string, square: string) {
+        this.hubConnection.send("UpdateSquare", editorId, square);
+    }
+
     /**
      * Requests the server to send an event with the board state
     */
