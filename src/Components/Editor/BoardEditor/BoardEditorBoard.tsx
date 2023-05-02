@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
-import EditorService, { EditorEvents, EditorState } from "../../../Services/EditorService";
+import EditorService, { EditorEvents, BoardEditorState } from "../../../Services/EditorService";
 import { Move } from "../../../Services/GameService";
 import PieceSelector from "./PieceSelector";
 
@@ -44,29 +44,24 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
 }));
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
-const initialState: EditorState = {
+const initialState: BoardEditorState = {
     board: [],
     boardSize: { rows: 8, cols: 8 },
-    moves: [],
-    square: "",
 };
 
 export default function BoardEditorBoard(props: { editorID: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const [editorState, setEditorState] = useState<EditorState>(initialState);
-
-    const [active, setActive] = useState(["", [""]]);
+    const [editorState, setEditorState] = useState<BoardEditorState>(initialState);
 
     const { editorID: editorID } = props;
 
     useEffect(() => {
 
-        editorService.on(EditorEvents.UpdatedPieceEditorState, (newEditorState: EditorState) => {
+        editorService.on(EditorEvents.UpdatedBoardEditorState, (newEditorState: BoardEditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);
-            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
         })
 
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
@@ -143,7 +138,7 @@ export default function BoardEditorBoard(props: { editorID: string }) {
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
+                        <Square isWhite={squareColor(i)} id={piece} active={"a1"} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
                             clickFunction(squareCoordinate(i))} />
                     ))
                 }

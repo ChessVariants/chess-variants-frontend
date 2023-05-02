@@ -31,7 +31,7 @@ export default function PieceEditorPage() {
 
   const createEditorFunction = () => {
 
-    console.log("creating editor");
+    console.log("creating piece editor");
     const editorID = (Math.random() + 1).toString(36).substring(5);
     setEditorID(editorID);
     editorService.sendCreatePieceEditor(editorID);

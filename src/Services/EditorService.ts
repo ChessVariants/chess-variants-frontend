@@ -65,7 +65,7 @@ export default class EditorService {
 
     setActiveSquare(editorId: string, square: string): void {
         this.hubConnection.send("ActivateSquare", editorId, square);
-        this.requestBoardState(editorId);
+        this.requestPieceEditorBoardState(editorId);
     }
 
     addMovementPattern(editorId: string, xDir: number, yDir: number, minLength: number, maxLength: number): void {
@@ -87,11 +87,10 @@ export default class EditorService {
         this.hubConnection.send("AddCapturePattern", editorId, xDir, yDir, minLength, maxLength);
     }
     
-    setBoardSize(editorId: string, rows: number, cols: number): void {
+    setPieceEditorBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("Removing pattern pressed");
         this.hubConnection.send("UpdatePieceEditorBoardSize", editorId, rows, cols);
     }
-y
 
     setSameCaptureAsMovement(editorId: string, enable: boolean): void {
         console.log("Same Capture as movement pattern");
@@ -123,11 +122,21 @@ y
         this.hubConnection.send("ResetPiece", editorId);
     }
 
+    // Board editor
+    sendCreateBoardEditor(editorId: string): void {
+        this.hubConnection.send('CreateBoardEditor', editorId);
+    }
+
+    setBoardEditorBoardSize(editorId: string): void {
+        console.log("setting board editor size");
+        this.hubConnection.send("SetBoardEditorSize", editorId, 10, 10);
+    }
+
     /**
      * Requests the server to send an event with the board state
     */
-   async requestBoardState(editorId: string): Promise<EditorState> {
-       return this.hubConnection.invoke('RequestState', editorId);
+   async requestPieceEditorBoardState(editorId: string): Promise<PieceEditorState> {
+       return this.hubConnection.invoke('RequestPieceEditorState', editorId);
    }
 
    async requestPatternState(editorId: string): Promise<PatternState> {
@@ -146,7 +155,12 @@ y
     
 }
 
-export interface EditorState {
+export interface BoardEditorState {
+    board: string[],
+    boardSize: BoardSize,
+}
+
+export interface PieceEditorState {
     board: string[],
     boardSize: BoardSize,
     moves: Move[],

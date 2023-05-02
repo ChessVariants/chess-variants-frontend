@@ -1,7 +1,8 @@
 import {  Container, Paper} from "@mui/material";
-import {  Theme } from "@material-ui/core";
+import {  Button, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import SizeInput from "../SizeInput";
+import EditorService from "../../../Services/EditorService";
 
 const useStyles = makeStyles<Theme>(({
     Container: {
@@ -14,6 +15,8 @@ const useStyles = makeStyles<Theme>(({
 
 export default function BoardSideInfo(props: { editorID: string }) {
 
+    const editorService = EditorService.getInstance();
+
     const { editorID } = props;
     const classes = useStyles();
 
@@ -21,6 +24,7 @@ export default function BoardSideInfo(props: { editorID: string }) {
         <Container>
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
                 <SizeInput editorID={editorID} ></SizeInput>
+                <Button style={{color: "#FFFFFF"}} onClick={() => editorService.setBoardEditorBoardSize(editorID)} >Klick</Button>
             </Paper>
         </Container>
     );

@@ -58,7 +58,7 @@ export default function SizeInput(props: { editorID: string }) {
                 <label htmlFor="cols">Cols:</label>
                 <input id="cols" type="text" value={cols} onChange={handleColsChange} style={{ width: "25px", position: "relative", marginLeft: "10px" }} />
             </div>
-            <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setBoardSize(editorID, Number(rows), Number(cols)) }}>Update board size</Button>
+            <Button disabled={!isBoardSizeValid} onClick={() => { editorService.setPieceEditorBoardSize(editorID, Number(rows), Number(cols)) }}>Update board size</Button>
         </FormGroup>
     );
 
