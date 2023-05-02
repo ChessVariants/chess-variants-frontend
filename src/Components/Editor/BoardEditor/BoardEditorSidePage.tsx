@@ -1,8 +1,6 @@
 import {  Container, Paper} from "@mui/material";
 import {  Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import PieceSettings from "../PieceEditor/PieceSettings";
-import PatternInputs from "../PieceEditor/PatternInputs";
 import SizeInput from "../SizeInput";
 
 const useStyles = makeStyles<Theme>(({

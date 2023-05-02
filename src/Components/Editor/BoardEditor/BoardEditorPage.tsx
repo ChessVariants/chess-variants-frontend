@@ -13,6 +13,7 @@ const useStyles = makeStyles<Theme>(({
         textAlign: "center",
         marginTop: "1vw",
         display: "flex",
+        alignItems: "center",
     },
 }));
 
@@ -37,7 +38,7 @@ export default function BoardEditorPage() {
     }
 
     return (
-        <Box className={classes.Container} style={{ paddingTop: 50, paddingLeft: 450 }} sx={{justifyContent: 'left'}} >
+        <Box className={classes.Container} style={{ paddingLeft: 450 }} >
             <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
             <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
         </Box>
