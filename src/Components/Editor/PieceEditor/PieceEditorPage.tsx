@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import EditorBoard from "../EditorBoard";
+import EditorBoard from "./PieceEditorBoard";
 import EditorSidePage from "./PieceEditorSidePage";
 import PatternList from "./PatternList";
 import { useEffect, useState } from "react";

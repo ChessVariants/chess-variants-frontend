@@ -1,10 +1,10 @@
 import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
-import Square from "../Game/Square";
+import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
-import EditorService, { EditorEvents, EditorState } from "../../Services/EditorService";
-import { Move } from "../../Services/GameService";
+import EditorService, { EditorEvents, EditorState } from "../../../Services/EditorService";
+import { Move } from "../../../Services/GameService";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -50,7 +50,7 @@ const initialState: EditorState = {
     square: "",
 };
 
-export default function EditorBoard(props: { editorID: string }) {
+export default function PieceEditorBoard(props: { editorID: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 

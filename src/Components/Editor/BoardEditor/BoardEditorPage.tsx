@@ -1,11 +1,10 @@
 import { Box } from "@mui/system";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import EditorBoard from "../EditorBoard";
 import { useEffect, useState } from "react";
 import EditorService from "../../../Services/EditorService";
-import PatternList from "../PieceEditor/PatternList";
-import PieceEditorSidePage from "../PieceEditor/PieceEditorSidePage";
+import BoardEditorBoard from "./BoardEditorBoard";
+import BoardEditorSidePage from "./BoardEditorSidePage";
 
 const useStyles = makeStyles<Theme>(({
     Container: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function PieceEditorPage() {
+export default function BoardEditorPage() {
 
     const editorService: EditorService = EditorService.getInstance();
 
@@ -38,11 +37,9 @@ export default function PieceEditorPage() {
     }
 
     return (
-        <Box className={classes.Container} style={{ paddingTop: 50 }} >
-            <h1> Board editor</h1>
-            <PatternList editorID={editorID} ></PatternList>
-            <EditorBoard editorID={editorID}></EditorBoard>
-            <PieceEditorSidePage editorID={editorID}></PieceEditorSidePage>
+        <Box className={classes.Container} style={{ paddingTop: 50, paddingLeft: 450 }} sx={{justifyContent: 'left'}} >
+            <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
+            <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
         </Box>
     );
 }
