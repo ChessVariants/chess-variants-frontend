@@ -1,5 +1,5 @@
 import { Box, Button, Divider, FormGroup, FormLabel, Stack, Typography } from "@mui/material";
-import EditorService from "../../Services/EditorService";
+import EditorService from "../../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
 export default function PatternInputs(props: { editorID: string }) {

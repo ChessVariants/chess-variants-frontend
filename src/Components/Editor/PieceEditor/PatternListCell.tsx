@@ -1,5 +1,5 @@
 import TableCell from '@mui/material/TableCell';
-import EditorService from "../../Services/EditorService";
+import EditorService from "../../../Services/EditorService";
 import { IconButton } from "@mui/material";
 import { Typography } from "@material-ui/core";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';

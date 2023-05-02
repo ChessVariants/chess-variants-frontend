@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import EditorService, { PatternState } from "../../Services/EditorService";
+import EditorService, { PatternState } from "../../../Services/EditorService";
 import { Button, Container, Theme } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import PatternListCell from "./PatternListCell";

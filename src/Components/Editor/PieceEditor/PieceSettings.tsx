@@ -1,6 +1,6 @@
 import { Box, Button, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Switch } from "@mui/material";
 import { FormControl } from "@material-ui/core";
-import EditorService from "../../Services/EditorService";
+import EditorService from "../../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
 export default function PieceSettings(props: { editorID: string }) {

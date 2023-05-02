@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import EditorPage from './Components/Editor/EditorPage';
+import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
 import EditorService from './Services/EditorService';
 import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
@@ -144,7 +144,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/pieceEditor" element={<EditorPage />} />
+        <Route path="/pieceEditor" element={<PieceEditorPage />} />
         <Route path="/match" element={<MatchPage />} />
         <Route path="/match/:gameID" element={<MatchPage />} />
         <Route path="/new" element={<SetupGame />} />

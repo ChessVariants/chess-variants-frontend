@@ -1,11 +1,11 @@
 import { Box } from "@mui/system";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import EditorBoard from "../Editor/EditorBoard";
-import EditorSidePage from "./EditorSidePage";
+import EditorBoard from "../EditorBoard";
+import EditorSidePage from "./PieceEditorSidePage";
 import PatternList from "./PatternList";
 import { useEffect, useState } from "react";
-import EditorService from "../../Services/EditorService";
+import EditorService from "../../../Services/EditorService";
 
 const useStyles = makeStyles<Theme>(({
   Container: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles<Theme>(({
   },
 }));
 
-export default function EditorPage() {
+export default function PieceEditorPage() {
 
   const editorService: EditorService = EditorService.getInstance();
 
