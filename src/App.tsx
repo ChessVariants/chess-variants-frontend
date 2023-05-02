@@ -9,11 +9,13 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
 import EditorService from './Services/EditorService';
 import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
+import EditorPage from './Components/Editor/EditorPage';
+import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
+import BoardEditorPage from './Components/Editor/BoardEditor/BoardEditorPage';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -144,7 +146,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/editor" element={<EditorPage />} />
         <Route path="/pieceEditor" element={<PieceEditorPage />} />
+        <Route path="/boardEditor" element={<BoardEditorPage />} />
         <Route path="/match" element={<MatchPage />} />
         <Route path="/match/:gameID" element={<MatchPage />} />
         <Route path="/new" element={<SetupGame />} />
