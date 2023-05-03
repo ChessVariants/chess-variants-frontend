@@ -7,7 +7,7 @@ import { Theme } from "@material-ui/core";
 /**
  * MUI styles provider
  */
-const useStyles = makeStyles<Theme>(theme => ({
+export const useStyles = makeStyles<Theme>(theme => ({
     SquareContainer: {
         width: "auto",
         height: "auto",
@@ -26,6 +26,9 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
     WhiteActive: {
         backgroundColor: "#C4FEC4",
+    },
+    Highlighted: {
+        backgroundColor: "#9fdafc",
     },
 
     Square: {
@@ -63,6 +66,7 @@ const useStyles = makeStyles<Theme>(theme => ({
         margin: "0",
         marginBlockStart: "0",
         marginBlockEnd: "0",
+        userSelect: "none",
     },
 }));
 
@@ -71,7 +75,7 @@ const useStyles = makeStyles<Theme>(theme => ({
  * @param props includes boolean for color, id of the piece, coordinate (position, i.e. e4), clickfunction and reference to list of active squares
  * @returns 
  */
-export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any }) {
+export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any, highlight?: boolean}) {
 
     const classes = useStyles();
     /**
@@ -88,6 +92,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         coordinate,
         clickFunction,
         active,
+        highlight,
     } = props;
 
     /**
@@ -118,13 +123,24 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
 
     }, [active]);
 
+    const Color = () => {
+        if (!activated && highlight) {
+            return classes.Highlighted;
+        }
+
+        if (isWhite) {
+            return activated ? classes.WhiteActive : classes.White;
+        }
+        return activated ? classes.BlackActive : classes.Black;
+    }
+
 
     /**
      * Returns HTML
      */
     if (isWhite) {
         return (
-            <Box className={`${classes.SquareContainer} ${activated ? classes.WhiteActive : classes.White}`} onClick={() => clickFunction("")}>
+            <Box className={`${classes.SquareContainer} ${Color()}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
                     {id !== "--" ? <img src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
@@ -137,7 +153,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
     }
     else {
         return (
-            <Box className={`${classes.SquareContainer} ${activated ? classes.BlackActive : classes.Black}`} onClick={() => clickFunction("")}>
+            <Box className={`${classes.SquareContainer} ${Color()}`} onClick={() => clickFunction("")}>
                 <Box className={classes.Square}>
                     {id !== "--" ? <img
                         src={PieceImageAdapter.getImageRef(id)}
