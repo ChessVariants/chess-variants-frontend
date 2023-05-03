@@ -51,7 +51,7 @@ export default function PieceSelector(props: { editorID: string, color: string }
                 </Grid>
                 <Grid item xs={1}>
                     <Box >
-                        <IconButton onClick={() => { editorService.setActivePiece(editorID, "remove")}}>
+                        <IconButton size="large" onClick={() => { editorService.setActivePiece(editorID, "remove")}}>
                             <DeleteIcon fontSize="inherit" />
                         </IconButton>
                     </Box>

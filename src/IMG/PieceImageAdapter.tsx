@@ -26,6 +26,7 @@ import ship from './ship.svg'
 import supertower from './supertower.svg'
 import telescope from './telescope.svg'
 import tower from './tower.svg'
+import whiteCircle from './whiteCircle.svg';
 
 
 /**
@@ -54,8 +55,11 @@ export class PieceImageAdapter {
                 return queen;
             case 'ki':
                 return king;
+            case 'ca':
+                return joker;
             default:
                 return "error"; // ID not found
+
         }
     }
 }

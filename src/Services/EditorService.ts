@@ -148,6 +148,11 @@ export default class EditorService {
         this.hubConnection.send("UpdateSquare", editorId, square);
     }
 
+    buildPiece(editorId: string) {
+        console.log("Building piece");
+        this.hubConnection.send("BuildPiece", editorId, "valle", "IMG/giraffe")
+    }
+
     /**
      * Requests the server to send an event with the board state
     */
@@ -197,5 +202,6 @@ export interface PatternState {
 export enum EditorEvents {
     UpdatedPieceEditorState = "updatedPieceEditorState",
     UpdatedBoardEditorState = "updatedBoardEditorState",
+    BuildFailed = "buildFailed",
     Error = "error",
 }

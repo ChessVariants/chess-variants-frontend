@@ -71,6 +71,10 @@ export default function PieceEditorBoard(props: { editorID: string }) {
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
             alert(errorMessage);
         })
+
+        editorService.on(EditorEvents.BuildFailed, (errorMessage: string) => {
+            alert(errorMessage);
+        })
     }, [])
 
     let tempPositions = editorState.board;

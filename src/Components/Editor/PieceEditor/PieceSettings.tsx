@@ -106,7 +106,9 @@ export default function PieceSettings(props: { editorID: string }) {
                     </Button>
                     <Button
                         color={"createColor"}
-                        onClick={() => { }}
+                        onClick={() => {
+                            editorService.buildPiece(editorID);
+                        }}
                         type="submit"
                         variant="contained"
                         sx={{ mt: 2, mb: 2, p: 2, width: "40%" }}
