@@ -75,7 +75,7 @@ export default function ListWithPopup({ title, type, singleton, width = "200px",
             </div>
             <div>
             </div>
-            <MyPopup isOpen={isOpen} setIsOpen={setIsOpen} type={type} onClickItem={(item) => handleClickItem(item)} addedItems={itemsAdded} singleton={singleton} items={items} setItems={setItems}></MyPopup>
+            <MyPopup isOpen={isOpen} setIsOpen={setIsOpen} title={type + "s"} onClickItem={(item) => handleClickItem(item)} addedItems={itemsAdded} singleton={singleton} items={items} setItems={setItems}></MyPopup>
         </div>
     );
 }

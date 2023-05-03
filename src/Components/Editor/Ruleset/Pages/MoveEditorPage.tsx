@@ -8,8 +8,11 @@ import ListWithPopup from "../Components/ListWithPopup";
 import PositionCreatorPopup from "../Components/PositionCreatorPopup";
 import ActionList from "../Components/ActionList";
 import SavePopup from "../Components/SavePopup";
+import MyPopup from "../Components/Popup";
+import CookieService, { Cookie } from "../../../../Services/CookieService";
+import { getPredicates } from "./ConditionEditorPage";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type PositionInfo = AbsoluteInfo | RelativeInfo;
 
@@ -49,16 +52,18 @@ type MoveInfo = {
   description: string;
 }
 
+type ConditionInfo = {
+  name: string;
+  description: string;
+  code: string;
+}
+
+
 export default function MoveEditorPage() {
 
 
   const classes = commonClasses();
 
-  const [selectedOption, setSelectedOption] = useState('Standard Chess');
-
-  const handleDropdownChange = (newSelectedOption: string) => {
-    setSelectedOption(newSelectedOption);
-  };
 
   const [isPositionCreatorOpen, setIsPositionCreatorOpen] = useState(false);
   const [saveWindowOpen, setSaveWindowOpen] = useState(false)
@@ -79,10 +84,15 @@ export default function MoveEditorPage() {
   const [listJSON, setListJSON] = useState("")
 
   const [identifier, setIdentifier] = useState("")
+  const [isMovePopupOpen, setIsMovePopupOpen] = useState(false)
+
+  // SAVE POPUP
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
 
   const saveMove = (name: string, description: string) => {
-    var info: MoveInfo = { posInfo: positionCreatorInfo.posInfo, actionDict: JSON.parse(listJSON), identifier: identifier, predicate: selectedOption, name, description }
+    var info: MoveInfo = { posInfo: positionCreatorInfo.posInfo, actionDict: JSON.parse(listJSON), identifier: identifier, predicate: selectedCondition, name, description }
     console.log(info)
   }
 
@@ -118,6 +128,38 @@ export default function MoveEditorPage() {
     setIdentifier(event.target.value)
   }
 
+  const [deleteMode, setDeleteMode] = useState(false);
+
+  const openPopup = (deleteMode: boolean) => {
+
+    setDeleteMode(deleteMode);
+    setIsMovePopupOpen(true)
+  }
+
+
+  const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
+  const [conditions, setConditions] = useState<string[]>([]);
+  const [selectedCondition, setSelectedCondition] = useState<string>("")
+
+
+  const selectCondition = (selectedItem: string) => {
+    setSelectedCondition(selectedItem)
+    setIsConditionPopupOpen(false)
+  }
+
+  let token = CookieService.getInstance().get(Cookie.JwtToken)
+
+  useEffect(() => {
+
+    const updateConditions = async () => {
+      const predicatesTemp: ConditionInfo[] = (await getPredicates(token));
+      setConditions(predicatesTemp.map((item) => item.name))
+    }
+
+    updateConditions();
+
+  }, []);
+
 
   return (
     <div>
@@ -131,11 +173,11 @@ export default function MoveEditorPage() {
                 <Typography variant="h5" sx={{ letterSpacing: '2px' }}>Condition:</Typography>
               </Grid>
               <Grid sx={{ ml: 2 }}>
-                <MyDropdown
-                  options={['Standard Chess', 'Option 2', 'Option 3']}
-                  defaultValue="Standard Chess"
-                  onChange={handleDropdownChange}
-                />
+                <Button variant="contained" color="joinColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 0 }} onClickCapture={() => setIsConditionPopupOpen(true)}>
+                  {selectedCondition !== "" ? selectedCondition : "Select Condition"}
+                </Button>
+                <MyPopup isOpen={isConditionPopupOpen} setIsOpen={setIsConditionPopupOpen} title={"Select Condition"} onClickItem={(item: string) => selectCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={conditions} setItems={() => { }}></MyPopup>
+
               </Grid>
             </Grid>
             <Grid container alignItems="center" justifyItems={"center"} justifyContent="center">
@@ -161,14 +203,38 @@ export default function MoveEditorPage() {
             </Grid>
             <PositionCreatorPopup positionCreatorInfo={positionCreatorInfo} onSavePosition={() => savePositionCreatorToAction(positionCreatorInfo.posInfo)} isOpen={isOpen} resetPositionCreatorPopup={() => resetPositionCreatorPopup(0, true)} setIsOpen={setIsOpen} fixed={true} />
             <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
-            <Button color={"browserColor"} onClick={() => { }}
-              type="submit"
-              variant="contained"
-              sx={{ mt: 2, mb: 0, width: 150, p: 1 }}
-              onClickCapture={() => setSaveWindowOpen(true)}>
-              Save
-            </Button>
-            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveMove}></SavePopup>
+            <Grid container marginTop="12px" alignItems="right" justifyItems={"right"} justifyContent="right" >
+              <Grid>
+                <Button color={"createColor"} onClick={() => { }}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => openPopup(false)}>
+                  Load
+                </Button>
+              </Grid>
+              <Grid>
+                <Button color={"browserColor"} onClick={() => { }}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => setSaveWindowOpen(true)}>
+                  Save
+                </Button>
+              </Grid>
+              <Grid>
+                <Button color={"editorColor"} onClick={() => { }}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => openPopup(true)}>
+                  Delete
+                </Button>
+              </Grid>
+            </Grid>
+            <MyPopup isOpen={isMovePopupOpen} setIsOpen={setIsMovePopupOpen} title={(deleteMode ? "Delete" : "Load") + " Move"} onClickItem={(item: string) => { }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
+            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveMove} name={name} setName={setName} description={description} setDescription={setDescription} type={"Move"}></SavePopup>
+
           </Paper>
         </Container>
       </ThemeProvider>

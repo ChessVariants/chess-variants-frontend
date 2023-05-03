@@ -41,7 +41,7 @@ type ItemInfo = {name:string, id:number};
 type MyPopupProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  type: string;
+  title: string;
   onClickItem: (newItem: string) => void;
   addedItems: {name:string, id:number}[];
   singleton: boolean;
@@ -50,7 +50,7 @@ type MyPopupProps = {
 }
 
 
-export default function MyPopup({ isOpen, setIsOpen, type, onClickItem, addedItems, singleton, items, setItems}: MyPopupProps) {
+export default function MyPopup({ isOpen, setIsOpen, title, onClickItem, addedItems, singleton, items, setItems}: MyPopupProps) {
 
 
   const classes = commonClasses();
@@ -81,7 +81,7 @@ export default function MyPopup({ isOpen, setIsOpen, type, onClickItem, addedIte
             <Paper className={classes.CenteredBasicCard} sx={{ zIndex: 10 }}>
               <Grid>
                 <Grid>
-                  <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 2, mt: 1, mr: 0, ml: 0 }}>{type}s</Typography>
+                  <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 2, mt: 1, mr: 0, ml: 0 }}>{title}</Typography>
                 </Grid>
                 <Grid>
                 </Grid>

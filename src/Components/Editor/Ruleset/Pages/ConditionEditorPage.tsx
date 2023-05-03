@@ -7,8 +7,7 @@ import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
 
-async function getPredicates(token: string) : Promise<ConditionInfo[]>{
-  
+export async function getPredicates(token: string): Promise<ConditionInfo[]> {
 
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
     method: "GET",
@@ -20,24 +19,35 @@ async function getPredicates(token: string) : Promise<ConditionInfo[]>{
 
 }
 
+type ConditionDict = { [name: string]: ConditionInfo }
 
 type ConditionInfo = {
   name: string;
   description: string;
   code: string;
+  null?: string;
+}
+
+type DeleteConditionInfo = {
+  name: string;
 }
 
 export default function ConditionEditorPage() {
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
 
-  const [isLoadPopupOpen, setIsLoadPopupOpen] = useState(false);
+  const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
 
-  const [conditionCode, setConditionCode] = useState("");
+  const [deleteMode, setDeleteMode] = useState(false);
 
-  const [predicates, setPredicates] = useState<ConditionInfo[]>([]);
+  const [conditionCode, setConditionCode] = useState<string>("");
 
-  const [conditionInfo, setConditionInfo] = useState({ name: "", description: "", code: "" } as ConditionInfo)
+  const [conditions, setConditions] = useState<ConditionDict>({});
+
+
+  // SAVE POPUP
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
   const classes = commonClasses();
 
@@ -115,27 +125,57 @@ export default function ConditionEditorPage() {
   });
   let token = CookieService.getInstance().get(Cookie.JwtToken)
 
-  const openLoadPopup = async () => {
-    
 
-    const predicates2 : ConditionInfo[] = (await getPredicates(token));
-    
-    console.log(predicates2)
-    console.log(typeof(predicates2))
-    console.log(predicates2.at(0))
+  const updateConditions = async () => {
 
-    setPredicates(predicates2)
-    setIsLoadPopupOpen(true)
+    const predicatesTemp: ConditionInfo[] = (await getPredicates(token));
 
+    let conditionDict: ConditionDict = {};
+    predicatesTemp.map((item) => {
+      conditionDict[item.name] = item
+    })
+
+    setConditions(conditionDict)
+  }
+
+
+  const openConditionPopup = (deleteMode: boolean) => {
+
+    setDeleteMode(deleteMode);
+    updateConditions();
+    setIsConditionPopupOpen(true)
 
   }
 
-  const loadCondition = (itemClicked: string) => {
-    
+  const selectCondition = (itemClicked: string) => {
+    if (deleteMode) {
+      let deleteConditionInfo: DeleteConditionInfo = { name: itemClicked };
+      // DELETE CODE HERE
+      fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate/" + itemClicked, {
+        method: "DELETE",
+        headers: {
+          'Accept': "application/json",
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': "application/json",
+        },
+      });
+      updateConditions();
+
+    }
+    else {
+      let retrievedInfo: ConditionInfo = conditions[itemClicked];
+      setName(retrievedInfo.name);
+      setDescription(retrievedInfo.description);
+      setConditionCode(retrievedInfo.code);
+    }
+    setIsConditionPopupOpen(false)
   };
 
   const saveCondition = (name: string, description: string) => {
-    setConditionInfo({ name: name, description: description, code: conditionCode })
+    if(name === "" || conditionCode === "")
+      return;
+
+    let conditionInfo = { name: name, description: description, code: conditionCode, null: null };
 
     console.log(JSON.stringify(conditionInfo))
     fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
@@ -147,6 +187,8 @@ export default function ConditionEditorPage() {
       },
       body: JSON.stringify(conditionInfo),
     }).then(o => console.log(o));
+
+
   }
 
 
@@ -168,7 +210,7 @@ export default function ConditionEditorPage() {
                 {lines_}
               </div>
               <div>
-                <textarea style={codeEditorStyle} spellCheck={false} defaultValue={value} onChange={handleChangeCondition}></textarea>
+                <textarea style={codeEditorStyle} spellCheck={false} onChange={handleChangeCondition} value={conditionCode}></textarea>
               </div>
 
             </Grid>
@@ -186,7 +228,7 @@ export default function ConditionEditorPage() {
                   &#9654; Compile
                 </Button>
               </Grid><Grid>
-                <Button color={"createColor"} onClick={openLoadPopup}
+                <Button color={"createColor"} onClick={() => openConditionPopup(false)}
                   type="submit"
                   variant="contained"
                   sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}>
@@ -197,18 +239,27 @@ export default function ConditionEditorPage() {
                 <Button color={"browserColor"} onClick={() => { }}
                   type="submit"
                   variant="contained"
-                  sx={{ mt: 0, mb: 0, width: 150, p: 1 }}
-                  onClickCapture={() => setIsOpen(true)}>
+                  sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => setIsSavePopupOpen(true)}>
                   Save
+                </Button>
+              </Grid>
+              <Grid>
+                <Button color={"editorColor"} onClick={() => { }}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 0, mb: 0, width: 150, p: 1 }}
+                  onClickCapture={() => openConditionPopup(true)}>
+                  Delete
                 </Button>
               </Grid>
             </Grid>
 
-            <MyPopup isOpen={isLoadPopupOpen} setIsOpen={setIsLoadPopupOpen} type={"Predicate"} onClickItem={(item: string) => loadCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={predicates.map((item) => item.name)} setItems={() => {}}></MyPopup>
+            <MyPopup isOpen={isConditionPopupOpen} setIsOpen={setIsConditionPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Condition"} onClickItem={(item: string) => selectCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={Object.keys(conditions)} setItems={() => { }}></MyPopup>
           </Paper>
         </Container>
 
-        <SavePopup isOpen={isOpen} setIsOpen={setIsOpen} save={saveCondition}></SavePopup>
+        <SavePopup isOpen={isSavePopupOpen} setIsOpen={setIsSavePopupOpen} save={saveCondition} name={name} setName={setName} description={description} setDescription={setDescription} type="Condition"></SavePopup>
 
       </ThemeProvider>
     </div>

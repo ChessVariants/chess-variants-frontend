@@ -1,4 +1,4 @@
-import { Button, Paper,} from "@mui/material";
+import { Button, Paper, TextField } from "@mui/material";
 import { List, ListItem, ListItemText } from "@material-ui/core"
 import PositionCreatorPopup from "./PositionCreatorPopup";
 
@@ -39,15 +39,18 @@ type ActionMoveInfo = {
   from: PositionInfo;
   to: PositionInfo;
 }
+
 type ActionSetPieceInfo = {
   at: PositionInfo;
+  identifier: string;
 }
 
 type ActionWin = {
   whiteWins: boolean;
 }
+
 type ActionTie = {
-  null:null
+  null: null
 }
 
 
@@ -112,7 +115,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       return { at: { coord: "a1" } } as ActionSetPieceInfo;
     }
     else
-      return {null: null} as ActionTie;
+      return { null: null } as ActionTie;
   }
 
   const getActionInfo = (id: number) => {
@@ -277,8 +280,16 @@ function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
     return "";
   }
 
+  const handleChangeIdentifier = (event: React.ChangeEvent<HTMLInputElement>) => {
+    actionInfo.identifier = event.target.value;
+  }
+
   return (
     <div>
+
+      <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier}>
+
+      </TextField>
       <Button variant="contained" color="createColor" style={{ height: '50px', width: '125px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>
         {positionInfoToString(actionInfo.at)}
       </Button>

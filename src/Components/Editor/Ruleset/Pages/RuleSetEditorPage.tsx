@@ -8,8 +8,9 @@ import MyDropdown from "../Components/Dropdown";
 import ListWithPopup from "../Components/ListWithPopup";
 import { useEffect, useState } from "react";
 import SavePopup from "../Components/SavePopup";
-
-
+import CookieService, { Cookie } from "../../../../Services/CookieService";
+import { getPredicates } from "./ConditionEditorPage";
+import MyPopup from "../Components/Popup";
 
 type RuleSetInfo = {
   name: string;
@@ -21,46 +22,83 @@ type RuleSetInfo = {
 }
 
 
+type ConditionInfo = {
+  name: string;
+  description: string;
+  code: string;
+}
+
 type ItemInfo = { name: string, id: number }
+
 
 export default function RuleSetEditorPage() {
 
   const classes = commonClasses();
 
-  const [selectedOption, setSelectedOption] = useState('Option 1');
   const [saveWindowOpen, setSaveWindowOpen] = useState(false);
+  const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
+  const [isRuleSetPopupOpen, setIsRuleSetPopupOpen] = useState(false);
 
   const [addedSpecialMoves, setAddedSpecialMoves] = useState([] as ItemInfo[]);
   const [addedEvents, setAddedEvents] = useState([] as ItemInfo[]);
   const [addedStalemateEvents, setAddedStalemateEvents] = useState([] as ItemInfo[]);
   const [ruleSetInfo, setRuleSetInfo] = useState({ name: "", description: "", condition: "", specialMoves: [], events: [], stalemateEvents: [] } as RuleSetInfo)
+  // SAVE POPUP
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
-  const handleDropdownChange = (newSelectedOption: string) => {
-    setSelectedOption(newSelectedOption);
-  };
 
 
   const saveEvent = (name: string, description: string) => {
-    setRuleSetInfo({ name: name, description: description, condition: selectedOption, specialMoves: addedSpecialMoves, events: addedEvents, stalemateEvents: addedStalemateEvents });
+    setRuleSetInfo({ name: name, description: description, condition: selectedCondition, specialMoves: addedSpecialMoves, events: addedEvents, stalemateEvents: addedStalemateEvents });
   }
 
   const navigate = useNavigate();
   const navigatePage = (link: string) => {
     navigate(link);
   }
-  const doNothing = () => {
 
-  }
+  let token = CookieService.getInstance().get(Cookie.JwtToken)
 
   const [specialMoves, setSpecialMoves] = useState(['En Passant', 'Castle King Side', 'Castle Queen Side', 'Double Pawn Move']);
   const [events, setEvents] = useState(['Promotion', 'Explosion']);
   const [stalemateEvents, setStalemateEvents] = useState(['Win If King Checked', 'Tie If King Not Checked']);
 
-  
+  const [conditions, setConditions] = useState<string[]>([]);
+  const [selectedCondition, setSelectedCondition] = useState<string>("")
+
+
+  const selectCondition = (selectedItem: string) => {
+    setSelectedCondition(selectedItem)
+    setIsConditionPopupOpen(false)
+  }
+
+  useEffect(() => {
+
+    const updateConditions = async () => {
+      const predicatesTemp: ConditionInfo[] = (await getPredicates(token));
+      setConditions(predicatesTemp.map((item) => item.name))
+    }
+
+    updateConditions();
+
+  }, []);
+
   useEffect(() => {
     console.log(ruleSetInfo)
   }, [ruleSetInfo]);
 
+
+
+  const [deleteMode, setDeleteMode] = useState(false);
+
+  const openPopup = (deleteMode: boolean) => {
+  
+      setDeleteMode(deleteMode);
+      setIsRuleSetPopupOpen(true)
+  }
+
+  
   return (
     <div>
       <ThemeProvider theme={CustomDarkTheme}>
@@ -74,11 +112,11 @@ export default function RuleSetEditorPage() {
               <Grid>
                 <Container >
                   <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 2, mt: 4 }}>Move Condition:</Typography>
-                  <MyDropdown
-                    options={['Standard Chess', 'Option 2', 'Option 3']}
-                    defaultValue="Standard Chess"
-                    onChange={handleDropdownChange}
-                  />
+                  <Button variant="contained" color="joinColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 0 }} onClickCapture={() => setIsConditionPopupOpen(true)}>
+                    {selectedCondition !== "" ? selectedCondition : "Select Condition"}
+                  </Button>
+                  <MyPopup isOpen={isConditionPopupOpen} setIsOpen={setIsConditionPopupOpen} title={"Select Condition"} onClickItem={(item: string) => selectCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={conditions} setItems={() => { }}></MyPopup>
+
                   <div>
                     <Button color={"createColor"} onClick={() => { }}
                       type="submit"
@@ -112,14 +150,38 @@ export default function RuleSetEditorPage() {
               </Grid>
             </Grid>
 
-            <Button color={"browserColor"} onClick={() => { }}
-              type="submit"
-              variant="contained"
-              sx={{ mt: 2, mb: 0, width: 150, p: 1 }}
-              onClickCapture={() => setSaveWindowOpen(true)}>
-              Save
-            </Button>
-            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent}></SavePopup>
+            <Grid container marginTop="12px" alignItems="right" justifyItems={"right"} justifyContent="right" >
+              <Grid>
+                <Button color={"createColor"} onClick={() => setIsRuleSetPopupOpen(true)}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mb: 0, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => openPopup(false)}>
+                  Load
+                </Button>
+              </Grid>
+              <Grid>
+                <Button color={"browserColor"} onClick={() => { }}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => setSaveWindowOpen(true)}>
+                  Save
+                </Button>
+              </Grid>
+              <Grid>
+                <Button color={"editorColor"} onClick={() => setIsRuleSetPopupOpen(true)}
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 2, mb: 0, mr: 2, width: 150, p: 1 }}
+                  onClickCapture={() => openPopup(true)}>
+                  Delete
+                </Button>
+              </Grid>
+            </Grid>
+            <MyPopup isOpen={isRuleSetPopupOpen} setIsOpen={setIsRuleSetPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Ruleset"} onClickItem={(item: string) => {}} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
+
+            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent} name={name} setName={setName} description={description} setDescription={setDescription} type={"Ruleset"}></SavePopup>
           </Paper>
         </Container>
       </ThemeProvider>
@@ -142,7 +204,7 @@ function MyList({ itemsAdded, onRemoveItem, width, height, setJSON }: MyListProp
     setJSON(JSON.stringify(itemsAdded));
     console.log("updated")
   }, [itemsAdded]);
-  
+
 
   return (
     <Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
