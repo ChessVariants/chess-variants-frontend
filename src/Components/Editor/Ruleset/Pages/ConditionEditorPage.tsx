@@ -6,6 +6,7 @@ import MyPopup from "../Components/Popup";
 import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
+import { ConditionDict, ConditionInfo, DeleteConditionInfo } from "../Types";
 
 export async function getPredicates(token: string): Promise<ConditionInfo[]> {
 
@@ -17,19 +18,6 @@ export async function getPredicates(token: string): Promise<ConditionInfo[]> {
     },
   }).then(o => o.json().then(o => o.predicates));
 
-}
-
-type ConditionDict = { [name: string]: ConditionInfo }
-
-type ConditionInfo = {
-  name: string;
-  description: string;
-  code: string;
-  null?: string;
-}
-
-type DeleteConditionInfo = {
-  name: string;
 }
 
 export default function ConditionEditorPage() {
@@ -175,7 +163,7 @@ export default function ConditionEditorPage() {
     if(name === "" || conditionCode === "")
       return;
 
-    let conditionInfo = { name: name, description: description, code: conditionCode, null: null };
+    let conditionInfo = { name: name, description: description, code: conditionCode };
 
     console.log(JSON.stringify(conditionInfo))
     fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {

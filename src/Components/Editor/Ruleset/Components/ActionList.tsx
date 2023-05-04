@@ -9,10 +9,11 @@ import MyDropdown from "./Dropdown";
 
 type PositionCreatorInfo = { posInfo: PositionInfo, id: number, editingFrom: boolean }
 
-type PositionInfo = AbsoluteInfo | RelativeInfo;
+type PositionInfo = { absolute: AbsoluteInfo | null, relative: RelativeInfo | null }
+
 
 type AbsoluteInfo = {
-  coord: string;
+  coordinate: string;
 }
 
 type RelativeInfo = {
@@ -31,9 +32,9 @@ type MoveInfo = {
 
 type ItemInfo = { name: string, id: number }
 
-type ActionItemInfo = { itemInfo: ItemInfo, actionInfo: ActionInfo }
+type ActionItemInfo = { itemInfo: ItemInfo, actionInfo: ActionDTO }
 
-type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo | ActionTie;
+type ActionDTO = { win: ActionWin | null, set: ActionSetPieceInfo | null, move: ActionMoveInfo | null, tie: boolean }
 
 type ActionMoveInfo = {
   from: PositionInfo;
@@ -41,20 +42,16 @@ type ActionMoveInfo = {
 }
 
 type ActionSetPieceInfo = {
-  at: PositionInfo;
   identifier: string;
+  at: PositionInfo;
 }
 
 type ActionWin = {
-  whiteWins: boolean;
-}
-
-type ActionTie = {
-  null: null
+  white: boolean;
 }
 
 
-type ActionDict = { [id: number]: ActionInfo }
+type ActionDict = { [id: number]: ActionDTO }
 
 interface ActionListProps {
   itemsAdded: ItemInfo[];
@@ -68,7 +65,7 @@ interface ActionListProps {
 
 export default function ActionList({ itemsAdded, onRemoveItem, width, height, setJSON }: ActionListProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { coord: "a1" }, id: 0, editingFrom: true } as PositionCreatorInfo);
+  const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true } as PositionCreatorInfo);
 
   const [actionInfo, setActionInfo] = useState({} as ActionDict);
 
@@ -77,10 +74,18 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
   }
 
   useEffect(() => {
+    console.log("saving actionInfo")
     localStorage.setItem('actionInfo', JSON.stringify(actionInfo));
   }, [actionInfo]);
 
   useEffect(() => {
+    console.log("Before: " + JSON.stringify(actionInfo))
+    updateDict();
+    console.log("After: " + JSON.stringify(actionInfo))
+  }, [itemsAdded]);
+
+  useEffect(() => {
+    console.log("retrieving actionInfo")
     const savedData = localStorage.getItem('actionInfo');
     if (savedData !== null) {
       updateJSON();
@@ -88,12 +93,12 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     }
   }, []);
 
-  const isMoveAction = (info: ActionInfo) => {
-    return 'from' in info && 'to' in info;
+  const isMoveAction = (info: ActionDTO) => {
+    return info.move !== null;
   }
 
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
-    setPositionCreatorInfo({ posInfo: { coord: "a1" }, id: id, editingFrom: editingFrom } as PositionCreatorInfo)
+    setPositionCreatorInfo({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: id, editingFrom: editingFrom } as PositionCreatorInfo)
   }
 
   const openPositionCreatorPopup = (id: number, editingFrom: boolean) => {
@@ -102,27 +107,59 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
   }
 
   const fromItemToActionInfo = (item: ItemInfo) => {
+    let action: ActionDTO = actionInfo[item.id] === undefined ? { move: null, win: null, set: null, tie: false } : actionInfo[item.id];
+
     if (item.name === "Win") {
-      return { whiteWins: true } as ActionWin;
+      if (action.win === null) {
+        action.win = { white: true };
+      }
+      action.move = null;
+      action.set = null;
+      action.tie = false;
     }
     else if (item.name === "Move Piece") {
-      return {
-        from: { coord: "a1" },
-        to: { coord: "a1" }
-      } as ActionMoveInfo;
+      if (action.move === null) {
+        action.move = {
+          from: { absolute: { coordinate: "a1" }, relative: null },
+          to: { absolute: { coordinate: "a1" }, relative: null }
+        };
+      }
+      action.win = null;
+      action.set = null;
+      action.tie = false;
     }
     else if (item.name == "Set Piece") {
-      return { at: { coord: "a1" } } as ActionSetPieceInfo;
+      if (action.set === null) {
+        action.set = { identifier: "", at: { absolute: { coordinate: "a1" }, relative: null } };
+      }
+      action.win = null;
+      action.move = null;
+      action.tie = false;
     }
-    else
-      return { null: null } as ActionTie;
+    else {
+      if (action.tie === false) {
+        action.tie = true;
+      }
+      action.win = null;
+      action.move = null;
+      action.set = null;
+    }
+    return action;
+  }
+
+  const updateDict = () => {
+    itemsAdded.map((item) => {
+      if (item !== undefined)
+        actionInfo[item.id] = fromItemToActionInfo(item)
+    });
+    updateJSON();
   }
 
   const getActionInfo = (id: number) => {
-    if (actionInfo[id] === undefined) {
-      actionInfo[id] = fromItemToActionInfo(itemsAdded[id])
-      updateJSON();
-    }
+    if (actionInfo[id] === undefined)
+      return fromItemToActionInfo(itemsAdded[id]);//{ move: null, win: null, set: null, isTie: false };
+    updateDict();
+    
     return actionInfo[id];
   }
 
@@ -131,17 +168,41 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
 
     let id = positionCreatorInfo.id;
     let currentInfo = getActionInfo(id);
-    if ('from' in currentInfo && 'to' in currentInfo) {
+    if (currentInfo === null)
+      return;
+    if (currentInfo.move !== null) {
       if (positionCreatorInfo.editingFrom)
-        currentInfo.from = positionCreatorInfo.posInfo;
+        currentInfo.move.from = positionCreatorInfo.posInfo;
       else
-        currentInfo.to = positionCreatorInfo.posInfo
+        currentInfo.move.to = positionCreatorInfo.posInfo
     }
-    else if ('at' in currentInfo) {
-      currentInfo.at = positionCreatorInfo.posInfo;
+    else if (currentInfo.set !== null) {
+      currentInfo.set.at = positionCreatorInfo.posInfo;
     }
+
     updateJSON();
     setIsOpen(false)
+  }
+
+
+  const removeItem = (newItem: ItemInfo, id: number) => {
+    delete actionInfo[id];
+    onRemoveItem(newItem);
+    updateJSON();
+
+    console.log(actionInfo);
+    console.log(itemsAdded);
+    /*    actionInfo[id] = null;
+        let j: number = 0;
+        for (let i = 0; i < itemsAdded.length - 1; i++) {
+          if (i === id) {
+            j++;
+          }
+          actionInfo[i] = actionInfo[j]
+          j++;
+        }
+        actionInfo[itemsAdded.length-1] = null;
+        updateJSON();*/
   }
 
   return (
@@ -149,7 +210,10 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       <Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
         <List>
           {itemsAdded.map((item) => (
-            <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={onRemoveItem} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
+            <div>
+              <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
+              {item.id}
+            </div>
           ))}
         </List>
       </Paper>
@@ -176,17 +240,17 @@ function ActionListItem({ item, onRemoveItem, onOpen }: ActionListItemProps) {
     <div>
       <ListItem key={item.itemInfo.id}>
         <ListItemText primary={item.itemInfo.name} />
-        {'whiteWins' in item.actionInfo
-          ? <ActionWin></ActionWin>
-          : ('from' in item.actionInfo && 'to' in item.actionInfo
-            ? <ActionMovePiece onOpen={onOpen} actionInfo={item.actionInfo}></ActionMovePiece>
-            : ('at' in item.actionInfo
-              ? <ActionSetPiece onOpen={onOpen} actionInfo={item.actionInfo}></ActionSetPiece>
+        {item.actionInfo.win !== null
+          ? <ActionWin actionInfo={item.actionInfo.win}></ActionWin>
+          : (item.actionInfo.move !== null
+            ? <ActionMovePiece onOpen={onOpen} actionInfo={item.actionInfo.move}></ActionMovePiece>
+            : (item.actionInfo.set !== null
+              ? <ActionSetPiece onOpen={onOpen} actionInfo={item.actionInfo.set}></ActionSetPiece>
               : <ActionTie></ActionTie>))}
 
 
 
-        <Button variant="contained" color="editorColor" style={{ height: '50px', width: '10px' }} onClickCapture={() => handleRemoveItem(item.itemInfo)}>
+        <Button variant="contained" color="editorColor" style={{ height: '50px', width: '10px' }} onClickCapture={() => onRemoveItem(item.itemInfo)}>
           -
         </Button>
       </ListItem>
@@ -195,15 +259,22 @@ function ActionListItem({ item, onRemoveItem, onOpen }: ActionListItemProps) {
 }
 
 
-function ActionWin() {
+interface ActionWinProps {
+  actionInfo: ActionWin;
+}
 
-  const handleDropdownChange = () => {
+function ActionWin({ actionInfo }: ActionWinProps) {
 
+  const whiteString: string = 'White';
+  const blackString: string = 'Black';
+
+  const handleDropdownChange = (selectedOption: string) => {
+    actionInfo.white = selectedOption == whiteString ? true : false
   }
 
   return (
     <MyDropdown
-      options={['White', 'Black']}
+      options={[whiteString, blackString]}
       defaultValue=""
       onChange={handleDropdownChange}
     />);
@@ -222,26 +293,23 @@ interface ActionMovePieceProps {
   actionInfo: ActionMoveInfo;
 }
 
+const positionInfoToString = (info: PositionInfo) => {
+  if (info.relative !== null) {
+    return (info.relative.to ? 'to' : 'from') + "(" + info.relative.x + ", " + info.relative.y + ")";
+  }
+  else if (info.absolute !== null) {
+    return info.absolute.coordinate;
+  }
+  return "";
+}
+
 function ActionMovePiece({ onOpen, actionInfo }: ActionMovePieceProps) {
 
-
-  const handleDropdownChange = () => {
-
-  }
 
   const handleOpenMenuClick = (bool: boolean) => {
 
   }
 
-  const positionInfoToString = (info: PositionInfo) => {
-    if ('x' in info && 'y' in info && 'to' in info) {
-      return (info.to ? 'to' : 'from') + "(" + info.x + ", " + info.y + ")";
-    }
-    else if ('coord' in info) {
-      return info.coord;
-    }
-    return "";
-  }
 
   return (
     <div>
@@ -262,22 +330,8 @@ interface ActionSetPieceProps {
 function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
 
 
-  const handleDropdownChange = () => {
-
-  }
-
   const handleOpenMenuClick = (bool: boolean) => {
 
-  }
-
-  const positionInfoToString = (info: PositionInfo) => {
-    if ('x' in info && 'y' in info && 'to' in info) {
-      return (info.to ? 'to' : 'from') + "(" + info.x + ", " + info.y + ")";
-    }
-    else if ('coord' in info) {
-      return info.coord;
-    }
-    return "";
   }
 
   const handleChangeIdentifier = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -11,25 +11,20 @@ import SavePopup from "../Components/SavePopup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
 import { getPredicates } from "./ConditionEditorPage";
 import MyPopup from "../Components/Popup";
+import { ConditionInfo, EventDTO, EventDict, ItemInfo, RuleSetInfo } from "../Types";
 
-type RuleSetInfo = {
-  name: string;
-  description: string;
-  condition: string;
-  specialMoves: ItemInfo[];
-  events: ItemInfo[];
-  stalemateEvents: ItemInfo[];
+
+export async function getEvents(token: string): Promise<EventDTO[]> {
+
+  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event", {
+      method: "GET",
+      headers: {
+          'Accept': "application/json",
+          'Authorization': `Bearer ${token}`,
+      },
+  }).then(o => o.json().then(o => o.events));
+
 }
-
-
-type ConditionInfo = {
-  name: string;
-  description: string;
-  code: string;
-}
-
-type ItemInfo = { name: string, id: number }
-
 
 export default function RuleSetEditorPage() {
 
@@ -49,7 +44,7 @@ export default function RuleSetEditorPage() {
 
 
 
-  const saveEvent = (name: string, description: string) => {
+  const saveRuleSet = (name: string, description: string) => {
     setRuleSetInfo({ name: name, description: description, condition: selectedCondition, specialMoves: addedSpecialMoves, events: addedEvents, stalemateEvents: addedStalemateEvents });
   }
 
@@ -58,10 +53,25 @@ export default function RuleSetEditorPage() {
     navigate(link);
   }
 
+
   let token = CookieService.getInstance().get(Cookie.JwtToken)
 
+  const updateEvents = async () => {
+
+    const eventsTemp: EventDTO[] = (await getEvents(token));
+
+    let eventDict: EventDict = {};
+    eventsTemp.map((item) => {
+      eventDict[item.name] = item
+    })
+
+    setEvents(eventDict)
+  }
+
+
+
   const [specialMoves, setSpecialMoves] = useState(['En Passant', 'Castle King Side', 'Castle Queen Side', 'Double Pawn Move']);
-  const [events, setEvents] = useState(['Promotion', 'Explosion']);
+  const [events, setEvents] = useState<EventDict>({});
   const [stalemateEvents, setStalemateEvents] = useState(['Win If King Checked', 'Tie If King Not Checked']);
 
   const [conditions, setConditions] = useState<string[]>([]);
@@ -81,6 +91,7 @@ export default function RuleSetEditorPage() {
     }
 
     updateConditions();
+    updateEvents();
 
   }, []);
 
@@ -93,12 +104,12 @@ export default function RuleSetEditorPage() {
   const [deleteMode, setDeleteMode] = useState(false);
 
   const openPopup = (deleteMode: boolean) => {
-  
-      setDeleteMode(deleteMode);
-      setIsRuleSetPopupOpen(true)
+
+    setDeleteMode(deleteMode);
+    setIsRuleSetPopupOpen(true)
   }
 
-  
+
   return (
     <div>
       <ThemeProvider theme={CustomDarkTheme}>
@@ -137,7 +148,7 @@ export default function RuleSetEditorPage() {
                 </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={events} setItems={setEvents} setListJSON={(json: string) => { setAddedEvents(JSON.parse(json)) }} />
+                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={Object.keys(events)} setItems={(t) => {}} setListJSON={(json: string) => { setAddedEvents(JSON.parse(json)) }} />
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
                   Create Event
                 </Button>
@@ -179,9 +190,9 @@ export default function RuleSetEditorPage() {
                 </Button>
               </Grid>
             </Grid>
-            <MyPopup isOpen={isRuleSetPopupOpen} setIsOpen={setIsRuleSetPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Ruleset"} onClickItem={(item: string) => {}} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
+            <MyPopup isOpen={isRuleSetPopupOpen} setIsOpen={setIsRuleSetPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Ruleset"} onClickItem={(item: string) => { }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
 
-            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent} name={name} setName={setName} description={description} setDescription={setDescription} type={"Ruleset"}></SavePopup>
+            <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveRuleSet} name={name} setName={setName} description={description} setDescription={setDescription} type={"Ruleset"}></SavePopup>
           </Paper>
         </Container>
       </ThemeProvider>

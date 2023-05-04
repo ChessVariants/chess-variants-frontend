@@ -13,54 +13,10 @@ import CookieService, { Cookie } from "../../../../Services/CookieService";
 import { getPredicates } from "./ConditionEditorPage";
 
 import React, { useEffect, useState } from "react";
-
-type PositionInfo = AbsoluteInfo | RelativeInfo;
-
-type AbsoluteInfo = {
-  coord: string;
-}
-
-type RelativeInfo = {
-  x: number;
-  y: number;
-  to: boolean;
-}
-
-type ActionDict = { [id: number]: ActionInfo }
-
-type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo;
-
-type ActionMoveInfo = {
-  from: PositionInfo;
-  to: PositionInfo;
-}
-type ActionSetPieceInfo = {
-  at: PositionInfo;
-}
-
-type ActionWin = {
-  whiteWins: boolean;
-}
-
-
-type MoveInfo = {
-  posInfo: PositionInfo;
-  actionDict: ActionDict;
-  identifier: string;
-  predicate: string;
-  name: string;
-  description: string;
-}
-
-type ConditionInfo = {
-  name: string;
-  description: string;
-  code: string;
-}
+import { ConditionInfo, MoveInfo, PositionCreatorInfo, PositionDTO } from "../Types";
 
 
 export default function MoveEditorPage() {
-
 
   const classes = commonClasses();
 
@@ -79,7 +35,7 @@ export default function MoveEditorPage() {
   const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { coord: "a1" }, id: 0, editingFrom: true });
+  const [positionCreatorInfo, setPositionCreatorInfo] = useState<PositionCreatorInfo>({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true });
 
   const [listJSON, setListJSON] = useState("")
 
@@ -98,7 +54,7 @@ export default function MoveEditorPage() {
 
 
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
-    setPositionCreatorInfo({ posInfo: { coord: "a1" }, id: 0, editingFrom: true })
+    setPositionCreatorInfo({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true })
 
   }
 
@@ -108,12 +64,12 @@ export default function MoveEditorPage() {
   }
 
 
-  const savePositionCreatorToAction = (posInfo: PositionInfo) => {
+  const savePositionCreatorToAction = (posInfo: PositionDTO) => {
     setIsOpen(false)
   }
 
 
-  const positionInfoToString = (info: PositionInfo) => {
+  const positionInfoToString = (info: PositionDTO) => {
     if ('x' in info && 'y' in info && 'to' in info) {
       return (info.to ? 'to' : 'from') + "(" + info.x + ", " + info.y + ")";
     }

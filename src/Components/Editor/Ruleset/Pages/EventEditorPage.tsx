@@ -10,9 +10,10 @@ import SavePopup from "../Components/SavePopup";
 import MyPopup from "../Components/Popup";
 import { getPredicates } from "./ConditionEditorPage";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
+import { getEvents } from "./RuleSetEditorPage"
 
 import React, { useEffect, useState, useRef } from "react";
-
+import { EventDict, EventDTO } from "../Types";
 
 
 export default function EventEditorPage() {
@@ -42,122 +43,39 @@ export default function EventEditorPage() {
     const navigatePage = (link: string) => {
         navigate(link);
     }
-
-
-
-
+    const [events, setEvents] = useState<EventDict>({});
 
     const [deleteMode, setDeleteMode] = useState(false);
 
-    const openPopup = (deleteMode: boolean) => {
+
+    const openPopup = async (deleteMode: boolean) => {
 
         setDeleteMode(deleteMode);
+        const eventsTemp: EventDTO[] = (await getEvents(token));
+
+        let eventDict: EventDict = {};
+        eventsTemp.map((item) => {
+            eventDict[item.name] = item
+        })
+
+        setEvents(eventDict)
         setIsEventPopupOpen(true)
     }
-    type EventInfo = {
-        actionDict: ActionDict
-        predicate: string
-        name: string
-        description: string
-    }
 
-    type EventDTO = {
-        name: string;
-        description: string;
-        predicate: string;
-        actions: ActionDTO[];
-    }
-
-    type ActionDTO = {
-        win?: WinDTO;
-        set?: SetPieceDTO;
-        move?: MovePieceDTO;
-        isTie: boolean;
-    }
-
-    type WinDTO = {
-        whiteWins: boolean;
-    }
-    type SetPieceDTO = {
-        identifier: string;
-        at: PositionDTO;
-    }
-    type MovePieceDTO = {
-        from: PositionDTO;
-        to: PositionDTO;
-    }
-    type PositionDTO = {
-        positionAbsolute: PositionAbsoluteDTO;
-        positionRelative: PositionRelativeDTO;
-    }
-    type PositionAbsoluteDTO = {
-        coordinate: string;
-    }
-    type PositionRelativeDTO = {
-        x: number;
-        y: number;
-        to: boolean;
-    }
-
-    const convertToDTO = (actionInfo: ActionInfo) : ActionDTO  => {
-        let actionDTO : ActionDTO;
-        if ('from' in actionInfo)
-        {
-            actionDTO.move = {
-                from: actionInfo.from,
-                to: actionInfo.to,
-            }
-        }
-    }
-
-    const getActionsFromDict = () => {
-
-        type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo;
-
-        type ActionMoveInfo = {
-            from: PositionInfo;
-            to: PositionInfo;
-        }
-        type ActionSetPieceInfo = {
-            at: PositionInfo;
-        }
-        
-        type ActionWin = {
-            whiteWins: boolean;
-        }
-
-
-        let actionDict: ActionDict = JSON.parse(listJSON);
-        let list = Object.values(actionDict)
-
-        list.map((action) => {
-            convertToDTO(action)
-        });
-
-        
-    }
 
     const saveEvent = (name: string, description: string) => {
-        if (name === "")
-            return;
-
-        let eventDTO = { name: name, description: description, predicate: selectedCondition, actions: getActionsFromDict() };
-
-        console.log(JSON.stringify(conditionInfo))
-        fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
+        var info: EventDTO = { name, description, predicate: selectedCondition, actions: Object.values(JSON.parse(listJSON)) }
+        fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event", {
             method: "POST",
             headers: {
                 'Accept': "application/json",
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': "application/json",
             },
-            body: JSON.stringify(conditionInfo),
+            body: JSON.stringify(info),
         }).then(o => console.log(o));
-    }
 
-    const saveEvent = (name: string, description: string) => {
-        var info: EventInfo = { actionDict: JSON.parse(listJSON), predicate: selectedOption, name, description }
-        console.log(info)
+        console.log("posting: " + JSON.stringify(info))
     }
 
     const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
@@ -245,44 +163,3 @@ export default function EventEditorPage() {
         </div>
     );
 }
-
-type ItemInfo = { name: string, id: number }
-
-type ActionItemInfo = { itemInfo: ItemInfo, actionInfo: ActionInfo }
-
-
-type PositionInfo = AbsoluteInfo | RelativeInfo;
-
-type AbsoluteInfo = {
-  coord: string;
-}
-
-type RelativeInfo = {
-  x: number;
-  y: number;
-  to: boolean;
-}
-
-
-type ActionInfo = ActionMoveInfo | ActionWin | ActionSetPieceInfo | ActionTie;
-
-type ActionMoveInfo = {
-  from: PositionInfo;
-  to: PositionInfo;
-}
-type ActionSetPieceInfo = {
-  at: PositionInfo;
-  identifier: string;
-}
-
-type ActionWin = {
-  whiteWins: boolean;
-}
-
-type ActionTie = {
-  null: null
-}
-
-type PositionCreatorInfo = { posInfo: PositionInfo, id: number, editingFrom: boolean }
-
-type ActionDict = { [id: number]: ActionInfo }

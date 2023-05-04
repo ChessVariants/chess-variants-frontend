@@ -39,6 +39,7 @@ export default function ListWithPopup({ title, type, singleton, width = "200px",
     }
 
     const handleAddItem = (newName: string) => {
+        console.log("NewItem: " + newName);
         var newItem = { name: newName, id: findUnusedId() };
         setItemsAdded([...itemsAdded, newItem]);
     };
