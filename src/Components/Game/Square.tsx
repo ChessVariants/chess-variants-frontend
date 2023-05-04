@@ -23,6 +23,7 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
     White: {
         backgroundColor: "white",
+        color: "black",
     },
     WhiteActive: {
         backgroundColor: "#C4FEC4",

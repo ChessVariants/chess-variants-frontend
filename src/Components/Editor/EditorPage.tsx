@@ -38,7 +38,7 @@ export default function EditorPage() {
   }
 
   return (
-    <Box className={classes.Container} style={{ paddingTop: 50 }} >
+    <Box className={classes.Container} style={{ paddingTop: 50, paddingLeft: 50 }} >
       <PatternList editorID={editorID} ></PatternList>
       <EditorBoard editorID={editorID}></EditorBoard>
       <EditorSidePage editorID={editorID}></EditorSidePage>
