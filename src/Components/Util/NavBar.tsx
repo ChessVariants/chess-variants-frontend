@@ -1,4 +1,4 @@
-import { useHref, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as React from 'react';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -6,7 +6,6 @@ import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -23,6 +22,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import CustomDarkTheme from "./CustomDarkTheme";
 import { Link } from "@mui/material";
+import CookieService, { Cookie } from "../../Services/CookieService";
 
 const drawerWidth = 240;
 
@@ -94,7 +94,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-const CustomListItem = (props: { text: string, open: any, icon: any, url: string }) => {
+const CustomListItem = (props: { text: string, open: any, icon: any, url: string, clickFunction?: any }) => {
     const navigate = useNavigate();
     return (<ListItem key={props.text} disablePadding sx={{ display: 'block' }}>
         <ListItemButton
@@ -103,7 +103,7 @@ const CustomListItem = (props: { text: string, open: any, icon: any, url: string
                 justifyContent: props.open ? 'initial' : 'center',
                 px: 2.5,
             }}
-            onClick={() => navigate(props.url)}
+            onClick={() => { navigate(props.url); props.clickFunction() }}
         >
             <ListItemIcon
                 sx={{
@@ -116,14 +116,20 @@ const CustomListItem = (props: { text: string, open: any, icon: any, url: string
             </ListItemIcon>
             <ListItemText primary={props.text} sx={{ opacity: props.open ? 1 : 0 }} />
         </ListItemButton>
-    </ListItem>)
+    </ListItem >)
 }
 
 export default function NavBar() {
 
-    /**
-       * Used to navigate to other pages
-       */
+    const cookieService = CookieService.getInstance()
+
+    const logout = () => {
+        Object.values(Cookie).forEach(cookie => {
+            cookieService.remove(cookie);
+        });
+        window.location.reload();
+    }
+
     const navigate = useNavigate();
 
     const theme = useTheme();
@@ -173,8 +179,7 @@ export default function NavBar() {
                 </List>
                 <Divider />
                 <List>
-                    {/* NOT COMPLETE */}
-                    <CustomListItem text={"LOG OUT"} open={open} icon={<LogoutIcon />} url={"/login"}></CustomListItem>
+                    <CustomListItem text={"LOG OUT"} open={open} icon={<LogoutIcon />} url={""} clickFunction={logout}></CustomListItem>
                 </List>
             </Drawer>
         </Box >
