@@ -9,6 +9,7 @@ export default function Lobby(props: { gameID: string }) {
 
     const { gameID } = props;
     const open = Boolean(anchorEl);
+    console.log(gameID)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log(gameID);

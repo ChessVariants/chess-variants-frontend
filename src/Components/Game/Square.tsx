@@ -55,6 +55,9 @@ const useStyles = makeStyles<Theme>(theme => ({
     BlackPiece: {
         filter: "sepia(2) saturate(1) hue-rotate(200deg) brightness(.2)",
     },
+    CommonPiece: {
+        filter: "invert(19%) sepia(40%) saturate(590%) hue-rotate(5deg) brightness(100%) contrast(84%)"
+    },
     Label: {
         position: "absolute",
         bottom: "0",
