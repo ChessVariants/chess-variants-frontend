@@ -60,7 +60,6 @@ export default function PieceEditorBoard(props: { editorID: string }) {
 
     const [editorState, setEditorState] = useState<PieceEditorState>(initialState);
 
-    const [imageRef, setImageRef] = useState("jo");
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -156,7 +155,7 @@ export default function PieceEditorBoard(props: { editorID: string }) {
     }
 
     const updateImage = (img: string) => {
-        setImageRef(img);
+        editorService.setImagePath(editorID, img);
         handleClose();
     }
 
@@ -176,7 +175,7 @@ export default function PieceEditorBoard(props: { editorID: string }) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <ImageSelectorPage editorID={editorID} updateFunction={updateImage}></ImageSelectorPage>
+                <ImageSelectorPage updateFunction={updateImage}></ImageSelectorPage>
             </Modal>
         </Box>
     );

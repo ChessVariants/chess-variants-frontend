@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container, Paper } from "@material-ui/core";
 import { Transition } from "../Util/SlideTransition";
 import { transform } from "typescript";
+import { title } from "process";
 
 
 
@@ -44,9 +45,9 @@ const useStyles = makeStyles<Theme>(theme => ({
 
 }));
 
-export default function ImageSelectorPage(props: { editorID: string, updateFunction: any }) {
+export default function ImageSelectorPage(props: { updateFunction: any }) {
 
-    const { editorID: editorID, updateFunction: updateFunction } = props;
+    const { updateFunction: updateFunction } = props;
 
     const classes = useStyles();
 
@@ -54,17 +55,17 @@ export default function ImageSelectorPage(props: { editorID: string, updateFunct
         <div>
             <Container className={classes.modal} >
                 <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 34 }}>
-                    Select an image
+                    Select an icon
                 </Typography>
-                <ImageList className={classes.scrollbar} sx={{ width: 500, height: 450 }} cols={3} rowHeight={100}>
+                <ImageList className={classes.scrollbar} sx={{ width: "20vw", height: "20vw" }} cols={3} rowHeight={75}>
                     {itemData.map((item) => (
                         <ImageListItem key={item.title}>
                             <Button onClick={() => {
                                 updateFunction(item.title);
                             }}>
                                 <img
-                                    src={`${item.img}?w=100&h=100&fit=crop&auto=format`}
-                                    srcSet={`${item.img}?w=100&h=100&fit=crop&auto=format&dpr=2 2x`}
+                                    src={item.img}
+                                    srcSet={item.img}
                                     alt={item.title}
                                     loading="lazy"
                                 />

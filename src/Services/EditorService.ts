@@ -63,6 +63,10 @@ export default class EditorService {
         this.hubConnection.send('CreatePieceEditor', editorId);
     }
 
+    setImagePath(editorId: string, imagePath: string): void {
+        this.hubConnection.send("SetImagePath", editorId, imagePath);
+    }
+
     setActiveSquare(editorId: string, square: string): void {
         this.hubConnection.send("ActivateSquare", editorId, square);
         this.requestPieceEditorBoardState(editorId);
