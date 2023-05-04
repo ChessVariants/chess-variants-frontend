@@ -1,15 +1,8 @@
-import { Box } from "@mui/system";
 import { Button, ImageList, ImageListItem, Typography } from "@mui/material";
-import { useState } from "react";
 import { PieceImageAdapter } from "../../IMG/PieceImageAdapter";
 import { Theme } from "@mui/material";
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper } from "@material-ui/core";
-import { Transition } from "../Util/SlideTransition";
-import { transform } from "typescript";
-import { title } from "process";
-
-
+import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles<Theme>(theme => ({
     Container: {
@@ -108,4 +101,29 @@ const itemData = [
         title: "jo",
         img: PieceImageAdapter.getImageRef('jo'),
     },
+    {
+        title: "ca",
+        img: PieceImageAdapter.getImageRef('ca'),
+    },
+    {
+        title: "co",
+        img: PieceImageAdapter.getImageRef('co'),
+    },
+    {
+        title: "fl",
+        img: PieceImageAdapter.getImageRef('fl'),
+    },
+    {
+        title: "gi",
+        img: PieceImageAdapter.getImageRef('gi'),
+    },
+    {
+        title: "ha",
+        img: PieceImageAdapter.getImageRef('ha'),
+    },
+    {
+        title: "sh",
+        img: PieceImageAdapter.getImageRef('sh'),
+    },
+
 ];

@@ -55,8 +55,20 @@ export class PieceImageAdapter {
                 return queen;
             case 'ki':
                 return king;
+            case 'ca':
+                return cannon;
+            case 'co':
+                return commoner;
+            case 'fl':
+                return flag;
+            case 'gi':
+                return giraffe;
+            case 'ha':
+                return halfmoon;
             case 'jo':
                 return joker;
+            case 'sh':
+                return ship;
             default:
                 return "error"; // ID not found
 
