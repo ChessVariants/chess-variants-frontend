@@ -5,6 +5,8 @@ import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
 import EditorService, { EditorEvents, PieceEditorState } from "../../../Services/EditorService";
 import { Move } from "../../../Services/GameService";
+import { Modal } from "@mui/material";
+import ImageSelectorPage from "../../Util/ImageSelectorPage";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -41,6 +43,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         },
     },
 }));
+
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
 const initialState: PieceEditorState = {
@@ -48,6 +51,7 @@ const initialState: PieceEditorState = {
     boardSize: { rows: 8, cols: 8 },
     moves: [],
     square: "",
+    belongsTo: "",
 };
 
 export default function PieceEditorBoard(props: { editorID: string }) {
@@ -55,6 +59,12 @@ export default function PieceEditorBoard(props: { editorID: string }) {
     const editorService: EditorService = EditorService.getInstance();
 
     const [editorState, setEditorState] = useState<PieceEditorState>(initialState);
+
+    const [imageRef, setImageRef] = useState("jo");
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
 
     const [active, setActive] = useState(["", [""]]);
 
@@ -65,7 +75,7 @@ export default function PieceEditorBoard(props: { editorID: string }) {
         editorService.on(EditorEvents.UpdatedPieceEditorState, (newEditorState: PieceEditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);
-            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
+            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)]);
         })
 
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
@@ -136,8 +146,18 @@ export default function PieceEditorBoard(props: { editorID: string }) {
     }
 
     const clickFunction = (coordinate: string) => {
-        setActive(["", []]);
-        editorService.setActiveSquare(editorID, coordinate);
+        if (coordinate === active[0]) {
+            handleOpen();
+        }
+        else {
+            setActive(["", []]);
+            editorService.setActiveSquare(editorID, coordinate);
+        }
+    }
+
+    const updateImage = (img: string) => {
+        setImageRef(img);
+        handleClose();
     }
 
     return (
@@ -145,11 +165,19 @@ export default function PieceEditorBoard(props: { editorID: string }) {
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
+                        <Square isWhite={squareColor(i)} id={`${piece == '--' ? piece : (editorState.belongsTo == "white" ? imageRef.toUpperCase() : imageRef)}`} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
                             clickFunction(squareCoordinate(i))} />
                     ))
                 }
             </Box>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <ImageSelectorPage editorID={editorID} updateFunction={updateImage}></ImageSelectorPage>
+            </Modal>
         </Box>
     );
 }

@@ -186,6 +186,7 @@ export interface PieceEditorState {
     boardSize: BoardSize,
     moves: Move[],
     square: string,
+    belongsTo: string,
 }
 
 export interface Pattern {
