@@ -3,11 +3,11 @@ import { FormControl } from "@material-ui/core";
 import EditorService from "../../../Services/EditorService";
 import { ChangeEvent, useState } from "react";
 
-export default function PieceSettings(props: { editorID: string }) {
+export default function PieceSettings(props: { editorID: string, buildPieceFunction: any }) {
 
     const editorService: EditorService = EditorService.getInstance()
 
-    const { editorID } = props;
+    const { editorID, buildPieceFunction } = props;
 
     const handleSameCaptureAndMovement = (event: ChangeEvent<HTMLInputElement>) => {
         setSameCapMove(event.target.checked);
@@ -106,9 +106,7 @@ export default function PieceSettings(props: { editorID: string }) {
                     </Button>
                     <Button
                         color={"createColor"}
-                        onClick={() => {
-                            editorService.buildPiece(editorID);
-                        }}
+                        onClick={() => {buildPieceFunction()}}
                         type="submit"
                         variant="contained"
                         sx={{ mt: 2, mb: 2, p: 2, width: "40%" }}

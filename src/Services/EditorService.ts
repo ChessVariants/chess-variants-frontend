@@ -152,9 +152,9 @@ export default class EditorService {
         this.hubConnection.send("UpdateSquare", editorId, square);
     }
 
-    buildPiece(editorId: string) {
+    buildPiece(editorId: string, pieceName: string) {
         console.log("Building piece");
-        this.hubConnection.send("BuildPiece", editorId, "valle", "IMG/giraffe")
+        this.hubConnection.send("BuildPiece", editorId, pieceName)
     }
 
     /**
