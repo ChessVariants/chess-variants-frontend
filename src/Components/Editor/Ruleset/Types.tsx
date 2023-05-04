@@ -16,14 +16,14 @@ export type EventInfo = {
 }
 
 export type ActionDTO = {
-    win?: WinDTO;
-    set?: SetPieceDTO;
-    move?: MovePieceDTO;
+    win: WinDTO | null;
+    set: SetPieceDTO | null;
+    move: MovePieceDTO | null;
     tie: boolean;
 }
 
 export type WinDTO = {
-    whiteWins: boolean;
+    white: boolean;
 }
 export type SetPieceDTO = {
     identifier: string;
@@ -48,7 +48,7 @@ export type PositionRelativeDTO = {
 
 export type ItemInfo = { name: string, id: number }
 
-type ActionDict = { [id: number]: ActionDTO }
+export type ActionDict = { [id: number]: ActionDTO }
 
 export type PositionCreatorInfo = { posInfo: PositionDTO, id: number, editingFrom: boolean }
 
@@ -71,17 +71,29 @@ export type ConditionInfo = {
 export type ConditionDict = { [name: string]: ConditionInfo }
 
 export type DeleteConditionInfo = {
-  name: string;
+    name: string;
+}
+
+export type DeleteEventDTO = {
+    name: string;
 }
 
 
+
+export type ActionItemInfo = {
+    itemInfo: ItemInfo;
+    actionInfo: ActionDTO;
+}
+
 export type EventDict = { [name: string]: EventDTO }
 
-export type MoveInfo = {
-  posInfo: PositionDTO;
-  actionDict: ActionDict;
-  identifier: string;
-  predicate: string;
-  name: string;
-  description: string;
+export type MoveDict = { [name: string]: MoveDTO }
+
+export type MoveDTO = {
+    posInfo: PositionDTO;
+    actions: ActionDTO[];
+    identifier: string;
+    predicate: string;
+    name: string;
+    description: string;
 }

@@ -5,69 +5,24 @@ import PositionCreatorPopup from "./PositionCreatorPopup";
 import { useEffect, useState } from "react";
 
 import MyDropdown from "./Dropdown";
-
-
-type PositionCreatorInfo = { posInfo: PositionInfo, id: number, editingFrom: boolean }
-
-type PositionInfo = { absolute: AbsoluteInfo | null, relative: RelativeInfo | null }
-
-
-type AbsoluteInfo = {
-  coordinate: string;
-}
-
-type RelativeInfo = {
-  x: number;
-  y: number;
-  to: boolean;
-}
-
-
-type MoveInfo = {
-  posInfo: PositionInfo;
-  actionDict: ActionDict
-  identifier: string;
-  predicate: string;
-}
-
-type ItemInfo = { name: string, id: number }
-
-type ActionItemInfo = { itemInfo: ItemInfo, actionInfo: ActionDTO }
-
-type ActionDTO = { win: ActionWin | null, set: ActionSetPieceInfo | null, move: ActionMoveInfo | null, tie: boolean }
-
-type ActionMoveInfo = {
-  from: PositionInfo;
-  to: PositionInfo;
-}
-
-type ActionSetPieceInfo = {
-  identifier: string;
-  at: PositionInfo;
-}
-
-type ActionWin = {
-  white: boolean;
-}
-
-
-type ActionDict = { [id: number]: ActionDTO }
+import { ActionDTO, ActionDict, ActionItemInfo, ItemInfo, MovePieceDTO, PositionCreatorInfo, PositionDTO, SetPieceDTO, WinDTO } from "../Types";
 
 interface ActionListProps {
   itemsAdded: ItemInfo[];
   onRemoveItem: (newItem: ItemInfo) => void;
   width: string | number;
   height: string | number;
-  setJSON: (json: string) => void
+  setJSON: (json: string) => void;
+  actionInfo: ActionDict;
+  setActionInfo: (newInfo: ActionDict) => void;
 }
 
 
 
-export default function ActionList({ itemsAdded, onRemoveItem, width, height, setJSON }: ActionListProps) {
+export default function ActionList({ itemsAdded, onRemoveItem, width, height, setJSON, actionInfo, setActionInfo }: ActionListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true } as PositionCreatorInfo);
 
-  const [actionInfo, setActionInfo] = useState({} as ActionDict);
 
   const updateJSON = () => {
     setJSON(JSON.stringify(actionInfo))
@@ -137,7 +92,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       action.tie = false;
     }
     else {
-      if (action.tie === false) {
+      if (!action.tie) {
         action.tie = true;
       }
       action.win = null;
@@ -163,7 +118,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     return actionInfo[id];
   }
 
-  const savePositionCreatorToAction = (posInfo: PositionInfo) => {
+  const savePositionCreatorToAction = (posInfo: PositionDTO) => {
     positionCreatorInfo.posInfo = posInfo;
 
     let id = positionCreatorInfo.id;
@@ -212,7 +167,6 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
           {itemsAdded.map((item) => (
             <div>
               <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
-              {item.id}
             </div>
           ))}
         </List>
@@ -221,8 +175,6 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     </div>
   );
 }
-
-
 
 interface ActionListItemProps {
   item: ActionItemInfo;
@@ -260,7 +212,7 @@ function ActionListItem({ item, onRemoveItem, onOpen }: ActionListItemProps) {
 
 
 interface ActionWinProps {
-  actionInfo: ActionWin;
+  actionInfo: WinDTO;
 }
 
 function ActionWin({ actionInfo }: ActionWinProps) {
@@ -275,7 +227,7 @@ function ActionWin({ actionInfo }: ActionWinProps) {
   return (
     <MyDropdown
       options={[whiteString, blackString]}
-      defaultValue=""
+      defaultValue={actionInfo.white ? whiteString : blackString}
       onChange={handleDropdownChange}
     />);
 }
@@ -290,10 +242,10 @@ function ActionTie() {
 
 interface ActionMovePieceProps {
   onOpen: (editingFrom: boolean) => void;
-  actionInfo: ActionMoveInfo;
+  actionInfo: MovePieceDTO;
 }
 
-const positionInfoToString = (info: PositionInfo) => {
+const positionInfoToString = (info: PositionDTO) => {
   if (info.relative !== null) {
     return (info.relative.to ? 'to' : 'from') + "(" + info.relative.x + ", " + info.relative.y + ")";
   }
@@ -324,7 +276,7 @@ function ActionMovePiece({ onOpen, actionInfo }: ActionMovePieceProps) {
 
 interface ActionSetPieceProps {
   onOpen: (editingFrom: boolean) => void;
-  actionInfo: ActionSetPieceInfo;
+  actionInfo: SetPieceDTO;
 }
 
 function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {

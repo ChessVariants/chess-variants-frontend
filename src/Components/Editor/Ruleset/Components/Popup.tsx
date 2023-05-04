@@ -36,7 +36,7 @@ function ListSelectable({ items, onClickItem, addedItems, singleton }: ListSelec
   </Paper>);
 }
 
-type MyPopupProps = {
+interface MyPopupProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;

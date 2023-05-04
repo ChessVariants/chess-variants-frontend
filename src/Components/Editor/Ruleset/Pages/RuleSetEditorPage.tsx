@@ -17,11 +17,11 @@ import { ConditionInfo, EventDTO, EventDict, ItemInfo, RuleSetInfo } from "../Ty
 export async function getEvents(token: string): Promise<EventDTO[]> {
 
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event", {
-      method: "GET",
-      headers: {
-          'Accept': "application/json",
-          'Authorization': `Bearer ${token}`,
-      },
+    method: "GET",
+    headers: {
+      'Accept': "application/json",
+      'Authorization': `Bearer ${token}`,
+    },
   }).then(o => o.json().then(o => o.events));
 
 }
@@ -108,6 +108,9 @@ export default function RuleSetEditorPage() {
     setDeleteMode(deleteMode);
     setIsRuleSetPopupOpen(true)
   }
+  const [specialMovesAdded, setSpecialMovesAdded] = useState<ItemInfo[]>([]);
+  const [eventsAdded, setEventsAdded] = useState<ItemInfo[]>([]);
+  const [stalemateEventsAdded, setStalemateEventsAdded] = useState<ItemInfo[]>([]);
 
 
   return (
@@ -142,19 +145,19 @@ export default function RuleSetEditorPage() {
             </Grid>
             <Grid container marginTop="12px" alignItems="left" justifyItems={"left"} justifyContent="center" >
               <Grid>
-                <ListWithPopup title={"Special Moves"} type={"Move"} singleton={true} width="200px" height="200px" listComponent={MyList} items={specialMoves} setItems={setSpecialMoves} setListJSON={(json: string) => { setAddedSpecialMoves(JSON.parse(json)) }} />
+                <ListWithPopup title={"Special Moves"} type={"Move"} singleton={true} width="200px" height="200px" listComponent={MyList} items={specialMoves} setItems={setSpecialMoves} itemsAdded={specialMovesAdded} setItemsAdded={setSpecialMovesAdded} setListJSON={(json: string) => { setAddedSpecialMoves(JSON.parse(json)) }} actionInfo={{}} setActionInfo={(a) => {}}/>
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/move")}>
                   Create Move
                 </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={Object.keys(events)} setItems={(t) => {}} setListJSON={(json: string) => { setAddedEvents(JSON.parse(json)) }} />
+                <ListWithPopup title={"Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={Object.keys(events)} setItems={(t) => { }} itemsAdded={eventsAdded} setItemsAdded={setEventsAdded} setListJSON={(json: string) => { setAddedEvents(JSON.parse(json)) }} actionInfo={{}} setActionInfo={(a) => {}}/>
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
                   Create Event
                 </Button>
               </Grid>
               <Grid>
-                <ListWithPopup title={"Stalemate Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={stalemateEvents} setItems={setStalemateEvents} setListJSON={(json: string) => { setAddedStalemateEvents(JSON.parse(json)) }} />
+                <ListWithPopup title={"Stalemate Events"} type={"Event"} singleton={true} width="200px" height="200px" listComponent={MyList} items={stalemateEvents} setItems={setStalemateEvents} itemsAdded={stalemateEventsAdded} setItemsAdded={setStalemateEventsAdded} setListJSON={(json: string) => { setAddedStalemateEvents(JSON.parse(json)) }} actionInfo={{}} setActionInfo={(a) => {}} />
                 <Button variant="contained" color="createColor" style={{ height: '40px', width: '200px' }} sx={{ mt: 1 }} onClickCapture={() => navigate("/editor/event")}>
                   Create Event
                 </Button>

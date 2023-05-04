@@ -1,6 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import MyPopup from "./Popup";
 import React, { useState } from "react";
+import { ActionDict, ItemInfo } from "../Types";
 
 
 interface ListWithPopupProps {
@@ -15,16 +16,20 @@ interface ListWithPopupProps {
             onRemoveItem: (newItem: { name: string, id: number }) => void;
             width: string | number;
             height: string | number;
-            setJSON: (json: string) => void
+            setJSON: (json: string) => void;
+            actionInfo: ActionDict;
+            setActionInfo: (newInfo: ActionDict) => void;
         }>;
-    items: string[]
-    setItems: (items: string[]) => void
-    setListJSON: (json: string) => void
+    items: string[];
+    setItems: (items: string[]) => void;
+    itemsAdded: ItemInfo[];
+    setItemsAdded: (items: ItemInfo[]) => void;
+    setListJSON: (json: string) => void;
+    actionInfo: ActionDict;
+    setActionInfo: (newInfo: ActionDict) => void;
 }
 
-export default function ListWithPopup({ title, type, singleton, width = "200px", height = "200px", listComponent: ListComponent, items, setItems, setListJSON }: ListWithPopupProps) {
-
-    const [itemsAdded, setItemsAdded] = useState([] as { name: string, id: number }[]);
+export default function ListWithPopup({ title, type, singleton, width = "200px", height = "200px", listComponent: ListComponent, items, setItems, itemsAdded, setItemsAdded, setListJSON, actionInfo, setActionInfo }: ListWithPopupProps) {
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -67,7 +72,7 @@ export default function ListWithPopup({ title, type, singleton, width = "200px",
     return (
         <div>
             <Typography variant="h5" sx={{ letterSpacing: '2px', mb: 1, mt: 2 }}>{title}:</Typography>
-            <ListComponent itemsAdded={itemsAdded} onRemoveItem={handleRemoveItem} width={width} height={height} setJSON={setListJSON} />
+            <ListComponent itemsAdded={itemsAdded} onRemoveItem={handleRemoveItem} width={width} height={height} setJSON={setListJSON} actionInfo={actionInfo} setActionInfo={setActionInfo} />
 
             <div>
                 <Button variant="contained" color="joinColor" style={{ height: '40px', width: '200px' }} onClickCapture={() => setIsOpen(true)} sx={{ mt: 1, mr: 2, ml: 2 }}>

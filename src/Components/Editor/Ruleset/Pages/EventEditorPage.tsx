@@ -13,7 +13,7 @@ import CookieService, { Cookie } from "../../../../Services/CookieService";
 import { getEvents } from "./RuleSetEditorPage"
 
 import React, { useEffect, useState, useRef } from "react";
-import { EventDict, EventDTO } from "../Types";
+import { ActionDict, ActionDTO, ConditionInfo, EventDict, EventDTO, ItemInfo } from "../Types";
 
 
 export default function EventEditorPage() {
@@ -48,9 +48,8 @@ export default function EventEditorPage() {
     const [deleteMode, setDeleteMode] = useState(false);
 
 
-    const openPopup = async (deleteMode: boolean) => {
+    const updateEvents = async () => {
 
-        setDeleteMode(deleteMode);
         const eventsTemp: EventDTO[] = (await getEvents(token));
 
         let eventDict: EventDict = {};
@@ -59,6 +58,12 @@ export default function EventEditorPage() {
         })
 
         setEvents(eventDict)
+    }
+
+    const openPopup = async (deleteMode: boolean) => {
+
+        setDeleteMode(deleteMode);
+        updateEvents();
         setIsEventPopupOpen(true)
     }
 
@@ -80,16 +85,10 @@ export default function EventEditorPage() {
 
     const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
 
-
-    type ConditionInfo = {
-        name: string;
-        description: string;
-        code: string;
-    }
-
     const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
     const [conditions, setConditions] = useState<string[]>([]);
     const [selectedCondition, setSelectedCondition] = useState<string>("")
+    const [actionInfo, setActionInfo] = useState<ActionDict>({});
 
 
     const selectCondition = (selectedItem: string) => {
@@ -97,6 +96,51 @@ export default function EventEditorPage() {
         setIsConditionPopupOpen(false)
     }
 
+    const selectEvent = (itemClicked: string) => {
+        if (deleteMode) {
+            fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event/" + itemClicked, {
+                method: "DELETE",
+                headers: {
+                    'Accept': "application/json",
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': "application/json",
+                },
+            });
+            updateEvents();
+
+        }
+        else {
+            let retrievedInfo: EventDTO = events[itemClicked];
+            setName(retrievedInfo.name);
+            setDescription(retrievedInfo.description);
+            setSelectedCondition(retrievedInfo.predicate);
+            setItemsAdded(retrievedInfo.actions.map((dto, i) =>
+                DTOToItemInfo(dto, i)
+            ));
+            let newDict: ActionDict = {}
+            retrievedInfo.actions.map((dto, i) =>
+                newDict[i] = dto
+            )
+            setActionInfo(newDict)
+            
+        }
+        setIsEventPopupOpen(false)
+    };
+
+
+
+    const DTOToItemInfo = (dto: ActionDTO, i: number): ItemInfo => {
+        if (dto.move !== null) {
+            return { name: "Move Piece", id: i }
+        }
+        if (dto.set !== null) {
+            return { name: "Set Piece", id: i }
+        }
+        if (dto.win !== null) {
+            return { name: "Win", id: i }
+        }
+        return { name: "Tie", id: i }
+    }
     let token = CookieService.getInstance().get(Cookie.JwtToken)
 
     useEffect(() => {
@@ -109,6 +153,8 @@ export default function EventEditorPage() {
         updateConditions();
 
     }, []);
+
+    const [itemsAdded, setItemsAdded] = useState<ItemInfo[]>([]);
 
     return (
         <div>
@@ -123,7 +169,7 @@ export default function EventEditorPage() {
                         </Button>
                         <MyPopup isOpen={isConditionPopupOpen} setIsOpen={setIsConditionPopupOpen} title={"Select Condition"} onClickItem={(item: string) => selectCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={conditions} setItems={() => { }}></MyPopup>
 
-                        <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} setListJSON={setListJSON}></ListWithPopup>
+                        <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} itemsAdded={itemsAdded} setItemsAdded={setItemsAdded} setListJSON={setListJSON} actionInfo={actionInfo} setActionInfo={setActionInfo}></ListWithPopup>
 
                         <Grid container marginTop="12px" alignItems="right" justifyItems={"right"} justifyContent="right" >
                             <Grid>
@@ -154,12 +200,12 @@ export default function EventEditorPage() {
                                 </Button>
                             </Grid>
                         </Grid>
-                        <MyPopup isOpen={isEventPopupOpen} setIsOpen={setIsEventPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Event"} onClickItem={(item: string) => { }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
+                        <MyPopup isOpen={isEventPopupOpen} setIsOpen={setIsEventPopupOpen} title={(deleteMode ? "Delete" : "Load") + " Event"} onClickItem={(item: string) => { selectEvent(item) }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={Object.keys(events)} setItems={() => { }}></MyPopup>
                         <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveEvent} name={name} setName={setName} description={description} setDescription={setDescription} type={"Event"}></SavePopup>
 
                     </Paper>
                 </Container>
             </ThemeProvider>
-        </div>
+        </div >
     );
 }
