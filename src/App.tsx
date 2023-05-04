@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import EditorService from './Services/EditorService';
 import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
@@ -46,7 +45,6 @@ function App() {
 
       if (cookie.name === Cookie.JwtToken && cookie.value !== "") {
         GameService.create();
-        EditorService.create();
         authenticate();
       }
 
@@ -75,7 +73,6 @@ function App() {
         else if (res.status === 200) {
           setUsername(cookieService.get(Cookie.Username))
           connectHub();
-          connectEditorHub();
         }
       })
       .catch(e => {
@@ -100,28 +97,10 @@ function App() {
         console.log(e);
       })
   }
-
-  // Guessing this is not the way to do it as it results in it being constantly being a ws with the editor.
-  // As I don't know what to do else, I'll use this for now.
-  const connectEditorHub = () => {
-    if (!EditorService.getInstance().isDisconnected()) {
-      return;
-    }
-  
-    EditorService.connect()
-    .then(() => {
-      console.log("connected");
-    })
-    .catch(e => {
-      console.log(e);
-      console.log("Not connected");
-    })
-  }
   
   useEffect(() => {
     authenticate();
     connectHub();
-    connectEditorHub();
   }, [])
 
   if (authenticationState === AuthenticationState.InProgress

@@ -1,8 +1,29 @@
 import { Button, Container, Divider, Paper, Typography } from "@mui/material";
 import { commonClasses } from "../Util/CommonClasses";
 import { useNavigate } from "react-router-dom";
+import EditorService from "../../Services/EditorService";
+import { useEffect } from "react";
 
 export default function EditorPage() {
+
+    const connectEditorHub = () => {
+        if (!EditorService.getInstance().isDisconnected()) {
+            return;
+        }
+
+        EditorService.connect()
+            .then(() => {
+                console.log("connected");
+            })
+            .catch(e => {
+                console.log(e);
+                console.log("Not connected");
+            })
+    }
+
+    useEffect(() => {
+        connectEditorHub();
+      }, [])
 
     /**
        * Used to navigate to other pages
