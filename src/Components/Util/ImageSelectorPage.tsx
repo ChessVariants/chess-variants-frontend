@@ -51,27 +51,29 @@ export default function ImageSelectorPage(props: { editorID: string, updateFunct
     const classes = useStyles();
 
     return (
-        <Container className={classes.modal} >
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 34 }}>
-                Select an image
-            </Typography>
-            <ImageList className={classes.scrollbar} sx={{ width: 500, height: 450 }} cols={3} rowHeight={100}>
-                {itemData.map((item) => (
-                    <ImageListItem key={item.title}>
-                        <Button onClick={() => {
-                            updateFunction(item.title);
-                        }}>
-                            <img
-                                src={`${item.img}?w=100&h=100&fit=crop&auto=format`}
-                                srcSet={`${item.img}?w=100&h=100&fit=crop&auto=format&dpr=2 2x`}
-                                alt={item.title}
-                                loading="lazy"
-                            />
-                        </Button>
-                    </ImageListItem>
-                ))}
-            </ImageList>
-        </Container>
+        <div>
+            <Container className={classes.modal} >
+                <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 34 }}>
+                    Select an image
+                </Typography>
+                <ImageList className={classes.scrollbar} sx={{ width: 500, height: 450 }} cols={3} rowHeight={100}>
+                    {itemData.map((item) => (
+                        <ImageListItem key={item.title}>
+                            <Button onClick={() => {
+                                updateFunction(item.title);
+                            }}>
+                                <img
+                                    src={`${item.img}?w=100&h=100&fit=crop&auto=format`}
+                                    srcSet={`${item.img}?w=100&h=100&fit=crop&auto=format&dpr=2 2x`}
+                                    alt={item.title}
+                                    loading="lazy"
+                                />
+                            </Button>
+                        </ImageListItem>
+                    ))}
+                </ImageList>
+            </Container>
+        </div>
     );
 }
 

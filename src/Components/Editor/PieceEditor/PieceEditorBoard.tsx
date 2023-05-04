@@ -165,7 +165,7 @@ export default function PieceEditorBoard(props: { editorID: string }) {
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={`${piece == '--' ? piece : (editorState.belongsTo == "white" ? imageRef.toUpperCase() : imageRef)}`} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
+                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
                             clickFunction(squareCoordinate(i))} />
                     ))
                 }
@@ -181,3 +181,11 @@ export default function PieceEditorBoard(props: { editorID: string }) {
         </Box>
     );
 }
+
+//const imageID = (piece: string): string => {
+//    //piece == '--' ? piece : (editorState.belongsTo == "white" ? imageRef.toUpperCase() : imageRef)}
+//
+//    if()
+//
+//    return "";
+//}

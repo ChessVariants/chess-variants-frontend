@@ -46,6 +46,7 @@ function App() {
 
       if (cookie.name === Cookie.JwtToken && cookie.value !== "") {
         GameService.create();
+        EditorService.create();
         authenticate();
       }
 
@@ -74,6 +75,7 @@ function App() {
         else if (res.status === 200) {
           setUsername(cookieService.get(Cookie.Username))
           connectHub();
+          connectEditorHub();
         }
       })
       .catch(e => {
@@ -125,7 +127,7 @@ function App() {
   if (authenticationState === AuthenticationState.InProgress
     || authenticationState === AuthenticationState.Uninitialized
     || GameService.getInstance().isConnecting()) {
-    return (<></>)
+    return (<>Loading</>)
   }
 
   if (authenticationState === AuthenticationState.NotPossible) {
