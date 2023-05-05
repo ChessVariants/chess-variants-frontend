@@ -23,7 +23,7 @@ export async function getMoves(token: string): Promise<MoveDTO[]> {
       'Accept': "application/json",
       'Authorization': `Bearer ${token}`,
     },
-  }).then(o => o.json().then(o => o.events));
+  }).then(o => o.json().then(o => o.moves));
 
 }
 
