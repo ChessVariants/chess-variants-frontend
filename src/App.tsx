@@ -136,7 +136,6 @@ function App() {
   const closeDialog = () => {
     setOpen(false)
   }
-  // FIX LOGIN DIALOG
   return (
     <Box>
       <Dialog open={open} TransitionComponent={Transition}>

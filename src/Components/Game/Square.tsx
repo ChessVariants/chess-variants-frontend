@@ -79,8 +79,7 @@ export const useStyles = makeStyles<Theme>(theme => ({
  * @param props includes boolean for color, id of the piece, coordinate (position, i.e. e4), clickfunction and reference to list of active squares
  * @returns 
  */
-export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any, highlight?: boolean}) {
-
+export default function Square(props: { isWhite: boolean, id: string, coordinate: string, clickFunction: any, active: any, highlight?: boolean, labelRow?: string, labelCol?: string }) {
     const classes = useStyles();
     /**
      * useState to activate square
@@ -97,6 +96,8 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         clickFunction,
         active,
         highlight,
+        labelRow,
+        labelCol,
     } = props;
 
     /**
@@ -106,8 +107,18 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
      * @returns label string
      */
     const labelVisibility = (coordinate: string) => {
-        if (coordinate[0] === "a") return coordinate;
-        if (coordinate[1] === "1" && coordinate.length === 2) return coordinate;
+        if (labelRow) {
+            if (coordinate[0] === labelRow) return coordinate;
+        }
+        else {
+            if (coordinate[0] === "a") return coordinate;
+        }
+        if (labelCol) {
+            if (coordinate.match(/\d+/)?.join() === labelCol) return coordinate;
+        }
+        else {
+            if (coordinate[1] === "1" && coordinate.length === 2) return coordinate;
+        }
         return "";
     }
 
