@@ -7,7 +7,7 @@ import { Theme } from "@material-ui/core";
 /**
  * MUI styles provider
  */
-const useStyles = makeStyles<Theme>(theme => ({
+export const useStyles = makeStyles<Theme>(theme => ({
     SquareContainer: {
         width: "auto",
         height: "auto",

@@ -134,6 +134,10 @@ export default class GameService {
         this.hubConnection.send('AssignAI', gameId);
     }
 
+    sendPromotionChoice(gameId: string, pieceIdentifier: string): void {
+        this.hubConnection.send('PromotePiece', gameId, pieceIdentifier);
+    }
+
     async requestColors(gameId: string): Promise<Colors> {
         return this.hubConnection.invoke('RequestColors', gameId)
     }
@@ -185,6 +189,11 @@ export interface Move {
     to: string[],
 }
 
+export interface PromotionOptions {
+    promotablePieces: string[],
+    player: "white" | "black",
+}
+
 
 export enum GameEvents {
     GameNotFound = "gameNotFound",
@@ -205,6 +214,8 @@ export enum GameEvents {
     GameVariantNotSet = "gameVariantNotSet",
     GameStarted = "gameStarted",
     Colors = "colors",
+    Promotion = "promotion",
+    Promoted = "promoted",
 }
 
 export enum Variant {
