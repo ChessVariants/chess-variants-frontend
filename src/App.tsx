@@ -1,6 +1,6 @@
 import HomePage from './Components/Home/HomePage';
 import MatchPage from './Components/Game/MatchPage';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Register from './Components/Account/Register';
 import JoinGame from './Components/SetupGame/JoinGame';
 import SetupGame from './Components/SetupGame/SetupGame';
@@ -15,6 +15,8 @@ import { Dialog } from '@mui/material';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
 import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
+import { Snackbar } from '@material-ui/core';
+import RegisteredNotification from './Components/Account/RegisteredNotification';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -35,7 +37,9 @@ function App() {
   const cookieService = CookieService.getInstance()
   const [authenticationState, setAuthenticationState] = useState<AuthenticationState>(AuthenticationState.InProgress);
   const [username, setUsername] = useState<string>("");
-  const [open, setOpen] = useState(true);
+  const [displayLoginDialog, setDisplayLoginDialog] = useState<boolean>(true);
+  const [displayRegisteredNotification, setDisplayRegisteredNotification] = useState<boolean>(false);
+  const location = useLocation();
 
   useEffect(() => {
     cookieService.addChangeListener((cookie) => {
@@ -55,9 +59,9 @@ function App() {
   }, [])
   useEffect(() => {
     if (username === "") {
-      setOpen(true)
+      setDisplayLoginDialog(true)
     } else {
-      setOpen(false)
+      setDisplayLoginDialog(false)
     }
   }, [username])
 
@@ -133,18 +137,35 @@ function App() {
 
 
   const closeDialog = () => {
-    setOpen(false)
+    setDisplayLoginDialog(false)
+  }
+  
+  const showRegisteredNotification = () => {
+    setDisplayRegisteredNotification(true);
+  }
+
+  const hideRegisteredNotification = () => {
+    setDisplayRegisteredNotification(false);
+  }
+
+  const shouldShowRegisteredNotification = () => {
+    return displayRegisteredNotification && displayLoginDialog;
   }
 
   return (
     <>
-      <Dialog open={open} TransitionComponent={Transition}>
+      <RegisteredNotification 
+        displayCondition={shouldShowRegisteredNotification} 
+        hideRegisteredNotification={hideRegisteredNotification}
+      ></RegisteredNotification>
+      {displayLoginDialog && !location.pathname.startsWith('/register') ? 
+      <Dialog open={displayLoginDialog} TransitionComponent={Transition}>
         <LoginDialog clickFunction={closeDialog}></LoginDialog>
-      </Dialog>
+      </Dialog> : null
+      }
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Register showRegisteredNotification={showRegisteredNotification} />} />
         <Route path="/pieceEditor" element={<EditorPage />} />
         <Route path="/match" element={<MatchPage />} />
         <Route path="/match/:gameID" element={<MatchPage />} />
