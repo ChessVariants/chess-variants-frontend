@@ -177,6 +177,8 @@ export interface GameState {
     board: string[],
     boardSize: BoardSize,
     moves: Move[]
+    latestMoveFromIndex?: number,
+    latestMoveToIndex?: number,
 }
 
 export interface BoardSize {

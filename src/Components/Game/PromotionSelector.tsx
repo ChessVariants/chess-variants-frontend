@@ -5,11 +5,25 @@ import { PieceImageAdapter } from "../../IMG/PieceImageAdapter";
 import { makeStyles, Theme } from "@material-ui/core";
 
 export const usePromotionStyle = makeStyles<Theme>(theme => ({
-    SquareContainer: {
+    BlackSquare: {
         width: "40px",
         height: "40px",
         position: "relative",
         backgroundColor: "black",
+        '&:hover': {
+            background: "#4d4d4d",
+            cursor: "pointer",
+        },
+    },
+    WhiteSquare: {
+        width: "40px",
+        height: "40px",
+        position: "relative",
+        backgroundColor: "white",
+        '&:hover': {
+            background: "#bfbfbf",
+            cursor: "pointer",
+        },
     },
     Container: {
         display: "inline-block",
@@ -31,9 +45,8 @@ export const usePromotionStyle = makeStyles<Theme>(theme => ({
 }));
 
 export default function PromotionSelector(props: { options: PromotionOptions, gameId: string }) {
-    
+
     const { options, gameId } = props;
-    const classes = useStyles();
     const squareClasses = usePromotionStyle();
 
 
@@ -50,18 +63,18 @@ export default function PromotionSelector(props: { options: PromotionOptions, ga
     );
 }
 
-function PromotionSquare(props: {id: string, clickFunction: any} ) {
+function PromotionSquare(props: { id: string, clickFunction: any }) {
     const { id, clickFunction } = props;
     const classes = useStyles();
     const squareClasses = usePromotionStyle();
 
     return (
-        <Box className={`${squareClasses.SquareContainer}`} onClick={() => clickFunction()}>;
+        <Box className={id === id.toLowerCase() ? squareClasses.WhiteSquare : squareClasses.BlackSquare} onClick={() => clickFunction()}>
             <Box className={classes.Square}>
-                {id !== "--" ? <img src={PieceImageAdapter.getImageRef(id)}
+                <img src={PieceImageAdapter.getImageRef(id)}
                     alt={id}
                     className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
-                /> : null}
+                />
             </Box>
         </Box>
     );
