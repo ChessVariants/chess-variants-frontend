@@ -59,6 +59,10 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
+    requestPiecesByUser(editorId: string): void {
+        this.hubConnection.send('GetUserPieces', editorId);
+    }
+
     sendCreatePieceEditor(editorId: string): void {
         this.hubConnection.send('CreatePieceEditor', editorId);
     }
@@ -146,6 +150,10 @@ export default class EditorService {
 
     setActivePiece(editorId: string, piece: string): void {
         this.hubConnection.send("SetActivePiece", editorId, piece);
+    }
+
+    setActiveRemove(editorId: string): void {
+        this.hubConnection.send("SetActiveRemove", editorId);
     }
 
     insertPiece(editorId: string, square: string) {
