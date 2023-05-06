@@ -1,7 +1,5 @@
-import { ThemeProvider } from "@emotion/react";
 import { Button, Container, CssBaseline, Grid, Paper, Typography } from "@mui/material";
 import { commonClasses } from "../../../Util/CommonClasses";
-import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 import MyPopup from "../Components/Popup";
 import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
@@ -160,7 +158,6 @@ export default function ConditionEditorPage() {
 
   return (
     <div>
-      <ThemeProvider theme={CustomDarkTheme}>
         <CssBaseline />
         <Container maxWidth="md" >
           <Paper className={classes.CenteredBasicCard}>
@@ -223,7 +220,6 @@ export default function ConditionEditorPage() {
 
         <SavePopup isOpen={isSavePopupOpen} setIsOpen={setIsSavePopupOpen} save={saveCondition} name={name} setName={setName} description={description} setDescription={setDescription} type="Condition"></SavePopup>
 
-      </ThemeProvider>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { FormControl, Select, MenuItem } from "@material-ui/core"
-import React, { useState } from "react";
+import { FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import React, { ReactNode, useState } from "react";
 
 interface MyDropdownProps {
     options: string[];
@@ -12,7 +12,7 @@ interface MyDropdownProps {
 export default function MyDropdown({ options, defaultValue, onChange }: MyDropdownProps) {
     const [selectedOption, setSelectedOption] = useState(defaultValue);
   
-    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const handleChange = (event: SelectChangeEvent<string>, child: ReactNode) => {
       const newSelectedOption = event.target.value as string;
       setSelectedOption(newSelectedOption);
       onChange(newSelectedOption);

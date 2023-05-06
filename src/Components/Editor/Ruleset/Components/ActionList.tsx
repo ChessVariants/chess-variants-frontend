@@ -1,5 +1,4 @@
-import { Button, Paper, TextField } from "@mui/material";
-import { List, ListItem, ListItemText } from "@material-ui/core"
+import { Button, Paper, TextField, List, ListItem, ListItemText  } from "@mui/material";
 import PositionCreatorPopup from "./PositionCreatorPopup";
 
 import { useEffect, useState } from "react";

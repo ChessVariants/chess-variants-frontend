@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@emotion/react";
 import { Button, Container, CssBaseline, Grid, Paper, TextField, Typography } from "@mui/material";
 import { commonClasses } from "../../../Util/CommonClasses";
 import CustomDarkTheme from "../../../Util/CustomDarkTheme";
@@ -162,7 +161,6 @@ export default function MoveEditorPage() {
   let token = CookieService.getInstance().get(Cookie.JwtToken)
   return (
     <div>
-      <ThemeProvider theme={CustomDarkTheme}>
         <CssBaseline />
         <Container maxWidth="md">
           <Paper className={classes.CenteredBasicCard}>
@@ -236,7 +234,6 @@ export default function MoveEditorPage() {
 
           </Paper>
         </Container>
-      </ThemeProvider>
     </div>
   );
 }

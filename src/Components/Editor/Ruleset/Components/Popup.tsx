@@ -1,8 +1,5 @@
-import { ThemeProvider } from "@emotion/react";
-import { Button, Container, Grid, ListItemButton, Paper, Typography } from "@mui/material";
-import { List, ListItemText } from "@material-ui/core"
+import { Button, Container, Grid, ListItemButton, Paper, Typography, List, ListItemText } from "@mui/material";
 import { commonClasses } from "../../../Util/CommonClasses";
-import CustomDarkTheme from "../../../Util/CustomDarkTheme";
 
 import React, { useEffect, useState, useRef } from "react";
 
@@ -73,7 +70,6 @@ export default function MyPopup({ isOpen, setIsOpen, title, onClickItem, addedIt
 
   return (
     <div>
-      <ThemeProvider theme={CustomDarkTheme}>
         {isOpen && (
           <Container maxWidth="md" ref={popupRef}>
             <Paper className={classes.CenteredBasicCard} sx={{ zIndex: 10 }}>
@@ -99,7 +95,6 @@ export default function MyPopup({ isOpen, setIsOpen, title, onClickItem, addedIt
             </Paper>
           </Container>
         )}
-      </ThemeProvider>
     </div>
   );
 }
