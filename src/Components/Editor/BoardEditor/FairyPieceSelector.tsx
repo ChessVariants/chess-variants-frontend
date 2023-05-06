@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import EditorService, { Piece } from "../../../Services/EditorService";
 import Grid from '@mui/material/Grid';
 import PieceItem from "./PieceItem";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const useStyles = makeStyles<Theme>(({
     Container: {
@@ -51,11 +49,6 @@ export default function FairyPieceSelector(props: { editorID: string, color: str
                         </Grid>
                     ))
                 }
-                <Box >
-                    <IconButton size="large" onClick={() => { editorService.setActiveRemove(editorID) }}>
-                        <DeleteIcon fontSize="inherit" />
-                    </IconButton>
-                </Box>
             </Grid>
         </Box>
     );
