@@ -31,32 +31,70 @@ export default function PositionCreatorPopup({ positionCreatorInfo, onSavePositi
     setSelectedOption(selectedOption);
 
     if (selectedOption === "Absolute")
+    {
       positionCreatorInfo.posInfo = { absolute: { coordinate: "a1" }, relative: null }
-    else
+      setCoord("a1")
+    }
+    else {
       positionCreatorInfo.posInfo = { absolute: null, relative: { x: 0, y: 0, to: false } }
+      setX("0");
+      setY("0");
+    }
   }
+  /*
+    const handleChangePosition = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { value: inputValue } = event.target;
+      const regex = /^[a-t]([0-9]|1[0-9]|20)$/i;
+      // Regex Explanation:
+      // ^[a-t] - matches the first character from a to t
+      // ([0-9]|1[0-9]|20) - matches any single digit number, any two-digit number starting with 1, or the number 20
+      // $ - end of string
+    
+      if (regex.test(inputValue)) {
+        setIdentifier(inputValue);
+      }
+    };*/
 
   const handleSaveButton = () => {
     setSelectedOption("")
     onSavePosition();
   }
 
+  const [x, setX] = useState("0");
+  const [y, setY] = useState("0");
+  const [coord, setCoord] = useState("");
+
   const handleChangeX = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (positionCreatorInfo.posInfo.relative !== null)
-      positionCreatorInfo.posInfo.relative.x = parseInt(event.target.value)
+
+    const regex = /^-?(20|[0-1]?[0-9])?$/
+    let val: string = (event.target.value)
+
+    if (positionCreatorInfo.posInfo.relative !== null && (regex.test(val) || val === "")) {
+      positionCreatorInfo.posInfo.relative.x = (val === "" || val === "-") ? 0 : parseInt(val)
+      setX(val)
+    }
   }
-
-
   const handleChangeY = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (positionCreatorInfo.posInfo.relative !== null)
-      positionCreatorInfo.posInfo.relative.y = parseInt(event.target.value)
-  }
+                  
+    const regex = /^-?(20|[0-1]?[0-9])?$/
+    let val: string = (event.target.value)
 
+    if (positionCreatorInfo.posInfo.relative !== null && (regex.test(val) || val === "")) {
+      positionCreatorInfo.posInfo.relative.y = (val === "" || val === "-") ? 0 : parseInt(val)
+      setY(val)
+    }
+  }
   const handleChangeCoord = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (positionCreatorInfo.posInfo.absolute !== null)
-      positionCreatorInfo.posInfo.absolute.coordinate = event.target.value
-  }
 
+    const regex =/^([a-t])([1-9]|[1-9][0-9]|20)?$/
+    let val: string = (event.target.value)
+
+    if (positionCreatorInfo.posInfo.absolute !== null && (regex.test(val) || val === "")) {
+      positionCreatorInfo.posInfo.absolute.coordinate = val.length <= 1 ? "a1" : val
+      setCoord(val)
+    }
+  }
+  
 
   const handleChangeRelativeTo = (value: string) => {
     if (positionCreatorInfo.posInfo.relative !== null)
@@ -84,7 +122,7 @@ export default function PositionCreatorPopup({ positionCreatorInfo, onSavePositi
                         <Typography variant="h4" sx={{ letterSpacing: '2px', mr: 1, fontSize: 18 }}>X:</Typography>
                       </Grid>
                       <Grid>
-                        <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeX}>
+                        <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeX} value={x}>
 
                         </TextField>
                       </Grid>
@@ -93,7 +131,7 @@ export default function PositionCreatorPopup({ positionCreatorInfo, onSavePositi
                       </Grid>
                       <Grid>
 
-                        <TextField sx={{ width: 60 }} onChange={handleChangeY}>
+                        <TextField sx={{ width: 60 }} onChange={handleChangeY} value={y}>
 
                         </TextField>
                       </Grid>
@@ -120,7 +158,7 @@ export default function PositionCreatorPopup({ positionCreatorInfo, onSavePositi
                         <Typography variant="h4" sx={{ letterSpacing: '2px', mt: 2, fontSize: 24 }}>Coordinate:</Typography>
                         <Grid container alignItems="center" justifyItems={"center"} justifyContent="center" sx={{ mt: 1, mb: 1 }}>
                           <Grid>
-                            <TextField sx={{ width: 120 }} onChange={handleChangeCoord}>
+                            <TextField sx={{ width: 120 }} onChange={handleChangeCoord} value={coord}>
 
                             </TextField>
                           </Grid>

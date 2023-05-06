@@ -1,10 +1,11 @@
-import { Button, Paper, TextField, List, ListItem, ListItemText  } from "@mui/material";
+import { Button, Paper, TextField, List, ListItem, ListItemText } from "@mui/material";
 import PositionCreatorPopup from "./PositionCreatorPopup";
 
 import { useEffect, useState } from "react";
 
 import MyDropdown from "./Dropdown";
 import { ActionDTO, ActionDict, ActionItemInfo, ItemInfo, MovePieceDTO, PositionCreatorInfo, PositionDTO, SetPieceDTO, WinDTO } from "../Types";
+import { handleChangeIdentifier, isIdentifier } from "../HelperFunctions";
 
 interface ActionListProps {
   itemsAdded: ItemInfo[];
@@ -155,7 +156,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       <Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
         <List>
           {itemsAdded.map((item) => (
-              <ActionListItem key={item.id} item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
+            <ActionListItem key={item.id} item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
           ))}
         </List>
       </Paper>
@@ -261,10 +262,10 @@ function ActionMovePiece({ onOpen, actionInfo }: ActionMovePieceProps) {
 
   return (
     <div>
-      <Button variant="contained" color="createColor" style={{ height: '50px', width: '125px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>
+      <Button variant="contained" color="createColor" style={{ height: '50px', width: '140px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>
         {positionInfoToString(actionInfo.from)}
       </Button>
-      <Button variant="contained" color="createColor" style={{ height: '50px', width: '125px' }} onClickCapture={() => onOpen(false)} sx={{ mr: 1 }}>
+      <Button variant="contained" color="createColor" style={{ height: '50px', width: '140px' }} onClickCapture={() => onOpen(false)} sx={{ mr: 1 }}>
         {positionInfoToString(actionInfo.to)}
       </Button>
     </div>);
@@ -278,21 +279,27 @@ interface ActionSetPieceProps {
 function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
 
 
+
+
   const handleOpenMenuClick = (bool: boolean) => {
 
   }
 
-  const handleChangeIdentifier = (event: React.ChangeEvent<HTMLInputElement>) => {
-    actionInfo.identifier = event.target.value;
+  const [identifier, setIdentifier] = useState("aa");
+
+  const setId = (id: string) => {
+    //    if(isIdentifier(event.target.value))
+    actionInfo.identifier = id;
+    setIdentifier(id);
   }
 
   return (
     <div>
 
-      <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier} defaultValue={actionInfo.identifier}>
+      <TextField sx={{ width: 60, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setId)} value={identifier}>
 
       </TextField>
-      <Button variant="contained" color="createColor" style={{ height: '50px', width: '125px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>
+      <Button variant="contained" color="createColor" style={{ height: '50px', width: '140px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>
         {positionInfoToString(actionInfo.at)}
       </Button>
     </div>);

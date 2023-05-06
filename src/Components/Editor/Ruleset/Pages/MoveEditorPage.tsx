@@ -12,7 +12,7 @@ import CookieService, { Cookie } from "../../../../Services/CookieService";
 
 import React, { useEffect, useState } from "react";
 import { ActionDict, ActionDTO, ConditionInfo, ItemInfo, MoveDict, MoveDTO, PositionCreatorInfo, PositionDTO } from "../Types";
-import { deleteItem, getMoves, postItem, updateDict, getPredicates } from "../HelperFunctions";
+import { deleteItem, getMoves, postItem, updateDict, getPredicates, handleChangeIdentifier } from "../HelperFunctions";
 
 
 export default function MoveEditorPage() {
@@ -21,7 +21,7 @@ export default function MoveEditorPage() {
 
   const [positionCreatorInfo, setPositionCreatorInfo] = useState<PositionCreatorInfo>({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true });
 
-  const [identifier, setIdentifier] = useState("")
+  const [identifier, setIdentifier] = useState("aa")
 
 
   const classes = commonClasses();
@@ -108,9 +108,6 @@ export default function MoveEditorPage() {
     return "";
   }
 
-  const handleChangeIdentifier = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIdentifier(event.target.value)
-  }
   const [itemsAdded, setItemsAdded] = useState<ItemInfo[]>([]);
 
   const [actionDict, setActionDict] = useState<ActionDict>({});
@@ -193,7 +190,7 @@ export default function MoveEditorPage() {
                 <Typography variant="h5" sx={{ letterSpacing: '2px' }}>Piece Identifier:</Typography>
               </Grid>
               <Grid sx={{ mr: 1 }}>
-                <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier} value={identifier}>
+                <TextField sx={{ width: 60, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setIdentifier)} value={identifier}>
 
                 </TextField>
               </Grid>

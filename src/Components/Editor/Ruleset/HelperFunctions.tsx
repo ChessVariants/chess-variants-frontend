@@ -25,7 +25,7 @@ export async function getExceptionMessage(code: string): Promise<string> {
             'Authorization': `Bearer ${token}`,
             'Content-Type': "application/json",
         },
-        body: JSON.stringify({code: code}),
+        body: JSON.stringify({ code: code }),
     }).then(o => o.json().then(o => o.exception));
 
 }
@@ -100,3 +100,16 @@ export async function updateDict<T extends { name: string }>(getFunction: (token
 
     setFunction(ruleSetDict)
 }
+
+export function isIdentifier(inputValue: string) {
+    const regex = /^(([a-z]|[A-Z])([a-z]|[A-Z]))|([a-z]|[A-Z])$/i;
+
+    return regex.test(inputValue) && inputValue.length >= 0 && inputValue.length <= 2;
+}
+
+export function handleChangeIdentifier(event: React.ChangeEvent<HTMLInputElement>, setFunc: ((value: React.SetStateAction<string>) => void) | ((value: string) => void)) {
+    const { value: inputValue } = event.target;
+    if (inputValue == "" || isIdentifier(inputValue)) {
+        setFunc(inputValue);
+    }
+};
