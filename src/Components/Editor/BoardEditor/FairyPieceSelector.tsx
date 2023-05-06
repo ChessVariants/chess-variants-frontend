@@ -1,11 +1,10 @@
 import { Box } from "@mui/system";
-import { Paper, Theme, styled } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from "react";
 import EditorService, { Piece } from "../../../Services/EditorService";
 import Grid from '@mui/material/Grid';
 import PieceItem from "./PieceItem";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -22,7 +21,7 @@ const useStyles = makeStyles<Theme>(({
 
 const initialState: Piece[] = []
 
-export default function PieceSelector(props: { editorID: string, color: string }) {
+export default function FairyPieceSelector(props: { editorID: string, color: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
@@ -32,7 +31,7 @@ export default function PieceSelector(props: { editorID: string, color: string }
 
     useEffect(() => {
 
-        editorService.requestStandardPieces(color)
+        editorService.requestPiecesByUser()
             .then((pieceList: Piece[]) => {
                 setPieces(pieceList);
             })

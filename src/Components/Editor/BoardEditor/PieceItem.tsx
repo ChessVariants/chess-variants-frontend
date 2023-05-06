@@ -1,11 +1,11 @@
 import { Box } from "@mui/system";
-import { Button, Paper, Theme, styled } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import { useEffect, useState } from "react";
+import { Theme } from "@material-ui/core";
 import EditorService from "../../../Services/EditorService";
 import { PieceImageAdapter } from "../../../IMG/PieceImageAdapter";
+import { Button } from "@mui/material";
 
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles<Theme>(({
     WhitePiece: {
         filter: "contrast(.7) brightness(1.2)",
     },

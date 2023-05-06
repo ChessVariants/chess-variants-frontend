@@ -1,10 +1,12 @@
 import { Box } from "@mui/system";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import EditorService from "../../../Services/EditorService";
 import BoardEditorBoard from "./BoardEditorBoard";
 import BoardEditorSidePage from "./BoardEditorSidePage";
+import { Stack } from "@mui/material";
+import FairyPieceSelector from "./FairyPieceSelector";
 
 const useStyles = makeStyles<Theme>(({
     Container: {
@@ -40,7 +42,11 @@ export default function BoardEditorPage() {
     return (
         <Box className={classes.Container} style={{ paddingLeft: 450 }} >
             <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
-            <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
+            <Stack>
+                <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
+                <FairyPieceSelector editorID={editorID} color="white"></FairyPieceSelector>
+
+            </Stack>
         </Box>
     );
 }

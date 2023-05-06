@@ -176,8 +176,8 @@ export default class EditorService {
         return this.hubConnection.invoke('RequestStandardPiecesByColor', color);
     }
 
-    async requestPiecesByUser(editorId: string): Promise<Piece[]> {
-        return this.hubConnection.invoke('GetUserPieces', editorId);
+    async requestPiecesByUser(): Promise<Piece[]> {
+        return this.hubConnection.invoke('GetUserPieces');
     }
 
     /**
