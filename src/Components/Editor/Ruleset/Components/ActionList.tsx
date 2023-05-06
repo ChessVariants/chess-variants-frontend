@@ -20,7 +20,7 @@ interface ActionListProps {
 
 
 export default function ActionList({ itemsAdded, onRemoveItem, width, height, setJSON, actionInfo, setActionInfo }: ActionListProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isPositionCreatorPopupOpen, setIsPositionCreatorPopupOpen] = useState(false);
   const [positionCreatorInfo, setPositionCreatorInfo] = useState({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true } as PositionCreatorInfo);
 
 
@@ -29,18 +29,10 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
   }
 
   useEffect(() => {
-    console.log("saving actionInfo")
     localStorage.setItem('actionInfo', JSON.stringify(actionInfo));
   }, [actionInfo]);
 
   useEffect(() => {
-    console.log("Before: " + JSON.stringify(actionInfo))
-    updateDict();
-    console.log("After: " + JSON.stringify(actionInfo))
-  }, [itemsAdded]);
-
-  useEffect(() => {
-    console.log("retrieving actionInfo")
     const savedData = localStorage.getItem('actionInfo');
     if (savedData !== null) {
       updateJSON();
@@ -48,9 +40,9 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     }
   }, []);
 
-  const isMoveAction = (info: ActionDTO) => {
-    return info.move !== null;
-  }
+  useEffect(() => {
+    updateDict();
+  }, [itemsAdded]);
 
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
     setPositionCreatorInfo({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: id, editingFrom: editingFrom } as PositionCreatorInfo)
@@ -58,11 +50,11 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
 
   const openPositionCreatorPopup = (id: number, editingFrom: boolean) => {
     resetPositionCreatorPopup(id, editingFrom)
-    setIsOpen(true)
+    setIsPositionCreatorPopupOpen(true)
   }
 
   const fromItemToActionInfo = (item: ItemInfo) => {
-    let action: ActionDTO = actionInfo[item.id] === undefined ? { move: null, win: null, set: null, tie: false } : actionInfo[item.id];
+    let action: ActionDTO = actionInfo[item.id] === undefined ? { move: null, win: null, set: null, tie: false, promotion: false } : actionInfo[item.id];
 
     if (item.name === "Win") {
       if (action.win === null) {
@@ -71,6 +63,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       action.move = null;
       action.set = null;
       action.tie = false;
+      action.promotion = false;
     }
     else if (item.name === "Move Piece") {
       if (action.move === null) {
@@ -82,6 +75,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       action.win = null;
       action.set = null;
       action.tie = false;
+      action.promotion = false;
     }
     else if (item.name == "Set Piece") {
       if (action.set === null) {
@@ -90,14 +84,25 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       action.win = null;
       action.move = null;
       action.tie = false;
+      action.promotion = false;
     }
-    else {
+    else if (item.name == "Tie") {
       if (!action.tie) {
         action.tie = true;
       }
       action.win = null;
       action.move = null;
       action.set = null;
+      action.promotion = false;
+    }
+    else {
+      if (!action.promotion) {
+        action.promotion = true;
+      }
+      action.win = null;
+      action.move = null;
+      action.set = null;
+      action.tie = false;
     }
     return action;
   }
@@ -112,9 +117,9 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
 
   const getActionInfo = (id: number) => {
     if (actionInfo[id] === undefined)
-      return fromItemToActionInfo(itemsAdded[id]);//{ move: null, win: null, set: null, isTie: false };
+      return fromItemToActionInfo(itemsAdded[id]);
     updateDict();
-    
+
     return actionInfo[id];
   }
 
@@ -136,7 +141,7 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     }
 
     updateJSON();
-    setIsOpen(false)
+    setIsPositionCreatorPopupOpen(false)
   }
 
 
@@ -144,20 +149,6 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
     delete actionInfo[id];
     onRemoveItem(newItem);
     updateJSON();
-
-    console.log(actionInfo);
-    console.log(itemsAdded);
-    /*    actionInfo[id] = null;
-        let j: number = 0;
-        for (let i = 0; i < itemsAdded.length - 1; i++) {
-          if (i === id) {
-            j++;
-          }
-          actionInfo[i] = actionInfo[j]
-          j++;
-        }
-        actionInfo[itemsAdded.length-1] = null;
-        updateJSON();*/
   }
 
   return (
@@ -165,13 +156,11 @@ export default function ActionList({ itemsAdded, onRemoveItem, width, height, se
       <Paper variant="outlined" style={{ width: width, height: height, overflowY: 'auto', borderWidth: '5px', userSelect: 'none' }} sx={{ ml: 2, mr: 2 }}>
         <List>
           {itemsAdded.map((item) => (
-            <div>
-              <ActionListItem item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
-            </div>
+              <ActionListItem key={item.id} item={{ itemInfo: item, actionInfo: getActionInfo(item.id) }} onRemoveItem={(itemToRemove) => removeItem(itemToRemove, item.id)} onOpen={(editingFrom) => openPositionCreatorPopup(item.id, editingFrom)} />
           ))}
         </List>
       </Paper>
-      <PositionCreatorPopup positionCreatorInfo={positionCreatorInfo} onSavePosition={() => savePositionCreatorToAction(positionCreatorInfo.posInfo)} isOpen={isOpen} resetPositionCreatorPopup={() => resetPositionCreatorPopup(0, true)} setIsOpen={setIsOpen} fixed={false} />
+      <PositionCreatorPopup positionCreatorInfo={positionCreatorInfo} onSavePosition={() => savePositionCreatorToAction(positionCreatorInfo.posInfo)} isOpen={isPositionCreatorPopupOpen} resetPositionCreatorPopup={() => resetPositionCreatorPopup(0, true)} setIsOpen={setIsPositionCreatorPopupOpen} fixed={false} />
     </div>
   );
 }
@@ -198,7 +187,9 @@ function ActionListItem({ item, onRemoveItem, onOpen }: ActionListItemProps) {
             ? <ActionMovePiece onOpen={onOpen} actionInfo={item.actionInfo.move}></ActionMovePiece>
             : (item.actionInfo.set !== null
               ? <ActionSetPiece onOpen={onOpen} actionInfo={item.actionInfo.set}></ActionSetPiece>
-              : <ActionTie></ActionTie>))}
+              : (item.actionInfo.tie)
+                ? <ActionTie></ActionTie>
+                : <ActionPromotion></ActionPromotion>))}
 
 
 
@@ -234,6 +225,12 @@ function ActionWin({ actionInfo }: ActionWinProps) {
 
 
 function ActionTie() {
+
+  return (
+    <div></div>);
+}
+
+function ActionPromotion() {
 
   return (
     <div></div>);
@@ -293,7 +290,7 @@ function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
   return (
     <div>
 
-      <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier}>
+      <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier} defaultValue={actionInfo.identifier}>
 
       </TextField>
       <Button variant="contained" color="createColor" style={{ height: '50px', width: '125px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>

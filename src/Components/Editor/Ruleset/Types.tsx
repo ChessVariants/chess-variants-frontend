@@ -20,6 +20,7 @@ export type ActionDTO = {
     set: SetPieceDTO | null;
     move: MovePieceDTO | null;
     tie: boolean;
+    promotion: boolean;
 }
 
 export type WinDTO = {
@@ -45,6 +46,7 @@ export type PositionRelativeDTO = {
     y: number;
     to: boolean;
 }
+type DTO = {name: string}
 
 export type ItemInfo = { name: string, id: number }
 
@@ -52,13 +54,13 @@ export type ActionDict = { [id: number]: ActionDTO }
 
 export type PositionCreatorInfo = { posInfo: PositionDTO, id: number, editingFrom: boolean }
 
-export type RuleSetInfo = {
+export type RuleSetDTO = {
     name: string;
     description: string;
-    condition: string;
-    specialMoves: ItemInfo[];
-    events: ItemInfo[];
-    stalemateEvents: ItemInfo[];
+    predicate: string;
+    moves: string[];
+    events: string[];
+    stalemateEvents: string[];
 }
 
 
@@ -84,13 +86,14 @@ export type ActionItemInfo = {
     itemInfo: ItemInfo;
     actionInfo: ActionDTO;
 }
+export type RuleSetDict = { [name: string]: RuleSetDTO }
 
 export type EventDict = { [name: string]: EventDTO }
 
 export type MoveDict = { [name: string]: MoveDTO }
 
 export type MoveDTO = {
-    posInfo: PositionDTO;
+    click: PositionDTO;
     actions: ActionDTO[];
     identifier: string;
     predicate: string;

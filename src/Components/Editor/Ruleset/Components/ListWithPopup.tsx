@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import MyPopup from "./Popup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActionDict, ItemInfo } from "../Types";
 
 
@@ -32,6 +32,8 @@ interface ListWithPopupProps {
 export default function ListWithPopup({ title, type, singleton, width = "200px", height = "200px", listComponent: ListComponent, items, setItems, itemsAdded, setItemsAdded, setListJSON, actionInfo, setActionInfo }: ListWithPopupProps) {
 
     const [isOpen, setIsOpen] = useState(false);
+
+
 
     const findUnusedId = () => {
         var i = 0

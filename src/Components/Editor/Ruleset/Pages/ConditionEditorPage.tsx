@@ -6,19 +6,8 @@ import MyPopup from "../Components/Popup";
 import React, { useState } from "react";
 import SavePopup from "../Components/SavePopup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
-import { ConditionDict, ConditionInfo, DeleteConditionInfo } from "../Types";
-
-export async function getPredicates(token: string): Promise<ConditionInfo[]> {
-
-  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
-    method: "GET",
-    headers: {
-      'Accept': "application/json",
-      'Authorization': `Bearer ${token}`,
-    },
-  }).then(o => o.json().then(o => o.predicates));
-
-}
+import { ConditionDict, ConditionInfo } from "../Types";
+import { deleteItem, postItem, getPredicates, getExceptionMessage } from "../HelperFunctions";
 
 export default function ConditionEditorPage() {
 
@@ -37,6 +26,7 @@ export default function ConditionEditorPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
+  const [exception, setException] = useState('');
   const classes = commonClasses();
 
   const terminalStyle = {
@@ -99,6 +89,7 @@ export default function ConditionEditorPage() {
     userSelect: 'none' as const,
   };
 
+  let predicateController: string = "predicate";
 
   const value = "last_move_duck = move_pred(last, name, DU)\nlast_move_white = move_pred(last, name, WHITE)\nthis_move_duck = move_pred(this, name, DU)\n\nfirst_m = move_pred(this, first_move)\n\nduck_move_rule = this_move_duck && last_move_white\nstandard_move_rule = !this_move_duck && (last_move_duck || first_m)\nmove_rule = duck_move_rule || standard_move_rule\n\nreturn = move_rule"
 
@@ -137,51 +128,34 @@ export default function ConditionEditorPage() {
 
   const selectCondition = (itemClicked: string) => {
     if (deleteMode) {
-      let deleteConditionInfo: DeleteConditionInfo = { name: itemClicked };
-      // DELETE CODE HERE
-      fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate/" + itemClicked, {
-        method: "DELETE",
-        headers: {
-          'Accept': "application/json",
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': "application/json",
-        },
-      });
+      deleteItem(predicateController, itemClicked);
       updateConditions();
-
     }
     else {
       let retrievedInfo: ConditionInfo = conditions[itemClicked];
       setName(retrievedInfo.name);
       setDescription(retrievedInfo.description);
       setConditionCode(retrievedInfo.code);
+      setException("");
     }
     setIsConditionPopupOpen(false)
   };
 
   const saveCondition = (name: string, description: string) => {
-    if(name === "" || conditionCode === "")
+    if (name === "" || conditionCode === "")
       return;
-
     let conditionInfo = { name: name, description: description, code: conditionCode };
-
-    console.log(JSON.stringify(conditionInfo))
-    fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/predicate", {
-      method: "POST",
-      headers: {
-        'Accept': "application/json",
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': "application/json",
-      },
-      body: JSON.stringify(conditionInfo),
-    }).then(o => console.log(o));
-
-
+    postItem(predicateController, conditionInfo);
   }
-
 
   const handleChangeCondition = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setConditionCode(event.target.value);
+  }
+
+  const compileCode = async () => {
+    setException("Compiling...")
+    let ex: string = await (getExceptionMessage(conditionCode));
+    setException(ex);
   }
 
   return (
@@ -204,41 +178,41 @@ export default function ConditionEditorPage() {
             </Grid>
 
             <div style={terminalStyle}>
-              Invalid type argument of move_pred predicate: 'captured_'
+              {exception}
             </div>
 
             <Grid container marginTop="12px" alignItems="right" justifyItems={"right"} justifyContent="right" >
               <Grid>
-                <Button color={"joinColor"} onClick={() => { }}
+                <Button color={"joinColor"} onClick={() => compileCode() }
                   type="submit"
                   variant="contained"
-                  sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}>
+                  sx={{ mt: 0, mb: 0, mr: 2, width: 160, p: 1 }}>
                   &#9654; Compile
                 </Button>
               </Grid><Grid>
                 <Button color={"createColor"} onClick={() => openConditionPopup(false)}
                   type="submit"
                   variant="contained"
-                  sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}>
-                  Load
+                  sx={{ mt: 0, mb: 0, mr: 2, width: 160, p: 1 }}>
+                  Load Condition
                 </Button>
               </Grid>
               <Grid>
                 <Button color={"browserColor"} onClick={() => { }}
                   type="submit"
                   variant="contained"
-                  sx={{ mt: 0, mb: 0, mr: 2, width: 150, p: 1 }}
+                  sx={{ mt: 0, mb: 0, mr: 2, width: 160, p: 1 }}
                   onClickCapture={() => setIsSavePopupOpen(true)}>
-                  Save
+                  Save Condition
                 </Button>
               </Grid>
               <Grid>
                 <Button color={"editorColor"} onClick={() => { }}
                   type="submit"
                   variant="contained"
-                  sx={{ mt: 0, mb: 0, width: 150, p: 1 }}
+                  sx={{ mt: 0, mb: 0, width: 160, p: 1 }}
                   onClickCapture={() => openConditionPopup(true)}>
-                  Delete
+                  Delete Condition
                 </Button>
               </Grid>
             </Grid>

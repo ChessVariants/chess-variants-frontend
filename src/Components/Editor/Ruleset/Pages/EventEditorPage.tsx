@@ -8,49 +8,45 @@ import ListWithPopup from "../Components/ListWithPopup";
 import ActionList from "../Components/ActionList";
 import SavePopup from "../Components/SavePopup";
 import MyPopup from "../Components/Popup";
-import { getPredicates } from "./ConditionEditorPage";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
-import { getEvents } from "./RuleSetEditorPage"
 
 import React, { useEffect, useState, useRef } from "react";
 import { ActionDict, ActionDTO, ConditionInfo, EventDict, EventDTO, ItemInfo } from "../Types";
+import { deleteItem, postItem, getEvents, updateDict, getPredicates } from "../HelperFunctions";
 
 
 export default function EventEditorPage() {
 
     const classes = commonClasses();
 
-    const [selectedOption, setSelectedOption] = useState("Standard Chess");
-    const [listJSON, setListJSON] = useState("");
-    const [saveWindowOpen, setSaveWindowOpen] = useState(false)
-    const [isEventPopupOpen, setIsEventPopupOpen] = useState(false)
+    const [actionsJSON, setActionsJSON] = useState("");
 
-    // SAVE POPUP
+    // EVENT INFO
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-
-    const handleDropdownChange = (newSelectedOption: string) => {
-        setSelectedOption(newSelectedOption);
-    };
-
-    const [isPositionCreatorOpen, setIsPositionCreatorOpen] = useState(false);
-
-    const loadCondition = (itemClicked: string) => {
-    };
-
-
-    const navigate = useNavigate();
-    const navigatePage = (link: string) => {
-        navigate(link);
-    }
     const [events, setEvents] = useState<EventDict>({});
 
+    // POPUPS
+    const [saveWindowOpen, setSaveWindowOpen] = useState(false);
+    const [isEventPopupOpen, setIsEventPopupOpen] = useState(false);
+
+    // ACTIONS THAT CAN BE ADDED
+    const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie', 'Promotion']);
+
+    // CONDITION INFO
+    const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
+    const [conditions, setConditions] = useState<string[]>([]);
+    const [selectedCondition, setSelectedCondition] = useState<string>("");
+
+    // ACTION DICTIONARY
+    const [actionInfo, setActionInfo] = useState<ActionDict>({});
+
+    // DELETE MODE FOR LOAD POPUP
     const [deleteMode, setDeleteMode] = useState(false);
-
-
+/*
     const updateEvents = async () => {
 
-        const eventsTemp: EventDTO[] = (await getEvents(token));
+        const eventsTemp: EventDTO[] = (await getEvents());
 
         let eventDict: EventDict = {};
         eventsTemp.map((item) => {
@@ -59,37 +55,22 @@ export default function EventEditorPage() {
 
         setEvents(eventDict)
     }
-
+*/
     const openPopup = async (deleteMode: boolean) => {
 
         setDeleteMode(deleteMode);
-        updateEvents();
+        updateDict(getEvents, setEvents);
         setIsEventPopupOpen(true)
     }
+    let eventController: string = "event";
 
 
     const saveEvent = (name: string, description: string) => {
-        var info: EventDTO = { name, description, predicate: selectedCondition, actions: Object.values(JSON.parse(listJSON)) }
-        fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event", {
-            method: "POST",
-            headers: {
-                'Accept': "application/json",
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': "application/json",
-            },
-            body: JSON.stringify(info),
-        }).then(o => console.log(o));
+        var info: EventDTO = { name, description, predicate: selectedCondition, actions: Object.values(JSON.parse(actionsJSON)) }
+        postItem(eventController, info);
 
-        console.log("posting: " + JSON.stringify(info))
+        console.log(info)
     }
-
-    const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
-
-    const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
-    const [conditions, setConditions] = useState<string[]>([]);
-    const [selectedCondition, setSelectedCondition] = useState<string>("")
-    const [actionInfo, setActionInfo] = useState<ActionDict>({});
-
 
     const selectCondition = (selectedItem: string) => {
         setSelectedCondition(selectedItem)
@@ -98,16 +79,8 @@ export default function EventEditorPage() {
 
     const selectEvent = (itemClicked: string) => {
         if (deleteMode) {
-            fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/event/" + itemClicked, {
-                method: "DELETE",
-                headers: {
-                    'Accept': "application/json",
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': "application/json",
-                },
-            });
-            updateEvents();
-
+            deleteItem(eventController, itemClicked);
+            updateDict(getEvents, setEvents);
         }
         else {
             let retrievedInfo: EventDTO = events[itemClicked];
@@ -122,25 +95,28 @@ export default function EventEditorPage() {
                 newDict[i] = dto
             )
             setActionInfo(newDict)
-            
+
         }
         setIsEventPopupOpen(false)
     };
 
 
-
     const DTOToItemInfo = (dto: ActionDTO, i: number): ItemInfo => {
+        console.log(dto);
         if (dto.move !== null) {
-            return { name: "Move Piece", id: i }
+          return { name: "Move Piece", id: i }
         }
         if (dto.set !== null) {
-            return { name: "Set Piece", id: i }
+          return { name: "Set Piece", id: i }
         }
         if (dto.win !== null) {
-            return { name: "Win", id: i }
+          return { name: "Win", id: i }
         }
-        return { name: "Tie", id: i }
-    }
+        if (dto.tie) {
+          return { name: "Tie", id: i }
+        }
+        return { name: "Promotion", id: i }
+      }
     let token = CookieService.getInstance().get(Cookie.JwtToken)
 
     useEffect(() => {
@@ -169,7 +145,7 @@ export default function EventEditorPage() {
                         </Button>
                         <MyPopup isOpen={isConditionPopupOpen} setIsOpen={setIsConditionPopupOpen} title={"Select Condition"} onClickItem={(item: string) => selectCondition(item)} addedItems={[] as { name: string, id: number }[]} singleton={true} items={conditions} setItems={() => { }}></MyPopup>
 
-                        <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} itemsAdded={itemsAdded} setItemsAdded={setItemsAdded} setListJSON={setListJSON} actionInfo={actionInfo} setActionInfo={setActionInfo}></ListWithPopup>
+                        <ListWithPopup title={"Actions"} type={"Action"} singleton={false} width="600px" height="400px" listComponent={ActionList} items={items} setItems={setItems} itemsAdded={itemsAdded} setItemsAdded={setItemsAdded} setListJSON={setActionsJSON} actionInfo={actionInfo} setActionInfo={setActionInfo}></ListWithPopup>
 
                         <Grid container marginTop="12px" alignItems="right" justifyItems={"right"} justifyContent="right" >
                             <Grid>
@@ -178,7 +154,7 @@ export default function EventEditorPage() {
                                     variant="contained"
                                     sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
                                     onClickCapture={() => openPopup(false)}>
-                                    Load
+                                    Load Event
                                 </Button>
                             </Grid>
                             <Grid>
@@ -187,7 +163,7 @@ export default function EventEditorPage() {
                                     variant="contained"
                                     sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
                                     onClickCapture={() => setSaveWindowOpen(true)}>
-                                    Save
+                                    Save Event
                                 </Button>
                             </Grid>
                             <Grid>
@@ -196,7 +172,7 @@ export default function EventEditorPage() {
                                     variant="contained"
                                     sx={{ mt: 2, mb: 0, width: 150, p: 1 }}
                                     onClickCapture={() => openPopup(true)}>
-                                    Delete
+                                    Delete Event
                                 </Button>
                             </Grid>
                         </Grid>

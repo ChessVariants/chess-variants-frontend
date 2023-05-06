@@ -10,22 +10,10 @@ import ActionList from "../Components/ActionList";
 import SavePopup from "../Components/SavePopup";
 import MyPopup from "../Components/Popup";
 import CookieService, { Cookie } from "../../../../Services/CookieService";
-import { getPredicates } from "./ConditionEditorPage";
 
 import React, { useEffect, useState } from "react";
 import { ActionDict, ActionDTO, ConditionInfo, ItemInfo, MoveDict, MoveDTO, PositionCreatorInfo, PositionDTO } from "../Types";
-
-export async function getMoves(token: string): Promise<MoveDTO[]> {
-
-  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/move", {
-    method: "GET",
-    headers: {
-      'Accept': "application/json",
-      'Authorization': `Bearer ${token}`,
-    },
-  }).then(o => o.json().then(o => o.moves));
-
-}
+import { deleteItem, getMoves, postItem, updateDict, getPredicates } from "../HelperFunctions";
 
 
 export default function MoveEditorPage() {
@@ -39,7 +27,6 @@ export default function MoveEditorPage() {
 
   const classes = commonClasses();
 
-  const [selectedOption, setSelectedOption] = useState("Standard Chess");
   const [listJSON, setListJSON] = useState("");
   const [saveWindowOpen, setSaveWindowOpen] = useState(false)
   const [isMovePopupOpen, setIsMovePopupOpen] = useState(false)
@@ -50,11 +37,6 @@ export default function MoveEditorPage() {
 
   const [isPositionCreatorOpen, setIsPositionCreatorOpen] = useState(false);
 
-
-  const navigate = useNavigate();
-  const navigatePage = (link: string) => {
-    navigate(link);
-  }
   const [moves, setMoves] = useState<MoveDict>({});
 
   const [deleteMode, setDeleteMode] = useState(false);
@@ -63,33 +45,21 @@ export default function MoveEditorPage() {
   const openPopup = async (deleteMode: boolean) => {
 
     setDeleteMode(deleteMode);
-    const movesTemp: MoveDTO[] = (await getMoves(token));
-
-    let moveDict: MoveDict = {};
-    movesTemp.map((item) => {
-      moveDict[item.name] = item
-    })
-
-    setMoves(moveDict)
+    updateDict(getMoves, setMoves);
     setIsMovePopupOpen(true)
   }
 
+  let moveController = "move"
+
   const saveMove = (name: string, description: string) => {
-    var info: MoveDTO = { posInfo: positionCreatorInfo.posInfo, actions: Object.values(JSON.parse(listJSON)), identifier: identifier, predicate: selectedCondition, name, description }
-    fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/move", {
-      method: "POST",
-      headers: {
-        'Accept': "application/json",
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': "application/json",
-      },
-      body: JSON.stringify(info),
-    }).then(o => console.log(o));
+    var info: MoveDTO = { click: positionCreatorInfo.posInfo, actions: Object.values(JSON.parse(listJSON)), identifier: identifier, predicate: selectedCondition, name, description }
+
+    postItem(moveController, info);
 
     console.log("posting: " + JSON.stringify(info))
   }
 
-  const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie']);
+  const [items, setItems] = useState(['Win', 'Move Piece', 'Set Piece', 'Tie', 'Promotion']);
 
   const [isConditionPopupOpen, setIsConditionPopupOpen] = useState(false);
   const [conditions, setConditions] = useState<string[]>([]);
@@ -113,8 +83,6 @@ export default function MoveEditorPage() {
   }, []);
 
 
-
-
   const resetPositionCreatorPopup = (id: number, editingFrom: boolean) => {
     setPositionCreatorInfo({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true })
 
@@ -129,6 +97,8 @@ export default function MoveEditorPage() {
   const savePositionCreatorToAction = (posInfo: PositionDTO) => {
     setIsPositionCreatorOpen(false)
   }
+
+
   const positionInfoToString = (info: PositionDTO) => {
     if (info.relative !== null) {
       return (info.relative.to ? 'to' : 'from') + "(" + info.relative.x + ", " + info.relative.y + ")";
@@ -146,65 +116,50 @@ export default function MoveEditorPage() {
 
   const [actionDict, setActionDict] = useState<ActionDict>({});
 
-  
-  const updateMoves = async () => {
-
-    const movesTemp: MoveDTO[] = (await getMoves(token));
-
-    let moveDict: MoveDict = {};
-     movesTemp.map((item) => {
-        moveDict[item.name] = item
-    })
-
-    setMoves(moveDict)
-}
 
   const selectMove = (itemClicked: string) => {
     if (deleteMode) {
-        fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/move/" + itemClicked, {
-            method: "DELETE",
-            headers: {
-                'Accept': "application/json",
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': "application/json",
-            },
-        });
-        updateMoves();
-
+      deleteItem(moveController, itemClicked)
+      updateDict(getMoves, setMoves);
     }
     else {
-        let retrievedInfo: MoveDTO = moves[itemClicked];
-        setName(retrievedInfo.name);
-        setDescription(retrievedInfo.description);
-        setSelectedCondition(retrievedInfo.predicate);
-        setItemsAdded(retrievedInfo.actions.map((dto, i) =>
-            DTOToItemInfo(dto, i)
-        ));
-        let newDict: ActionDict = {}
-        retrievedInfo.actions.map((dto, i) =>
-            newDict[i] = dto
-        )
-        setActionDict(newDict)
-        
+      let retrievedInfo: MoveDTO = moves[itemClicked];
+      setName(retrievedInfo.name);
+      setDescription(retrievedInfo.description);
+      setSelectedCondition(retrievedInfo.predicate);
+      setItemsAdded(retrievedInfo.actions.map((dto, i) =>
+        DTOToItemInfo(dto, i)
+      ));
+      let newDict: ActionDict = {}
+      retrievedInfo.actions.map((dto, i) =>
+        newDict[i] = dto
+      )
+      positionCreatorInfo.posInfo = retrievedInfo.click;
+      setIdentifier(retrievedInfo.identifier);
+      setActionDict(newDict)
+
     }
     setIsMovePopupOpen(false)
-};
+  };
 
 
 
-const DTOToItemInfo = (dto: ActionDTO, i: number): ItemInfo => {
+  const DTOToItemInfo = (dto: ActionDTO, i: number): ItemInfo => {
     if (dto.move !== null) {
-        return { name: "Move Piece", id: i }
+      return { name: "Move Piece", id: i }
     }
     if (dto.set !== null) {
-        return { name: "Set Piece", id: i }
+      return { name: "Set Piece", id: i }
     }
     if (dto.win !== null) {
-        return { name: "Win", id: i }
+      return { name: "Win", id: i }
     }
-    return { name: "Tie", id: i }
-}
-let token = CookieService.getInstance().get(Cookie.JwtToken)
+    if (dto.tie) {
+      return { name: "Tie", id: i }
+    }
+    return { name: "Promotion", id: i }
+  }
+  let token = CookieService.getInstance().get(Cookie.JwtToken)
   return (
     <div>
       <ThemeProvider theme={CustomDarkTheme}>
@@ -240,7 +195,7 @@ let token = CookieService.getInstance().get(Cookie.JwtToken)
                 <Typography variant="h5" sx={{ letterSpacing: '2px' }}>Piece Identifier:</Typography>
               </Grid>
               <Grid sx={{ mr: 1 }}>
-                <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier}>
+                <TextField sx={{ width: 60, mr: 2 }} onChange={handleChangeIdentifier} value={identifier}>
 
                 </TextField>
               </Grid>
@@ -254,7 +209,7 @@ let token = CookieService.getInstance().get(Cookie.JwtToken)
                   variant="contained"
                   sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
                   onClickCapture={() => openPopup(false)}>
-                  Load
+                  Load Move
                 </Button>
               </Grid>
               <Grid>
@@ -263,7 +218,7 @@ let token = CookieService.getInstance().get(Cookie.JwtToken)
                   variant="contained"
                   sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
                   onClickCapture={() => setSaveWindowOpen(true)}>
-                  Save
+                  Save Move
                 </Button>
               </Grid>
               <Grid>
@@ -272,11 +227,11 @@ let token = CookieService.getInstance().get(Cookie.JwtToken)
                   variant="contained"
                   sx={{ mt: 2, mr: 2, width: 150, p: 1 }}
                   onClickCapture={() => openPopup(true)}>
-                  Delete
+                  Delete Move
                 </Button>
               </Grid>
             </Grid>
-            <MyPopup isOpen={isMovePopupOpen} setIsOpen={setIsMovePopupOpen} title={(deleteMode ? "Delete" : "Load") + " Move"} onClickItem={(item: string) => { selectMove(item) }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={[]} setItems={() => { }}></MyPopup>
+            <MyPopup isOpen={isMovePopupOpen} setIsOpen={setIsMovePopupOpen} title={(deleteMode ? "Delete" : "Load") + " Move"} onClickItem={(item: string) => { selectMove(item) }} addedItems={[] as { name: string, id: number }[]} singleton={true} items={Object.keys(moves)} setItems={() => { }}></MyPopup>
             <SavePopup isOpen={saveWindowOpen} setIsOpen={setSaveWindowOpen} save={saveMove} name={name} setName={setName} description={description} setDescription={setDescription} type={"Move"}></SavePopup>
 
           </Paper>
