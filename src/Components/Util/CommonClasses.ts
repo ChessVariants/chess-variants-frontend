@@ -21,6 +21,18 @@ const commonClasses = makeStyles({
         transform: 'translate(-50%, -50%)',
         textAlign: 'center',
     },
+
+    LeftBasicCard: {
+        display: 'grid',
+        alignItems: 'center',
+        padding: '0em',
+        position: 'absolute',
+        left: '0%',
+        top: '0%',
+        webkitTransform: 'translate(0%, 0%)',
+        transform: 'translate(0%, 0%)',
+        textAlign: 'center',
+    },
     CustomButton: {
         background: CustomDarkTheme.palette.primary.main + '!important',
         '&:hover': {
