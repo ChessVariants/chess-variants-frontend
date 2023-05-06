@@ -62,9 +62,19 @@ export const useStyles = makeStyles<Theme>(theme => ({
     CommonPiece: {
         filter: "invert(19%) sepia(40%) saturate(590%) hue-rotate(5deg) brightness(100%) contrast(84%)"
     },
-    Label: {
+    RankLabel: {
         position: "absolute",
         bottom: "0",
+        right: "0",
+        boxSizing: "border-box",
+        margin: "0",
+        marginBlockStart: "0",
+        marginBlockEnd: "0",
+        userSelect: "none",
+    },
+    FileLabel: {
+        position: "absolute",
+        top: "0",
         left: "0",
         boxSizing: "border-box",
         margin: "0",
@@ -106,18 +116,22 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
      * @param coordinate 
      * @returns label string
      */
-    const labelVisibility = (coordinate: string) => {
+    const fileLabel = (coordinate: string) => {
         if (labelRow) {
-            if (coordinate[0] === labelRow) return coordinate;
-        }
+            if (coordinate[0] === labelRow) return coordinate.replace(/[^0-9]/gi, '');
+        }    
         else {
-            if (coordinate[0] === "a") return coordinate;
+            if (coordinate[0] === "a") return coordinate.replace(/[^0-9]/gi, '');
         }
+        return "";
+    }
+
+    const rankLabel = (coordinate: string) => {
         if (labelCol) {
-            if (coordinate.match(/\d+/)?.join() === labelCol) return coordinate;
+            if (coordinate.match(/\d+/)?.join() === labelCol) return coordinate.replace(/[^a-z]/gi, '');
         }
         else {
-            if (coordinate[1] === "1" && coordinate.length === 2) return coordinate;
+            if (coordinate[1] === "1" && coordinate.length === 2) return coordinate.replace(/[^a-z]/gi, '');
         }
         return "";
     }
@@ -161,7 +175,8 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                         alt={id}
                         className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
                     /> : null}
-                    <p className={classes.Label}>{labelVisibility(coordinate)}</p>
+                    <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
+                    <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>
                 </Box>
             </Box>
         );
@@ -175,7 +190,8 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                         alt={id}
                         className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
                     /> : null}
-                    <p className={classes.Label}>{labelVisibility(coordinate)}</p>
+                    <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
+                    <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>
                 </Box>
             </Box>
         );
