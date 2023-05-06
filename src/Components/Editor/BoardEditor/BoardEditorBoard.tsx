@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
 import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
-import EditorService, { EditorEvents, BoardEditorState } from "../../../Services/EditorService";
+import EditorService, { EditorEvents, BoardEditorState, Piece } from "../../../Services/EditorService";
 import PieceSelector from "./PieceSelector";
 
 /**

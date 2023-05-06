@@ -6,7 +6,7 @@ import CookieService, { Cookie } from './CookieService';
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
  */
 export default class EditorService {
-    
+
     public readonly hubConnection: HubConnection;
 
     private static editorService?: EditorService;
@@ -14,7 +14,7 @@ export default class EditorService {
     constructor(baseUrl: string, token: string, path: string = "editor") {
         let completePath: string = baseUrl + path;
         this.hubConnection = new HubConnectionBuilder()
-            .withUrl(completePath, { accessTokenFactory: () => token})
+            .withUrl(completePath, { accessTokenFactory: () => token })
             .withAutomaticReconnect().build();
     }
 
@@ -59,10 +59,6 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
-    requestPiecesByUser(editorId: string): void {
-        this.hubConnection.send('GetUserPieces', editorId);
-    }
-
     sendCreatePieceEditor(editorId: string): void {
         this.hubConnection.send('CreatePieceEditor', editorId);
     }
@@ -85,7 +81,7 @@ export default class EditorService {
         console.log("Removing pattern pressed");
         this.hubConnection.send("RemoveMovementPattern", editorId, xDir, yDir, minLength, maxLength);
     }
-    
+
     removeAllMovementPatterns(editorId: string): void {
         this.hubConnection.send("ClearMovementPatterns", editorId);
     }
@@ -94,7 +90,7 @@ export default class EditorService {
         console.log("Adding pattern pressed");
         this.hubConnection.send("AddCapturePattern", editorId, xDir, yDir, minLength, maxLength);
     }
-    
+
     setPieceEditorBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("Removing pattern pressed");
         this.hubConnection.send("UpdatePieceEditorBoardSize", editorId, rows, cols);
@@ -125,7 +121,7 @@ export default class EditorService {
         this.hubConnection.send("AmountRepeat", editorId, repeat);
     }
 
-    resetPiece(editorId: string, ): void {
+    resetPiece(editorId: string,): void {
         console.log("Reset piece");
         this.hubConnection.send("ResetPiece", editorId);
     }
@@ -148,8 +144,8 @@ export default class EditorService {
         this.hubConnection.send("ResetStartingPosition", editorId);
     }
 
-    setActivePiece(editorId: string, piece: string): void {
-        this.hubConnection.send("SetActivePiece", editorId, piece);
+    setActivePiece(editorId: string, piece: string, color: string): void {
+        this.hubConnection.send("SetActivePiece", editorId, piece, color);
     }
 
     setActiveRemove(editorId: string): void {
@@ -168,24 +164,37 @@ export default class EditorService {
     /**
      * Requests the server to send an event with the board state
     */
-   async requestPieceEditorBoardState(editorId: string): Promise<PieceEditorState> {
-       return this.hubConnection.invoke('RequestPieceEditorState', editorId);
-   }
+    async requestPieceEditorBoardState(editorId: string): Promise<PieceEditorState> {
+        return this.hubConnection.invoke('RequestPieceEditorState', editorId);
+    }
 
-   async requestPatternState(editorId: string): Promise<PatternState> {
-       return this.hubConnection.invoke('RequestPatternState', editorId);
-   }
-    
+    async requestPatternState(editorId: string): Promise<PatternState> {
+        return this.hubConnection.invoke('RequestPatternState', editorId);
+    }
+
+    async requestStandardPieces(color: string): Promise<Piece[]> {
+        return this.hubConnection.invoke('RequestStandardPiecesByColor', color);
+    }
+
+    async requestPiecesByUser(editorId: string): Promise<Piece[]> {
+        return this.hubConnection.invoke('GetUserPieces', editorId);
+    }
+
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
      */
     async startConnection(): Promise<void> {
         if (this.hubConnection.state === HubConnectionState.Disconnected) {
-          await this.hubConnection.start();
-          console.log('Connection to user hub successful');
+            await this.hubConnection.start();
+            console.log('Connection to user hub successful');
         }
     }
-    
+
+}
+
+export interface Piece {
+    name: string,
+    image: string,
 }
 
 export interface BoardEditorState {

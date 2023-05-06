@@ -14,23 +14,20 @@ const useStyles = makeStyles<Theme>(theme => ({
     },
 }));
 
-export default function PieceItem(props: { editorID: string, piece: string, color: string }) {
+export default function PieceItem(props: { editorID: string, piece: string, color: string, image: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { editorID: editorID, piece: piece, color: color } = props;
+    const { editorID: editorID, piece: piece, color: color, image: image } = props;
 
     const classes = useStyles();
 
     return (
         <Box >
             <Button onClick={() => {
-                var pieceColor = piece;
-                if (color === "white")
-                    pieceColor = pieceColor.toUpperCase();
-                editorService.setActivePiece(editorID, pieceColor);
+                editorService.setActivePiece(editorID, piece, color);
             }}>
-                <img src={PieceImageAdapter.getImageRef(piece)}
+                <img src={PieceImageAdapter.getImageRef(image)}
                     className={`${classes.Icon} ${ color === "white" ? classes.WhitePiece: classes.BlackPiece}`}
                 />
             </Button>

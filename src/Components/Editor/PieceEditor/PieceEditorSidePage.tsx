@@ -55,7 +55,6 @@ export default function SideInfo(props: { editorID: string }) {
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
                 <PatternInputs editorID={editorID}></PatternInputs>
                 <PieceSettings buildPieceFunction={handleOpen} editorID={editorID}></PieceSettings>
-                <Button onClick={() => {editorService.requestPiecesByUser(editorID);}}> Request piece by user</Button>
                 <Modal
                     open={open}
                     onClose={handleClose}
