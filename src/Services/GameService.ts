@@ -76,7 +76,7 @@ export default class GameService {
      */
     on(methodName: string, newMethod: (...args: any[]) => any): void {
         console.log("registered:" + methodName);
-        
+
         this.hubConnection.on(methodName, newMethod)
     }
 
@@ -106,8 +106,8 @@ export default class GameService {
      * Joins or creates a game with the supplied gameId on the server
      * @param gameId the game to join or create.
      */
-    sendCreateGame(gameId: string, variant: string = Variant.Standard): void {
-        this.hubConnection.send('CreateGame', gameId, variant);
+    async sendCreateGame(gameId: string, variant: string = Variant.Standard): Promise<CreateGameResult> {
+        return this.hubConnection.invoke('CreateGame', gameId, variant);
     }
 
     sendStartGame(gameId: string): void {
@@ -128,6 +128,14 @@ export default class GameService {
      */
     sendSwapColors(gameId: string): void {
         this.hubConnection.send('SwapColors', gameId);
+    }
+
+    sendAddAI(gameId: string): void {
+        this.hubConnection.send('AssignAI', gameId);
+    }
+
+    sendPromotionChoice(gameId: string, pieceIdentifier: string): void {
+        this.hubConnection.send('PromotePiece', gameId, pieceIdentifier);
     }
 
     async requestColors(gameId: string): Promise<Colors> {
@@ -159,11 +167,18 @@ export interface JoinResult {
     failReason?: string,
 }
 
+export interface CreateGameResult {
+    success?: boolean,
+    failReason?: string,
+}
+
 export interface GameState {
     sideToMove: string,
     board: string[],
     boardSize: BoardSize,
     moves: Move[]
+    latestMoveFromIndex?: number,
+    latestMoveToIndex?: number,
 }
 
 export interface BoardSize {
@@ -174,6 +189,11 @@ export interface BoardSize {
 export interface Move {
     from: string,
     to: string[],
+}
+
+export interface PromotionOptions {
+    promotablePieces: string[],
+    player: "white" | "black",
 }
 
 
@@ -196,6 +216,8 @@ export enum GameEvents {
     GameVariantNotSet = "gameVariantNotSet",
     GameStarted = "gameStarted",
     Colors = "colors",
+    Promotion = "promotion",
+    Promoted = "promoted",
 }
 
 export enum Variant {

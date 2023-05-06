@@ -74,7 +74,7 @@ export default function GameBoard(props: { gameID: string, color: string }) {
     /**
      * GameState which includes boardsize, positions, side to move and valid moves.
      */
-    const [gameState, setGameState] = useState<GameState>(initialState);    
+    const [gameState, setGameState] = useState<GameState>(initialState);
 
     /**
      * The GameBoard requires the GameService object as a prop
@@ -228,13 +228,28 @@ export default function GameBoard(props: { gameID: string, color: string }) {
 
     }
 
+    const shouldHighlight = (index: number) => {
+        if (color === "black" && gameState.latestMoveFromIndex && gameState.latestMoveToIndex) {
+            let boardSize = gameState.boardSize.rows * gameState.boardSize.cols
+            let newFromIndex = boardSize - gameState.latestMoveFromIndex - 1;
+            let newToIndex = boardSize - gameState.latestMoveToIndex - 1;
+            return index === newFromIndex || index === newToIndex;
+        }
+        return index === gameState.latestMoveFromIndex || index === gameState.latestMoveToIndex;
+    }
+
     return (
         <Box className={classes.Container}>
             <Box className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
-                        <Square isWhite={squareColor(i)} id={piece} active={active} coordinate={squareCoordinate(i)} key={squareCoordinate(i)} clickFunction={() =>
-                            clickFunction(squareCoordinate(i))} />
+                        <Square
+                        isWhite={squareColor(i)}
+                        id={piece} active={active}
+                        coordinate={squareCoordinate(i)}
+                        key={squareCoordinate(i)}
+                        clickFunction={() => clickFunction(squareCoordinate(i))}
+                        highlight={shouldHighlight(i)} />
                     ))
                 }
             </Box>

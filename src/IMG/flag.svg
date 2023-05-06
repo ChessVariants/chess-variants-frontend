@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+      <path
+        fill="none"
+        stroke="#000"
+        d="M15.5 22.5l7-18"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+      <path
+        fill="#FFF"
+        stroke="#000"
+        d="M4.5 8.5c2 2 4 4 7 5l2-5c-3 2-6 0-9 0z"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+      <path
+        fill="gray"
+        stroke="#000"
+        d="M11.5 13.5s-2-1-1-2h3c0 1-1 2.474-2 2z"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+      <path
+        fill="#FFF"
+        stroke="#000"
+        d="M18.5 14.5c-2 0-4-4-8-3l3-7c3-1 6 2 8 2z"
+        color="#000"
+        enableBackground="accumulate"
+      ></path>
+    </svg>

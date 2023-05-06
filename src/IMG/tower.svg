@@ -1,0 +1,32 @@
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+      <path
+        fill="#FFF"
+        stroke="#000"
+        d="M6 1046.862c2-5.5 3-11.5 3-19h8c0 7.5 1 13.5 3 19z"
+        color="#000"
+        enableBackground="accumulate"
+        transform="translate(0 -1025.362)"
+      ></path>
+      <path
+        fill="#FFF"
+        stroke="#000"
+        strokeLinecap="square"
+        strokeWidth="1"
+        d="M8.5 1046.362a2.5 2.5 0 11-5 0 2.5 2.5 0 115 0zM22.5 1046.362a2.5 2.5 0 11-5 0 2.5 2.5 0 115 0z"
+        transform="translate(0 -1025.362)"
+      ></path>
+      <path
+        fill="none"
+        stroke="#000"
+        d="M6.5 1044h13"
+        color="#000"
+        enableBackground="accumulate"
+        transform="translate(0 -1025.362)"
+      ></path>
+      <path
+        fill="#666"
+        d="M7 1046.362a1 1 0 11-2 0 1 1 0 112 0zM21 1046.362a1 1 0 11-2 0 1 1 0 112 0z"
+        transform="translate(0 -1025.362)"
+      ></path>
+      <path d="M14.5 5.5a1.5 1.5 0 11-3 0 1.5 1.5 0 113 0z"></path>
+    </svg>

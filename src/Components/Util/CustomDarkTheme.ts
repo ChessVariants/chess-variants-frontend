@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material";
-import { amber, cyan, deepOrange, deepPurple, green, lightGreen, orange, purple, red, yellow } from "@mui/material/colors";
+import { cyan, deepOrange, green, orange } from "@mui/material/colors";
+
 declare module "@mui/material/styles" {
     interface Palette {
         joinColor: Palette['primary'];
@@ -13,6 +14,14 @@ declare module "@mui/material/styles" {
         createColor: PaletteOptions['primary'];
         browserColor: PaletteOptions['primary'];
         editorColor: PaletteOptions['primary'];
+    }
+}
+declare module "@mui/material/InputBase" {
+    interface InputBasePropsColorOverrides {
+        joinColor: true;
+        createColor: true;
+        browserColor: true;
+        editorColor: true;
     }
 }
 declare module "@mui/material/Button" {
@@ -31,13 +40,19 @@ declare module "@mui/material/TextField" {
         editorColor: true;
     }
 }
+
 const { palette } = createTheme();
+
+
 const createColor = (mainColor: string) => palette.augmentColor({ color: { main: mainColor } });
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
             main: '#29adef',
+        },
+        secondary: {
+            main: '#ff124d',
         },
         joinColor: createColor(cyan[500]),
         createColor: createColor(green[500]),
@@ -54,13 +69,15 @@ const darkTheme = createTheme({
                 // Name of the slot
                 root: {
                     // Some CSS
-                    backgroundColor: "rgba(0,0,0,.2)"
+                    backgroundColor: "rgba(0,0,0,.25)"
                 },
             },
         },
+
     },
 }
 
 );
+
 
 export default darkTheme;
