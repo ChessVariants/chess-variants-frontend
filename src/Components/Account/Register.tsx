@@ -29,7 +29,7 @@ async function registerUser(username: string, email: string, password: string): 
     body: JSON.stringify({ username: username, email: email, password: password })
   })
   .then(data => data.json())
-  .catch(() => alert("Could not register user"));
+  .catch(() => console.log("Could not register user"));
 }
 
 /**
