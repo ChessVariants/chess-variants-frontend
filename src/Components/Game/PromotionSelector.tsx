@@ -45,7 +45,6 @@ export const usePromotionStyle = makeStyles<Theme>(theme => ({
 }));
 
 export default function PromotionSelector(props: { options: PromotionOptions, gameId: string }) {
-    
     const { options, gameId } = props;
     const squareClasses = usePromotionStyle();
 
@@ -62,8 +61,7 @@ export default function PromotionSelector(props: { options: PromotionOptions, ga
         </Box>
     );
 }
-
-function PromotionSquare(props: {id: string, clickFunction: any} ) {
+function PromotionSquare(props: { id: string, clickFunction: any }) {
     const { id, clickFunction } = props;
     const classes = useStyles();
     const squareClasses = usePromotionStyle();
