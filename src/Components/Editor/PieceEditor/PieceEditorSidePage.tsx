@@ -46,6 +46,8 @@ export default function SideInfo(props: { editorID: string }) {
         handleClose();
     };
 
+    const isValidName = name.trim() !== "" && name.length < 15; // Max length 15 characters
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
         setName(event.target.value);
     };
@@ -71,7 +73,7 @@ export default function SideInfo(props: { editorID: string }) {
                                     id="name" type="text" value={name} onChange={handleChange} style={{ position: "relative", marginLeft: "10px" }}
                                 >
                                 </TextField>
-                                <Button sx={{ height: 40 }} onClick={() => { buildPiece() }}>
+                                <Button disabled={!isValidName} sx={{ height: 40 }} onClick={() => { buildPiece() }}>
                                     Build piece
                                 </Button>
                             </Stack>

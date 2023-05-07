@@ -48,6 +48,8 @@ export default function BoardSideInfo(props: { editorID: string }) {
         setName(event.target.value);
     };
 
+    const isValidName = name.trim() !== "" && name.length < 15; // Max length 15 characters
+
     return (
         <Container>
             <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
@@ -87,7 +89,7 @@ export default function BoardSideInfo(props: { editorID: string }) {
                                     id="name" type="text" value={name} onChange={handleTextFieldChange} style={{ position: "relative", marginLeft: "10px" }}
                                 >
                                 </TextField>
-                                <Button sx={{ height: 40 }} onClick={() => { buildBoard() }}>
+                                <Button disabled={!isValidName} sx={{ height: 40 }} onClick={() => { buildBoard() }}>
                                     Build Board
                                 </Button>
                             </Stack>
