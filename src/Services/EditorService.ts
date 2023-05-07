@@ -126,6 +126,11 @@ export default class EditorService {
         this.hubConnection.send("ResetPiece", editorId);
     }
 
+    buildPiece(editorId: string, pieceName: string) {
+        console.log("Building piece");
+        this.hubConnection.send("BuildPiece", editorId, pieceName)
+    }
+
     // Board editor
     sendCreateBoardEditor(editorId: string): void {
         this.hubConnection.send('CreateBoardEditor', editorId);
@@ -157,9 +162,9 @@ export default class EditorService {
         this.hubConnection.send("UpdateSquare", editorId, square);
     }
 
-    buildPiece(editorId: string, pieceName: string) {
-        console.log("Building piece");
-        this.hubConnection.send("BuildPiece", editorId, pieceName)
+    buildBoard(editorId: string, boardName: string) {
+        console.log("Building board");
+        this.hubConnection.send("BuildChessboard", editorId, boardName)
     }
 
     /**
@@ -178,7 +183,11 @@ export default class EditorService {
     }
 
     async requestPiecesByUser(): Promise<Piece[]> {
-        return this.hubConnection.invoke('GetUserPieces');
+        return this.hubConnection.invoke('RequestUserPieces');
+    }
+
+    async requestBoardsByUser(): Promise<string[]> {
+        return this.hubConnection.invoke('RequestUserChessboards');
     }
 
     /**
