@@ -103,7 +103,7 @@ const CustomListItem = (props: { text: string, open: any, icon: any, url: string
                 justifyContent: props.open ? 'initial' : 'center',
                 px: 2.5,
             }}
-            onClick={() => { navigate(props.url); props.clickFunction() }}
+            onClick={() => { navigate(props.url); props.clickFunction?.() }}
         >
             <ListItemIcon
                 sx={{
