@@ -1,9 +1,8 @@
-import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
-import { Theme } from "@material-ui/core";
+import { Container, FormControl, Theme } from "@material-ui/core";
 import EditorService from "../../../Services/EditorService";
 import { PieceImageAdapter } from "../../../IMG/PieceImageAdapter";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 const useStyles = makeStyles<Theme>(({
     WhitePiece: {
@@ -14,38 +13,41 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function PieceItem(props: { editorID: string, piece: string, image: string }) {
+export default function PieceItem(props: { editorID: string, piece: string, image: string, displayName: boolean }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { editorID: editorID, piece: piece, image: image } = props;
+    const { editorID: editorID, piece: piece, image: image, displayName: displayName } = props;
 
     const classes = useStyles();
 
     const checkColor = (): string => {
-        if(image == image.toLowerCase()) {
-            console.log("black pieces");
+        if (image == image.toLowerCase())
             return classes.BlackPiece;
-        }
 
-        if(image == image.toUpperCase()) {
-            console.log("White pieces");
+        else if (image == image.toUpperCase())
             return classes.WhitePiece;
-        }
+
+        // Uncomment when rebased with master
+        //else
+        //    return classes.CommonPiece;
 
         console.log("no color");
         return classes.WhitePiece;
     };
 
     return (
-        <Box >
-            <Button onClick={() => {
-                editorService.setActivePiece(editorID, piece);
-            }}>
-                <img src={PieceImageAdapter.getImageRef(image)}
-                    className={`${classes.Icon} ${checkColor()}`}
-                />
-            </Button>
-        </Box>
+        <Container>
+            <FormControl>
+                <Button onClick={() => {
+                    editorService.setActivePiece(editorID, piece);
+                }}>
+                    <img src={PieceImageAdapter.getImageRef(image)}
+                        className={`${classes.Icon} ${checkColor()}`}
+                    />
+                </Button>
+                {displayName ? <Typography > {piece} </Typography> : <></>}
+            </FormControl>
+        </Container>
     );
 }

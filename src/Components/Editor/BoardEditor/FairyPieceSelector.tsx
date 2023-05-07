@@ -14,6 +14,7 @@ const useStyles = makeStyles<Theme>(({
         display: "inline-block",
         width: "60%",
         backgroundColor: "#adaca8",
+        borderRadius: 10
     },
 }));
 
@@ -40,12 +41,12 @@ export default function FairyPieceSelector(props: { editorID: string }) {
     const { editorID: editorID } = props;
 
     return (
-        <Box className={classes.Container}>
-            <Grid container spacing={1} columns={7} >
+        <Box className={classes.Container} >
+            <Grid container spacing={2} rowSpacing={2}>
                 {
                     pieces.map((piece) => (
-                        <Grid item xs={1}>
-                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image}></PieceItem>
+                        <Grid item>
+                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image} displayName={true}></PieceItem>
                         </Grid>
                     ))
                 }

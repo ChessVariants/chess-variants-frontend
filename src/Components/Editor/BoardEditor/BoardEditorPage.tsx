@@ -23,16 +23,8 @@ export default function BoardEditorPage() {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const [boards, setBoards] = useState([""]);
-
     useEffect(() => {
         createEditorFunction();
-
-        editorService.requestBoardsByUser()
-            .then((boards: string[]) => {
-                setBoards(boards);
-            })
-            .catch(e => console.log(e));
     }, [])
 
     const classes = useStyles();
@@ -47,24 +39,36 @@ export default function BoardEditorPage() {
         editorService.sendCreateBoardEditor(editorID);
     }
 
-    // The select component just serves as an example of how one could choose from their board configurations. It will be removed later.
     return (
         <Box className={classes.Container} style={{ paddingLeft: 450 }} >
             <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
             <Stack>
                 <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
                 <FairyPieceSelector editorID={editorID} ></FairyPieceSelector>
-               
-               
-                <Select >
-                    {
-                        boards.map((board) => (
-                            <MenuItem value={board}>{board} </MenuItem>
-                        ))
-                    }
-                </Select>
-
             </Stack>
         </Box>
     );
 }
+
+
+/* This is just an example of how board configurations can be selected in the variant editor.
+
+const [boards, setBoards] = useState([""]);
+
+useEffect(() => 
+    editorService.requestBoardsByUser()
+    .then((boards: string[]) => {
+        setBoards(boards);
+    })
+    .catch(e => console.log(e));
+)
+
+<Select >
+    {
+        boards.map((board) => (
+            <MenuItem value={board}>{board} </MenuItem>
+        ))
+    }
+</Select>
+
+*/

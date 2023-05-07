@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import { Theme } from "@material-ui/core";
+import { Container, Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from "react";
 import EditorService, { Piece } from "../../../Services/EditorService";
@@ -17,6 +17,7 @@ const useStyles = makeStyles<Theme>(({
         display: "inline-block",
         width: "60%",
         backgroundColor: "#adaca8",
+        borderRadius: 10,
     },
 }));
 
@@ -44,19 +45,23 @@ export default function StandardPieceSelector(props: { editorID: string, color: 
 
     return (
         <Box className={classes.Container}>
-            <Grid container spacing={1} columns={7} >
+            <Grid container spacing={0} columns={7} alignItems={"center"}>
                 {
                     pieces.map((piece) => (
                         <Grid item xs={1}>
-                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image}></PieceItem>
+                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image} displayName={false}></PieceItem>
                         </Grid>
                     ))
                 }
-                <Box >
-                    <IconButton size="large" onClick={() => { editorService.setActiveRemove(editorID) }}>
-                        <DeleteIcon fontSize="inherit" />
-                    </IconButton>
-                </Box>
+
+                <Grid item xs={1}>
+                    <Container>
+                        <IconButton size="large" onClick={() => { editorService.setActiveRemove(editorID) }}>
+                            <DeleteIcon fontSize="inherit" />
+                        </IconButton>
+                    </Container>
+                </Grid>
+
             </Grid>
         </Box>
     );
