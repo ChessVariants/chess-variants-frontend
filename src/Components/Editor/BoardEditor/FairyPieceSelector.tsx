@@ -45,7 +45,7 @@ export default function FairyPieceSelector(props: { editorID: string }) {
                 {
                     pieces.map((piece) => (
                         <Grid item xs={1}>
-                            <PieceItem editorID={editorID} piece={piece.name} color={piece.color} image={piece.image}></PieceItem>
+                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image}></PieceItem>
                         </Grid>
                     ))
                 }

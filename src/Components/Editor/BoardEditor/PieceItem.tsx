@@ -14,11 +14,11 @@ const useStyles = makeStyles<Theme>(({
     },
 }));
 
-export default function PieceItem(props: { editorID: string, piece: string, color: string, image: string }) {
+export default function PieceItem(props: { editorID: string, piece: string, image: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { editorID: editorID, piece: piece, color: color, image: image } = props;
+    const { editorID: editorID, piece: piece, image: image } = props;
 
     const classes = useStyles();
 
@@ -40,7 +40,7 @@ export default function PieceItem(props: { editorID: string, piece: string, colo
     return (
         <Box >
             <Button onClick={() => {
-                editorService.setActivePiece(editorID, piece, color);
+                editorService.setActivePiece(editorID, piece);
             }}>
                 <img src={PieceImageAdapter.getImageRef(image)}
                     className={`${classes.Icon} ${checkColor()}`}

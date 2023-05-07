@@ -144,9 +144,9 @@ export default class EditorService {
         this.hubConnection.send("ResetStartingPosition", editorId);
     }
 
-    setActivePiece(editorId: string, piece: string, color: string): void {
-        console.log("piece: " + piece + ",  color: " + color);
-        this.hubConnection.send("SetActivePiece", editorId, piece, color);
+    setActivePiece(editorId: string, piece: string): void {
+        console.log("piece: " + piece);
+        this.hubConnection.send("SetActivePiece", editorId, piece);
     }
 
     setActiveRemove(editorId: string): void {
@@ -196,7 +196,6 @@ export default class EditorService {
 export interface Piece {
     name: string,
     image: string,
-    color: string,
 }
 
 export interface BoardEditorState {
