@@ -3,11 +3,12 @@ import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import GameService, { GameEvents, JoinResult } from "../../Services/GameService";
+import GameService, { GameEvents, JoinResult, PromotionOptions } from "../../Services/GameService";
 import { useLocation, useParams } from "react-router-dom";
 import RedirectLogin from "../Util/RedirectLoginPage";
 import { useEffect, useState } from "react";
 import EndScreen from "./EndScreen";
+import PromotionSelector from "./PromotionSelector";
 
 export enum Result {
   ongoing = "Match is ongoing",
@@ -43,6 +44,7 @@ export default function MatchPage() {
   let players = location.state?.players;
 
   const [gameResult, setGameResult] = useState(Result.ongoing);
+  const [promotionOptions, setPromotionOptions] = useState<PromotionOptions | null>(null);
 
 
   useEffect(() => {
@@ -88,6 +90,16 @@ export default function MatchPage() {
         console.log(e);
         setJoinState(JoinState.Fail)
       })
+
+    gameService.on(GameEvents.Promotion, (promotionOptions: PromotionOptions) => {
+      console.log(promotionOptions);
+      setPromotionOptions(promotionOptions);
+    })
+
+    gameService.on(GameEvents.Promoted, () => {
+      console.log('promtion done');
+      setPromotionOptions(null);
+    })
   }, [])
 
   if (gameService.isDisconnected()) {
@@ -109,6 +121,7 @@ export default function MatchPage() {
       {gameResult === Result.ongoing ? null : <EndScreen players={players} result={gameResult} />}
       <Box className={classes.Container}>
         <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>
+        {promotionOptions ? <PromotionSelector options={promotionOptions} gameId={gameID!} /> : null}
         <GameSideInfo gameService={gameService}></GameSideInfo>
       </Box>
     </div>

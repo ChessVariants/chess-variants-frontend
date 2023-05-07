@@ -43,7 +43,9 @@ export default function NewGame(props: { pageState?: pageStates }) {
         return (<CreateGame createGameFunction={createGameFunction}></CreateGame>);
     }
     else {
-        return (<Lobby gameID={gameID} isAdmin={true}></Lobby>);
+        return (
+            <Lobby gameID={gameID} isAdmin={true}></Lobby>
+        );
     }
 
 }

@@ -9,14 +9,20 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
+import ConditionEditorPage from './Components/Editor/Ruleset/Pages/ConditionEditorPage';
+import RuleSetEditorPage from './Components/Editor/Ruleset/Pages/RuleSetEditorPage';
+import EventEditorPage from './Components/Editor/Ruleset/Pages/EventEditorPage';
+import MoveEditorPage from './Components/Editor/Ruleset/Pages/MoveEditorPage';
 import EditorPage from './Components/Editor/EditorPage';
 import EditorService from './Services/EditorService';
-import { Dialog } from '@mui/material';
+import { Box, Dialog } from '@mui/material';
+import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
+import NavBar from './Components/Util/NavBar';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
-import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
 import { Snackbar } from '@material-ui/core';
 import RegisteredNotification from './Components/Account/RegisteredNotification';
+
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -108,17 +114,17 @@ function App() {
     if (!EditorService.getInstance().isDisconnected()) {
       return;
     }
-  
+
     EditorService.connect()
-    .then(() => {
-      console.log("connected");
-    })
-    .catch(e => {
-      console.log(e);
-      console.log("Not connected");
-    })
+      .then(() => {
+        console.log("connected");
+      })
+      .catch(e => {
+        console.log(e);
+        console.log("Not connected");
+      })
   }
-  
+
   useEffect(() => {
     authenticate();
     connectHub();
@@ -151,9 +157,8 @@ function App() {
   const shouldShowRegisteredNotification = () => {
     return displayRegisteredNotification && displayLoginDialog;
   }
-
   return (
-    <>
+    <Box>
       <RegisteredNotification 
         displayCondition={shouldShowRegisteredNotification} 
         hideRegisteredNotification={hideRegisteredNotification}
@@ -163,20 +168,27 @@ function App() {
         <LoginDialog clickFunction={closeDialog}></LoginDialog>
       </Dialog> : null
       }
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/register" element={<Register showRegisteredNotification={showRegisteredNotification} />} />
-        <Route path="/pieceEditor" element={<EditorPage />} />
-        <Route path="/match" element={<MatchPage />} />
-        <Route path="/match/:gameID" element={<MatchPage />} />
-        <Route path="/new" element={<SetupGame />} />
-        <Route path="/join" element={<JoinGame />} />
-        <Route path="/join/:joinCode" element={<JoinGame />} />
-        <Route path="/browse" element={<VariantBrowser />} />
-        <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
-        <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
-      </Routes>
-    </>
+      <NavBar />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/editor/condition" element={<ConditionEditorPage/>} />
+          <Route path="/editor/event" element={<EventEditorPage/>} />
+          <Route path="/editor/move" element={<MoveEditorPage/>} />
+          <Route path="/editor/ruleset" element={<RuleSetEditorPage/>} />
+          <Route path="/register" element={<Register showRegisteredNotification={showRegisteredNotification} />} />
+          <Route path="/pieceEditor" element={<EditorPage />} />
+          <Route path="/match" element={<MatchPage />} />
+          <Route path="/match/:gameID" element={<MatchPage />} />
+          <Route path="/new" element={<SetupGame />} />
+          <Route path="/join" element={<JoinGame />} />
+          <Route path="/join/:joinCode" element={<JoinGame />} />
+          <Route path="/browse" element={<VariantBrowser />} />
+          <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
+          <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
+        </Routes>
+      </Box>
+    </Box>
   );
 }
 

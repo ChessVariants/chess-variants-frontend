@@ -1,0 +1,16 @@
+.numbered-textarea {
+    padding-left: 30px; /* Add some padding to make room for the numbers */
+    line-height: 1.5em; /* Set the line height to match the font size */
+    font-size: 16px; /* Set the font size to a reasonable value */
+    border: none; /* Remove the border to make it look like a plain text area */
+  }
+  
+  .numbered-textarea::before {
+    display: inline-block;
+    content: counter(lineno); /* Use the counter value as the number */
+    counter-increment: lineno; /* Increment the counter for each line */
+    margin-right: 10px; /* Add some space between the number and the text */
+    width: 20px; /* Set a fixed width for the number */
+    text-align: right; /* Align the number to the right */
+    color: #999; /* Set a color for the number */
+  }

@@ -52,7 +52,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     }, [])
 
     return (
-        <Paper className={classes.CenteredBasicCard}>
+        <Paper className={classes.CenteredBasicCard} sx={{ mt: 2 }}>
             <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
             <Divider style={{ width: '100%' }}></Divider>
             <Grid container marginTop="12px" alignItems="center" justifyItems={"center"} justifyContent="center">
