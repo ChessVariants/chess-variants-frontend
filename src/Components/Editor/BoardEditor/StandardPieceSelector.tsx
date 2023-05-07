@@ -1,5 +1,5 @@
 import { Box } from "@mui/system";
-import { Container, Theme } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { useEffect, useState } from "react";
 import EditorService, { Piece } from "../../../Services/EditorService";
@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import PieceItem from "./PieceItem";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Container } from "@mui/material";
 
 
 const useStyles = makeStyles<Theme>(({
@@ -45,16 +46,16 @@ export default function StandardPieceSelector(props: { editorID: string, color: 
 
     return (
         <Box className={classes.Container}>
-            <Grid container spacing={0} columns={7} alignItems={"center"}>
+            <Grid container spacing={0} columns={16} alignItems={"center"}>
                 {
                     pieces.map((piece) => (
-                        <Grid item xs={1}>
+                        <Grid item xs={2}>
                             <PieceItem editorID={editorID} piece={piece.name} image={piece.image} displayName={false}></PieceItem>
                         </Grid>
                     ))
                 }
 
-                <Grid item xs={1}>
+                <Grid item xs={4}>
                     <Container>
                         <IconButton size="large" onClick={() => { editorService.setActiveRemove(editorID) }}>
                             <DeleteIcon fontSize="inherit" />
