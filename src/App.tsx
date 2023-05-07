@@ -20,7 +20,6 @@ import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
 import NavBar from './Components/Util/NavBar';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
-import { Snackbar } from '@material-ui/core';
 import RegisteredNotification from './Components/Account/RegisteredNotification';
 
 

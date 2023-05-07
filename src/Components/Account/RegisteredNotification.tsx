@@ -1,4 +1,4 @@
-import { IconButton, Snackbar } from "@material-ui/core";
+import { IconButton, Snackbar } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function RegisteredNotification(props: { displayCondition: any, hideRegisteredNotification: any }) {
