@@ -124,9 +124,8 @@ export default function NavBar() {
     const cookieService = CookieService.getInstance()
 
     const logout = () => {
-        Object.values(Cookie).forEach(cookie => {
-            cookieService.remove(cookie);
-        });
+        cookieService.remove(Cookie.Username); 
+        cookieService.remove(Cookie.JwtToken); 
         window.location.reload();
     }
 
