@@ -9,6 +9,10 @@ import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
+import ConditionEditorPage from './Components/Editor/Ruleset/Pages/ConditionEditorPage';
+import RuleSetEditorPage from './Components/Editor/Ruleset/Pages/RuleSetEditorPage';
+import EventEditorPage from './Components/Editor/Ruleset/Pages/EventEditorPage';
+import MoveEditorPage from './Components/Editor/Ruleset/Pages/MoveEditorPage';
 import EditorPage from './Components/Editor/EditorPage';
 import EditorService from './Services/EditorService';
 import { Box, Dialog } from '@mui/material';
@@ -145,6 +149,10 @@ function App() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/editor/condition" element={<ConditionEditorPage/>} />
+          <Route path="/editor/event" element={<EventEditorPage/>} />
+          <Route path="/editor/move" element={<MoveEditorPage/>} />
+          <Route path="/editor/ruleset" element={<RuleSetEditorPage/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/pieceEditor" element={<EditorPage />} />
