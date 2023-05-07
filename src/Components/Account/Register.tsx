@@ -15,11 +15,28 @@ import CustomDarkTheme from '../Util/CustomDarkTheme';
 import { CssBaseline, Paper } from '@mui/material';
 import { commonClasses } from '../Util/CommonClasses';
 
+type RegisterUserResponse = {
+  username: string,
+  email: string,
+}
+
+async function registerUser(username: string, email: string, password: string): Promise<RegisterUserResponse> {
+  return fetch(process.env.REACT_APP_BACKEND_BASE_URL + "api/users", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username: username, email: email, password: password })
+  })
+  .then(data => data.json())
+  .catch(() => console.log("Could not register user"));
+}
+
 /**
  * RegisterPage component
  * @returns HTML
  */
-export default function RegisterPage() {
+export default function RegisterPage(props: { showRegisteredNotification: any}) {
   const classes = commonClasses();
   /**
    * useState used to print a label with error message if the registration service returned an error
@@ -94,7 +111,7 @@ export default function RegisterPage() {
   /**
    * Handles submit on button click of the register button
    */
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -102,12 +119,18 @@ export default function RegisterPage() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    const dataValue = {
-      username: data.get('username'),
-      email: data.get('email'),
-      password: data.get('password'),
+
+    const response: RegisterUserResponse = await registerUser(
+      data.get('username') as string,
+      data.get('email') as string,
+      data.get('password') as string
+    );
+    if (response) {
+      navigatePage("/");
+      props.showRegisteredNotification();
+    } else {
+      setRegistrationError("Registration failed, please try again.");
     }
-    //createUser(dataValue);
   };
 
   /**
