@@ -111,6 +111,11 @@ export default class EditorService {
         this.hubConnection.send("PieceCanBeCaptured", editorId, enable);
     }
 
+    canBePromotedTo(editorId: string, enable: boolean): void {
+        console.log("Set can promote to");
+        this.hubConnection.send("SetCanBePromotedTo", editorId, enable);
+    }
+
     belongsToPlayer(editorId: string, player: string): void {
         console.log("Set belongs to player");
         this.hubConnection.send("BelongsToPlayer", editorId, player);

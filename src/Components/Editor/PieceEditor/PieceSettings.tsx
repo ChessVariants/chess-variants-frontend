@@ -19,6 +19,11 @@ export default function PieceSettings(props: { editorID: string, buildPieceFunct
         editorService.canBeCaptured(editorID, event.target.checked);
     };
 
+    const handleCanBePromotedTo = (event: ChangeEvent<HTMLInputElement>) => {
+        setCanBePromotedTo(event.target.checked);
+        editorService.canBePromotedTo(editorID, event.target.checked);
+    };
+
     const handleShowMovement = (event: ChangeEvent<HTMLInputElement>) => {
         var showMovement = true;
         if (event.target.value === "captures")
@@ -39,6 +44,7 @@ export default function PieceSettings(props: { editorID: string, buildPieceFunct
 
     const [sameCapMove, setSameCapMove] = useState(true);
     const [canBeCaptured, setCanBeCaptured] = useState(true);
+    const [canBePromotedTo, setCanBePromotedTo] = useState(true);
     const [belongsTo, setBelongsTo] = useState("white");
 
     return (
@@ -64,6 +70,7 @@ export default function PieceSettings(props: { editorID: string, buildPieceFunct
                     <FormGroup style={{ alignItems: "left" }} >
                         <FormControlLabel control={<Switch checked={sameCapMove} onChange={handleSameCaptureAndMovement} />} label="Same capture as movement" />
                         <FormControlLabel control={<Switch checked={canBeCaptured} onChange={handleCanBeCaptured} />} label="Can be captured" />
+                        <FormControlLabel control={<Switch checked={canBePromotedTo} onChange={handleCanBePromotedTo} />} label="Can be promoted to" />
                     </FormGroup>
                     <FormControl>
                         <FormLabel id="movement-display-radio">Belongs to </FormLabel>
