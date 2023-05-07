@@ -134,6 +134,10 @@ export default class GameService {
         this.hubConnection.send('AssignAI', gameId);
     }
 
+    sendPromotionChoice(gameId: string, pieceIdentifier: string): void {
+        this.hubConnection.send('PromotePiece', gameId, pieceIdentifier);
+    }
+
     async requestColors(gameId: string): Promise<Colors> {
         return this.hubConnection.invoke('RequestColors', gameId)
     }
@@ -173,6 +177,8 @@ export interface GameState {
     board: string[],
     boardSize: BoardSize,
     moves: Move[]
+    latestMoveFromIndex?: number,
+    latestMoveToIndex?: number,
 }
 
 export interface BoardSize {
@@ -183,6 +189,11 @@ export interface BoardSize {
 export interface Move {
     from: string,
     to: string[],
+}
+
+export interface PromotionOptions {
+    promotablePieces: string[],
+    player: "white" | "black",
 }
 
 
@@ -205,6 +216,8 @@ export enum GameEvents {
     GameVariantNotSet = "gameVariantNotSet",
     GameStarted = "gameStarted",
     Colors = "colors",
+    Promotion = "promotion",
+    Promoted = "promoted",
 }
 
 export enum Variant {

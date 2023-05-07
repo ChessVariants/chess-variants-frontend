@@ -25,7 +25,8 @@ async function loginUser(url: string, email?: string, password?: string) {
     },
     body: JSON.stringify({ email: email, password: password })
   })
-    .then(data => data.json())
+  .then(data => data.json())
+  .catch(error => alert("Invalid email or password " + String.fromCodePoint(0x1F480))); // unicode is skull emoji
 }
 
 async function loginGuest(url: string) {
@@ -35,6 +36,7 @@ async function loginGuest(url: string) {
       'Content-Type': 'application/json'
     }
   }).then(data => data.json())
+  .catch(error => alert("Something went terribly wrong " + String.fromCodePoint(0x1F480))); // unicode is skull emoji
 }
 /**
  * RegisterPage component
@@ -108,7 +110,7 @@ export default function LoginComponent(props: { clickFunction?: any }) {
     if (props.clickFunction != null) {
       props.clickFunction();
     }
-
+    navigatePage("/");
   };
 
   const loginAsGuest = async () => {
@@ -121,6 +123,7 @@ export default function LoginComponent(props: { clickFunction?: any }) {
     if (props.clickFunction != null) {
       props.clickFunction();
     }
+    navigatePage("/");
   }
 
   const saveUsernameAsCookie = (username: string) => {

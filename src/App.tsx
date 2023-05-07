@@ -1,17 +1,23 @@
 import HomePage from './Components/Home/HomePage';
 import MatchPage from './Components/Game/MatchPage';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Register from './Components/Account/Register';
 import JoinGame from './Components/SetupGame/JoinGame';
 import SetupGame from './Components/SetupGame/SetupGame';
-import LoginPage from './Components/Account/Login/LoginPage';
 import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
 import GenericErrorPage from './Components/Util/GenericErrorPage';
-import { Dialog } from '@mui/material';
+import ConditionEditorPage from './Components/Editor/Ruleset/Pages/ConditionEditorPage';
+import RuleSetEditorPage from './Components/Editor/Ruleset/Pages/RuleSetEditorPage';
+import EventEditorPage from './Components/Editor/Ruleset/Pages/EventEditorPage';
+import MoveEditorPage from './Components/Editor/Ruleset/Pages/MoveEditorPage';
+import { Box, Dialog } from '@mui/material';
+import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
+import NavBar from './Components/Util/NavBar';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
+import RegisteredNotification from './Components/Account/RegisteredNotification';
 import EditorPage from './Components/Editor/EditorPage';
 import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
 import BoardEditorPage from './Components/Editor/BoardEditor/BoardEditorPage';
@@ -35,7 +41,9 @@ function App() {
   const cookieService = CookieService.getInstance()
   const [authenticationState, setAuthenticationState] = useState<AuthenticationState>(AuthenticationState.InProgress);
   const [username, setUsername] = useState<string>("");
-  const [open, setOpen] = useState(true);
+  const [displayLoginDialog, setDisplayLoginDialog] = useState<boolean>(true);
+  const [displayRegisteredNotification, setDisplayRegisteredNotification] = useState<boolean>(false);
+  const location = useLocation();
 
   useEffect(() => {
     cookieService.addChangeListener((cookie) => {
@@ -55,9 +63,9 @@ function App() {
   }, [])
   useEffect(() => {
     if (username === "") {
-      setOpen(true)
+      setDisplayLoginDialog(true)
     } else {
-      setOpen(false)
+      setDisplayLoginDialog(false)
     }
   }, [username])
 
@@ -97,7 +105,7 @@ function App() {
         console.log(e);
       })
   }
-  
+
   useEffect(() => {
     authenticate();
     connectHub();
@@ -115,30 +123,54 @@ function App() {
 
 
   const closeDialog = () => {
-    setOpen(false)
+    setDisplayLoginDialog(false)
   }
 
+  const showRegisteredNotification = () => {
+    setDisplayRegisteredNotification(true);
+  }
+
+  const hideRegisteredNotification = () => {
+    setDisplayRegisteredNotification(false);
+  }
+
+  const shouldShowRegisteredNotification = () => {
+    return displayRegisteredNotification && displayLoginDialog;
+  }
   return (
-    <>
-      <Dialog open={open} TransitionComponent={Transition}>
-        <LoginDialog clickFunction={closeDialog}></LoginDialog>
-      </Dialog>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/editor" element={<EditorPage />} />
-        <Route path="/pieceEditor" element={<PieceEditorPage />} />
-        <Route path="/boardEditor" element={<BoardEditorPage />} />
-        <Route path="/match" element={<MatchPage />} />
-        <Route path="/match/:gameID" element={<MatchPage />} />
-        <Route path="/new" element={<SetupGame />} />
-        <Route path="/join" element={<JoinGame />} />
-        <Route path="/join/:joinCode" element={<JoinGame />} />
-        <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
-        <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
-      </Routes>
-    </>
+    <Box>
+      <RegisteredNotification
+        displayCondition={shouldShowRegisteredNotification}
+        hideRegisteredNotification={hideRegisteredNotification}
+      ></RegisteredNotification>
+      {displayLoginDialog && !location.pathname.startsWith('/register') ?
+        <Dialog open={displayLoginDialog} TransitionComponent={Transition}>
+          <LoginDialog clickFunction={closeDialog}></LoginDialog>
+        </Dialog> : null
+      }
+      <NavBar />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/editor/condition" element={<ConditionEditorPage />} />
+          <Route path="/editor/event" element={<EventEditorPage />} />
+          <Route path="/editor/move" element={<MoveEditorPage />} />
+          <Route path="/editor/ruleset" element={<RuleSetEditorPage />} />
+          <Route path="/register" element={<Register showRegisteredNotification={showRegisteredNotification} />} />
+          <Route path="/editor" element={<EditorPage />} />
+          <Route path="/pieceEditor" element={<PieceEditorPage />} />
+          <Route path="/boardEditor" element={<BoardEditorPage />} />
+          <Route path="/match" element={<MatchPage />} />
+          <Route path="/match/:gameID" element={<MatchPage />} />
+          <Route path="/new" element={<SetupGame />} />
+          <Route path="/join" element={<JoinGame />} />
+          <Route path="/join/:joinCode" element={<JoinGame />} />
+          <Route path="/browse" element={<VariantBrowser />} />
+          <Route path="/unauthorized" element={<GenericErrorPage text={'Unauthorized'} />} />
+          <Route path="/*" element={<GenericErrorPage text={'Page not found'} />} />
+        </Routes>
+      </Box>
+    </Box>
   );
 }
 

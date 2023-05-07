@@ -7,7 +7,6 @@ import LobbyJoinInfo from "./LobbyJoinInfo";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CookieService, { Cookie } from "../../../Services/CookieService";
-import { log } from "console";
 
 export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     /**
@@ -28,7 +27,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     const gameService = GameService.getInstance();
     const { gameID, isAdmin } = props;
     const classes = commonClasses();
-
+    console.log(gameID)
     useEffect(() => {
         gameService.on(GameEvents.GameStarted, (colors: Colors) => {
             console.log(colors);
@@ -53,7 +52,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     }, [])
 
     return (
-        <Paper className={classes.CenteredBasicCard}>
+        <Paper className={classes.CenteredBasicCard} sx={{ mt: 2 }}>
             <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>LOBBY</Typography>
             <Divider style={{ width: '100%' }}></Divider>
             <Grid container marginTop="12px" alignItems="center" justifyItems={"center"} justifyContent="center">
@@ -89,7 +88,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
     );
 }
 
-function AddAIButton(props: {isAdmin: boolean, available: boolean, gameService: GameService, gameId: string}) {
+function AddAIButton(props: { isAdmin: boolean, available: boolean, gameService: GameService, gameId: string }) {
     if (props.isAdmin && props.available) {
         return (
             <Button
@@ -98,7 +97,7 @@ function AddAIButton(props: {isAdmin: boolean, available: boolean, gameService: 
                 type="submit"
                 variant="contained"
                 sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
-                >
+            >
                 ADD AI
             </Button>
         )
