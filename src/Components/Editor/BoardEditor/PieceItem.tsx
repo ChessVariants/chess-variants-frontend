@@ -22,13 +22,28 @@ export default function PieceItem(props: { editorID: string, piece: string, colo
 
     const classes = useStyles();
 
+    const checkColor = (): string => {
+        if(image == image.toLowerCase()) {
+            console.log("black pieces");
+            return classes.BlackPiece;
+        }
+
+        if(image == image.toUpperCase()) {
+            console.log("White pieces");
+            return classes.WhitePiece;
+        }
+
+        console.log("no color");
+        return classes.WhitePiece;
+    };
+
     return (
         <Box >
             <Button onClick={() => {
                 editorService.setActivePiece(editorID, piece, color);
             }}>
                 <img src={PieceImageAdapter.getImageRef(image)}
-                    className={`${classes.Icon} ${ color === "white" ? classes.WhitePiece: classes.BlackPiece}`}
+                    className={`${classes.Icon} ${checkColor()}`}
                 />
             </Button>
         </Box>

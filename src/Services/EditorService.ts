@@ -145,6 +145,7 @@ export default class EditorService {
     }
 
     setActivePiece(editorId: string, piece: string, color: string): void {
+        console.log("piece: " + piece + ",  color: " + color);
         this.hubConnection.send("SetActivePiece", editorId, piece, color);
     }
 
@@ -195,6 +196,7 @@ export default class EditorService {
 export interface Piece {
     name: string,
     image: string,
+    color: string,
 }
 
 export interface BoardEditorState {

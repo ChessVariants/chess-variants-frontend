@@ -44,7 +44,7 @@ export default function BoardEditorPage() {
             <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
             <Stack>
                 <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
-                <FairyPieceSelector editorID={editorID} color="white"></FairyPieceSelector>
+                <FairyPieceSelector editorID={editorID} ></FairyPieceSelector>
 
             </Stack>
         </Box>

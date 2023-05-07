@@ -19,7 +19,7 @@ const useStyles = makeStyles<Theme>(({
 
 const initialState: Piece[] = []
 
-export default function FairyPieceSelector(props: { editorID: string, color: string }) {
+export default function FairyPieceSelector(props: { editorID: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
@@ -37,7 +37,7 @@ export default function FairyPieceSelector(props: { editorID: string, color: str
 
     }, [])
 
-    const { editorID: editorID, color: color } = props;
+    const { editorID: editorID } = props;
 
     return (
         <Box className={classes.Container}>
@@ -45,7 +45,7 @@ export default function FairyPieceSelector(props: { editorID: string, color: str
                 {
                     pieces.map((piece) => (
                         <Grid item xs={1}>
-                            <PieceItem editorID={editorID} piece={piece.name} color={color} image={piece.image}></PieceItem>
+                            <PieceItem editorID={editorID} piece={piece.name} color={piece.color} image={piece.image}></PieceItem>
                         </Grid>
                     ))
                 }
