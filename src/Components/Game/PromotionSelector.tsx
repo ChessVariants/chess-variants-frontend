@@ -56,7 +56,7 @@ export default function PromotionSelector(props: { options: PromotionOptions, ga
     return (
         <Box className={squareClasses.Container}>
             {
-                options.promotablePieces.map((piece, i) => (<PromotionSquare id={piece} key={i} clickFunction={() => choosePromotion(piece)} />))
+                options.promotablePieces.map((piece, i) => (<PromotionSquare id={piece.imagePath} key={i} clickFunction={() => choosePromotion(piece.identifier)} />))
             }
         </Box>
     );

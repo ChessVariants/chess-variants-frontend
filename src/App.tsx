@@ -21,6 +21,7 @@ import RegisteredNotification from './Components/Account/RegisteredNotification'
 import EditorPage from './Components/Editor/EditorPage';
 import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
 import BoardEditorPage from './Components/Editor/BoardEditor/BoardEditorPage';
+import VariantEditor from './Components/Editor/Variant/VariantEditor';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -160,6 +161,7 @@ function App() {
           <Route path="/editor" element={<EditorPage />} />
           <Route path="/pieceEditor" element={<PieceEditorPage />} />
           <Route path="/boardEditor" element={<BoardEditorPage />} />
+          <Route path="/variantEditor" element={<VariantEditor />} />
           <Route path="/match" element={<MatchPage />} />
           <Route path="/match/:gameID" element={<MatchPage />} />
           <Route path="/new" element={<SetupGame />} />
