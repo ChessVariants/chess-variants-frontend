@@ -1,10 +1,10 @@
-import { Box } from "@mui/system";
-import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
 import Square from "./Square";
 import { useEffect, useState } from "react";
 import GameService, { GameEvents, GameState } from "../../Services/GameService";
 import { useNavigate } from "react-router-dom";
+import { Paper, Box } from "@mui/material";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -24,20 +24,16 @@ interface StyleProps {
 const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     Container: {
         verticalAlign: "top",
-        display: "inline-block",
-        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+        display: "inline-block"
     },
     Board: {
-        borderStyle: "solid",
-        borderColor: "#2C2D2F",
-        borderWidth: "15px",
+        padding: "20px",
         margin: "0",
         display: "grid",
         gridTemplateRows: (({ rows }) => rows),
         gridTemplateColumns: (({ cols }) => cols),
         height: (({ height }) => height),
         width: (({ width }) => width),
-        backgroundColor: "blue",
         [theme.breakpoints.down('xs')]: {
             height: (({ heightSmall }) => heightSmall),
             width: (({ widthSmall }) => widthSmall),
@@ -240,7 +236,7 @@ export default function GameBoard(props: { gameID: string, color: string }) {
 
     return (
         <Box className={classes.Container}>
-            <Box className={classes.Board}>
+            <Paper className={classes.Board}>
                 {
                     pieces.map((piece, i) => (
                         <Square
@@ -255,7 +251,7 @@ export default function GameBoard(props: { gameID: string, color: string }) {
                         />
                     ))
                 }
-            </Box>
+            </Paper>
         </Box>
     );
 }

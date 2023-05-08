@@ -33,7 +33,7 @@ export default function EndScreen(props: { players: string[], result: Result }) 
     const classes = useStyles();
     const navigate = useNavigate();
     return (
-        <Dialog TransitionComponent={Transition} open={true} className={result === Result.win ? classes.winBackground : result === Result.loss ? classes.lossBackground : classes.drawBackground}>
+        <Dialog TransitionComponent={Transition} open={true} className={result === Result.win ? classes.winBackground : result === Result.loss ? classes.lossBackground : result === Result.winBySurrender ? classes.winBackground : result === Result.lossBySurrender ? classes.lossBackground : classes.drawBackground}>
             <IconButton
                 aria-label="close"
                 onClick={() => { navigate("/") }}

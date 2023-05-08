@@ -96,25 +96,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const CustomListItem = (props: { text: string, open: any, icon: any, url: string, clickFunction?: any }) => {
     const navigate = useNavigate();
-    return (<ListItem key={props.text} disablePadding sx={{ display: 'block' }}>
+    const { text, open, icon, url, clickFunction } = props;
+
+    return (<ListItem key={text} disablePadding sx={{ display: 'block' }}>
         <ListItemButton
             sx={{
                 minHeight: 48,
-                justifyContent: props.open ? 'initial' : 'center',
+                justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
             }}
-            onClick={() => { navigate(props.url); props.clickFunction() }}
+            onClick={() => {
+                navigate(url); if (clickFunction) {
+                    clickFunction();
+                }
+            }}
         >
             <ListItemIcon
                 sx={{
                     minWidth: 0,
-                    mr: props.open ? 3 : 'auto',
+                    mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                 }}
             >
-                {props.icon}
+                {icon}
             </ListItemIcon>
-            <ListItemText primary={props.text} sx={{ opacity: props.open ? 1 : 0 }} />
+            <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
     </ListItem >)
 }
@@ -124,8 +130,8 @@ export default function NavBar() {
     const cookieService = CookieService.getInstance()
 
     const logout = () => {
-        cookieService.remove(Cookie.Username); 
-        cookieService.remove(Cookie.JwtToken); 
+        cookieService.remove(Cookie.Username);
+        cookieService.remove(Cookie.JwtToken);
         window.location.reload();
     }
 

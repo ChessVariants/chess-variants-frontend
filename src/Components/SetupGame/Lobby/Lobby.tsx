@@ -73,6 +73,7 @@ export default function Lobby(props: { gameID: string, isAdmin: boolean }) {
                 }}
                 type="submit"
                 variant="contained"
+                disabled={!lobbyFull}
                 sx={{ mt: 3, mb: 1, p: 2, width: "80%" }}
             >
                 START MATCH
