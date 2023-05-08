@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Register from './Components/Account/Register';
 import JoinGame from './Components/SetupGame/JoinGame';
 import SetupGame from './Components/SetupGame/SetupGame';
-import LoginPage from './Components/Account/Login/LoginPage';
 import { useEffect, useState } from 'react';
 import GameService from './Services/GameService';
 import CookieService, { Cookie } from './Services/CookieService';
@@ -13,15 +12,15 @@ import ConditionEditorPage from './Components/Editor/Ruleset/Pages/ConditionEdit
 import RuleSetEditorPage from './Components/Editor/Ruleset/Pages/RuleSetEditorPage';
 import EventEditorPage from './Components/Editor/Ruleset/Pages/EventEditorPage';
 import MoveEditorPage from './Components/Editor/Ruleset/Pages/MoveEditorPage';
-import EditorPage from './Components/Editor/EditorPage';
-import EditorService from './Services/EditorService';
 import { Box, Dialog } from '@mui/material';
 import VariantBrowser from './Components/VariantBrowser/VariantBrowser';
 import NavBar from './Components/Util/NavBar';
 import LoginDialog from './Components/Account/Login/LoginDialog';
 import { Transition } from './Components/Util/SlideTransition'
 import RegisteredNotification from './Components/Account/RegisteredNotification';
-
+import EditorPage from './Components/Editor/EditorPage';
+import PieceEditorPage from './Components/Editor/PieceEditor/PieceEditorPage';
+import BoardEditorPage from './Components/Editor/BoardEditor/BoardEditorPage';
 
 async function checkAuthentication(token: string): Promise<Response> {
   return fetch(process.env.REACT_APP_BACKEND_BASE_URL + 'api/auth', {
@@ -107,33 +106,15 @@ function App() {
       })
   }
 
-  // Guessing this is not the way to do it as it results in it being constantly being a ws with the editor.
-  // As I don't know what to do else, I'll use this for now.
-  const connectEditorHub = () => {
-    if (!EditorService.getInstance().isDisconnected()) {
-      return;
-    }
-
-    EditorService.connect()
-      .then(() => {
-        console.log("connected");
-      })
-      .catch(e => {
-        console.log(e);
-        console.log("Not connected");
-      })
-  }
-
   useEffect(() => {
     authenticate();
     connectHub();
-    connectEditorHub();
   }, [])
 
   if (authenticationState === AuthenticationState.InProgress
     || authenticationState === AuthenticationState.Uninitialized
     || GameService.getInstance().isConnecting()) {
-    return (<></>)
+    return (<>Loading</>)
   }
 
   if (authenticationState === AuthenticationState.NotPossible) {
@@ -144,7 +125,7 @@ function App() {
   const closeDialog = () => {
     setDisplayLoginDialog(false)
   }
-  
+
   const showRegisteredNotification = () => {
     setDisplayRegisteredNotification(true);
   }
@@ -158,25 +139,27 @@ function App() {
   }
   return (
     <Box>
-      <RegisteredNotification 
-        displayCondition={shouldShowRegisteredNotification} 
+      <RegisteredNotification
+        displayCondition={shouldShowRegisteredNotification}
         hideRegisteredNotification={hideRegisteredNotification}
       ></RegisteredNotification>
-      {displayLoginDialog && !location.pathname.startsWith('/register') ? 
-      <Dialog open={displayLoginDialog} TransitionComponent={Transition}>
-        <LoginDialog clickFunction={closeDialog}></LoginDialog>
-      </Dialog> : null
+      {displayLoginDialog && !location.pathname.startsWith('/register') ?
+        <Dialog open={displayLoginDialog} TransitionComponent={Transition}>
+          <LoginDialog clickFunction={closeDialog}></LoginDialog>
+        </Dialog> : null
       }
       <NavBar />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/editor/condition" element={<ConditionEditorPage/>} />
-          <Route path="/editor/event" element={<EventEditorPage/>} />
-          <Route path="/editor/move" element={<MoveEditorPage/>} />
-          <Route path="/editor/ruleset" element={<RuleSetEditorPage/>} />
+          <Route path="/editor/condition" element={<ConditionEditorPage />} />
+          <Route path="/editor/event" element={<EventEditorPage />} />
+          <Route path="/editor/move" element={<MoveEditorPage />} />
+          <Route path="/editor/ruleset" element={<RuleSetEditorPage />} />
           <Route path="/register" element={<Register showRegisteredNotification={showRegisteredNotification} />} />
-          <Route path="/pieceEditor" element={<EditorPage />} />
+          <Route path="/editor" element={<EditorPage />} />
+          <Route path="/pieceEditor" element={<PieceEditorPage />} />
+          <Route path="/boardEditor" element={<BoardEditorPage />} />
           <Route path="/match" element={<MatchPage />} />
           <Route path="/match/:gameID" element={<MatchPage />} />
           <Route path="/new" element={<SetupGame />} />

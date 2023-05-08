@@ -1,47 +1,61 @@
-import { Box } from "@mui/system";
-import { Theme } from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles';
-import EditorBoard from "../Editor/EditorBoard";
-import EditorSidePage from "./EditorSidePage";
-import PatternList from "./PatternList";
-import { useEffect, useState } from "react";
+import { Button, Container, Divider, Paper, Typography } from "@mui/material";
+import { commonClasses } from "../Util/CommonClasses";
+import { useNavigate } from "react-router-dom";
 import EditorService from "../../Services/EditorService";
-
-const useStyles = makeStyles<Theme>(({
-  Container: {
-    alignContent: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    marginTop: "1vw",
-    display: "flex",
-  },
-}));
+import { useEffect } from "react";
 
 export default function EditorPage() {
 
-  const editorService: EditorService = EditorService.getInstance();
+    const connectEditorHub = () => {
+        if (!EditorService.getInstance().isDisconnected()) {
+            return;
+        }
 
-  useEffect(() => {
-    createEditorFunction();
-  }, [])
+        EditorService.connect()
+            .then(() => {
+                console.log("connected");
+            })
+            .catch(e => {
+                console.log(e);
+                console.log("Not connected");
+            })
+    }
 
-  const classes = useStyles();
+    useEffect(() => {
+        connectEditorHub();
+      }, [])
 
-  const [editorID, setEditorID] = useState("initial_editorid");
+    /**
+       * Used to navigate to other pages
+       */
+    const navigate = useNavigate();
 
-  const createEditorFunction = () => {
-
-    console.log("creating editor");
-    const editorID = (Math.random() + 1).toString(36).substring(5);
-    setEditorID(editorID);
-    editorService.sendCreateEditor(editorID);
-  }
-
-  return (
-    <Box className={classes.Container} style={{ paddingTop: 50, paddingLeft: 50 }} >
-      <PatternList editorID={editorID} ></PatternList>
-      <EditorBoard editorID={editorID}></EditorBoard>
-      <EditorSidePage editorID={editorID}></EditorSidePage>
-    </Box>
-  );
+    const classes = commonClasses();
+    return (
+        <Container>
+            <Paper className={classes.CenteredBasicCard} sx={{ maxWidth: '360px', width: "80%" }}>
+                <Typography variant="h5" sx={{ letterSpacing: '4px', mb: 2, mt: 1 }}>EDITOR MENU</Typography>
+                <Divider style={{ width: '100%' }}></Divider>
+                <Button color={"joinColor"} onClick={() => {
+                    navigate("/pieceEditor");
+                }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3, mb: 1, p: 2 }}>
+                    CREATE NEW PIECE
+                </Button>
+                <Button color={"createColor"} onClick={() => {
+                    navigate("/boardEditor");
+                }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3, mb: 1, p: 2 }}>
+                    CREATE NEW BOARD
+                </Button>
+            </Paper>
+        </Container>
+    );
 }
+

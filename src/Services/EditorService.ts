@@ -6,7 +6,7 @@ import CookieService, { Cookie } from './CookieService';
  * Abstraction for a SignalR hub connection, in this case relating to playing a game.
  */
 export default class EditorService {
-    
+
     public readonly hubConnection: HubConnection;
 
     private static editorService?: EditorService;
@@ -14,7 +14,7 @@ export default class EditorService {
     constructor(baseUrl: string, token: string, path: string = "editor") {
         let completePath: string = baseUrl + path;
         this.hubConnection = new HubConnectionBuilder()
-            .withUrl(completePath, { accessTokenFactory: () => token})
+            .withUrl(completePath, { accessTokenFactory: () => token })
             .withAutomaticReconnect().build();
     }
 
@@ -59,13 +59,17 @@ export default class EditorService {
         this.hubConnection.on(methodName, newMethod)
     }
 
-    sendCreateEditor(editorId: string): void {
-        this.hubConnection.send('CreateEditor', editorId);
+    sendCreatePieceEditor(editorId: string): void {
+        this.hubConnection.send('CreatePieceEditor', editorId);
+    }
+
+    setImagePath(editorId: string, imagePath: string): void {
+        this.hubConnection.send("SetImagePath", editorId, imagePath);
     }
 
     setActiveSquare(editorId: string, square: string): void {
         this.hubConnection.send("ActivateSquare", editorId, square);
-        this.requestBoardState(editorId);
+        this.requestPieceEditorBoardState(editorId);
     }
 
     addMovementPattern(editorId: string, xDir: number, yDir: number, minLength: number, maxLength: number): void {
@@ -77,7 +81,7 @@ export default class EditorService {
         console.log("Removing pattern pressed");
         this.hubConnection.send("RemoveMovementPattern", editorId, xDir, yDir, minLength, maxLength);
     }
-    
+
     removeAllMovementPatterns(editorId: string): void {
         this.hubConnection.send("ClearMovementPatterns", editorId);
     }
@@ -86,10 +90,10 @@ export default class EditorService {
         console.log("Adding pattern pressed");
         this.hubConnection.send("AddCapturePattern", editorId, xDir, yDir, minLength, maxLength);
     }
-    
-    setBoardSize(editorId: string, rows: number, cols: number): void {
+
+    setPieceEditorBoardSize(editorId: string, rows: number, cols: number): void {
         console.log("Removing pattern pressed");
-        this.hubConnection.send("UpdateBoardSize", editorId, rows, cols);
+        this.hubConnection.send("UpdatePieceEditorBoardSize", editorId, rows, cols);
     }
 
     setSameCaptureAsMovement(editorId: string, enable: boolean): void {
@@ -107,6 +111,11 @@ export default class EditorService {
         this.hubConnection.send("PieceCanBeCaptured", editorId, enable);
     }
 
+    canBePromotedTo(editorId: string, enable: boolean): void {
+        console.log("Set can promote to");
+        this.hubConnection.send("SetCanBePromotedTo", editorId, enable);
+    }
+
     belongsToPlayer(editorId: string, player: string): void {
         console.log("Set belongs to player");
         this.hubConnection.send("BelongsToPlayer", editorId, player);
@@ -117,39 +126,103 @@ export default class EditorService {
         this.hubConnection.send("AmountRepeat", editorId, repeat);
     }
 
-    resetPiece(editorId: string, ): void {
+    resetPiece(editorId: string,): void {
         console.log("Reset piece");
         this.hubConnection.send("ResetPiece", editorId);
+    }
+
+    buildPiece(editorId: string, pieceName: string) {
+        console.log("Building piece");
+        this.hubConnection.send("BuildPiece", editorId, pieceName)
+    }
+
+    // Board editor
+    sendCreateBoardEditor(editorId: string): void {
+        this.hubConnection.send('CreateBoardEditor', editorId);
+    }
+
+    setBoardEditorBoardSize(editorId: string, rows: number, cols: number): void {
+        console.log("setting board editor size");
+        this.hubConnection.send("SetBoardEditorSize", editorId, rows, cols);
+    }
+
+    clearBoardEditorBoard(editorId: string): void {
+        this.hubConnection.send("ClearBoard", editorId);
+    }
+
+    resetStartingPosition(editorId: string): void {
+        this.hubConnection.send("ResetStartingPosition", editorId);
+    }
+
+    setActivePiece(editorId: string, piece: string): void {
+        console.log("piece: " + piece);
+        this.hubConnection.send("SetActivePiece", editorId, piece);
+    }
+
+    setActiveRemove(editorId: string): void {
+        this.hubConnection.send("SetActiveRemove", editorId);
+    }
+
+    insertPiece(editorId: string, square: string) {
+        this.hubConnection.send("UpdateSquare", editorId, square);
+    }
+
+    buildBoard(editorId: string, boardName: string) {
+        console.log("Building board");
+        this.hubConnection.send("BuildChessboard", editorId, boardName)
     }
 
     /**
      * Requests the server to send an event with the board state
     */
-   async requestBoardState(editorId: string): Promise<EditorState> {
-       return this.hubConnection.invoke('RequestState', editorId);
-   }
+    async requestPieceEditorBoardState(editorId: string): Promise<PieceEditorState> {
+        return this.hubConnection.invoke('RequestPieceEditorState', editorId);
+    }
 
-   async requestPatternState(editorId: string): Promise<PatternState> {
-       return this.hubConnection.invoke('RequestPatternState', editorId);
-   }
-    
+    async requestPatternState(editorId: string): Promise<PatternState> {
+        return this.hubConnection.invoke('RequestPatternState', editorId);
+    }
+
+    async requestStandardPieces(color: string): Promise<Piece[]> {
+        return this.hubConnection.invoke('RequestStandardPiecesByColor', color);
+    }
+
+    async requestPiecesByUser(): Promise<Piece[]> {
+        return this.hubConnection.invoke('RequestUserPieces');
+    }
+
+    async requestBoardsByUser(): Promise<string[]> {
+        return this.hubConnection.invoke('RequestUserChessboards');
+    }
+
     /**
      * Starts the connection if it is disconnected, otherwise does nothing.
      */
     async startConnection(): Promise<void> {
         if (this.hubConnection.state === HubConnectionState.Disconnected) {
-          await this.hubConnection.start();
-          console.log('Connection to user hub successful');
+            await this.hubConnection.start();
+            console.log('Connection to user hub successful');
         }
     }
-    
+
 }
 
-export interface EditorState {
+export interface Piece {
+    name: string,
+    image: string,
+}
+
+export interface BoardEditorState {
+    board: string[],
+    boardSize: BoardSize,
+}
+
+export interface PieceEditorState {
     board: string[],
     boardSize: BoardSize,
     moves: Move[],
     square: string,
+    belongsTo: string,
 }
 
 export interface Pattern {
@@ -164,6 +237,8 @@ export interface PatternState {
 }
 
 export enum EditorEvents {
-    UpdatedEditorState = "updatedEditorState",
+    UpdatedPieceEditorState = "updatedPieceEditorState",
+    UpdatedBoardEditorState = "updatedBoardEditorState",
+    BuildFailed = "buildFailed",
     Error = "error",
 }
