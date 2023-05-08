@@ -21,7 +21,7 @@ export default function MoveEditorPage() {
 
   const [positionCreatorInfo, setPositionCreatorInfo] = useState<PositionCreatorInfo>({ posInfo: { absolute: { coordinate: "a1" }, relative: null }, id: 0, editingFrom: true });
 
-  const [identifier, setIdentifier] = useState("aa")
+  const [identifier, setIdentifier] = useState("")
 
 
   const classes = commonClasses();
@@ -190,7 +190,7 @@ export default function MoveEditorPage() {
                 <Typography variant="h5" sx={{ letterSpacing: '2px' }}>Piece Identifier:</Typography>
               </Grid>
               <Grid sx={{ mr: 1 }}>
-                <TextField sx={{ width: 60, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setIdentifier)} value={identifier}>
+                <TextField sx={{ width: 120, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setIdentifier)} value={identifier}>
 
                 </TextField>
               </Grid>
