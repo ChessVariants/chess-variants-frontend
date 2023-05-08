@@ -43,7 +43,7 @@ export class PieceImageAdapter {
      */
     static getImageRef(id: string) {
         if (id === "--") return "";
-        if (id === "DU") return duck;
+        if (id === "Du") return duck;
         switch (id.toLowerCase()) {
             case 'pa':
                 return pawn;
