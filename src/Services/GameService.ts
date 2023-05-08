@@ -224,4 +224,6 @@ export enum Variant {
     Standard = "standard",
     CaptureTheKing = "captureTheKing",
     AntiChess = "antiChess",
+    DuckChess = "duckChess",
+    AtomicChess = "atomicChess",
 }

@@ -77,6 +77,7 @@ export default function CreateGame(props: { createGameFunction: any }) {
                             <CMenuItem value={"standard"}>Standard</CMenuItem>
                             <CMenuItem value={"captureTheKing"}>CaptureTheKing</CMenuItem>
                             <CMenuItem value={"antiChess"}>AntiChess</CMenuItem>
+                            <CMenuItem value={"duckChess"}>DuckChess</CMenuItem>
                         </Select>
                     </Grid>
                     <Grid item md={2} sm={12} xs={12}>
