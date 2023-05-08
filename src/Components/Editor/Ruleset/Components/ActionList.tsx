@@ -285,7 +285,7 @@ function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
 
   }
 
-  const [identifier, setIdentifier] = useState("aa");
+  const [identifier, setIdentifier] = useState("");
 
   const setId = (id: string) => {
     //    if(isIdentifier(event.target.value))
@@ -296,7 +296,7 @@ function ActionSetPiece({ onOpen, actionInfo }: ActionSetPieceProps) {
   return (
     <div>
 
-      <TextField sx={{ width: 60, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setId)} value={identifier}>
+      <TextField sx={{ width: 120, mr: 2 }} onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChangeIdentifier(event, setId)} value={identifier}>
 
       </TextField>
       <Button variant="contained" color="createColor" style={{ height: '50px', width: '140px' }} onClickCapture={() => onOpen(true)} sx={{ mr: 1 }}>

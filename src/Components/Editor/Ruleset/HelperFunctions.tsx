@@ -102,9 +102,9 @@ export async function updateDict<T extends { name: string }>(getFunction: (token
 }
 
 export function isIdentifier(inputValue: string) {
-    const regex = /^(([a-z]|[A-Z])([a-z]|[A-Z]))|([a-z]|[A-Z])$/i;
+    const regex = /^[a-zA-Z]+$/i;
 
-    return regex.test(inputValue) && inputValue.length >= 0 && inputValue.length <= 2;
+    return regex.test(inputValue) && inputValue.length <= 15;
 }
 
 export function handleChangeIdentifier(event: React.ChangeEvent<HTMLInputElement>, setFunc: ((value: React.SetStateAction<string>) => void) | ((value: string) => void)) {

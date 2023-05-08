@@ -151,7 +151,6 @@ export default function ConditionEditorPage() {
   }
 
   const compileCode = async () => {
-    setException("Compiling...")
     let ex: string = await (getExceptionMessage(conditionCode));
     setException(ex);
   }
