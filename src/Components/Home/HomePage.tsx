@@ -44,7 +44,7 @@ export default function HomePage() {
           BROWSE VARIANTS
         </Button>
         <Button color={"editorColor"} onClick={() => {
-          navigate("/pieceEditor")
+          navigate("/editor")
         }}
           type="submit"
           variant="contained"

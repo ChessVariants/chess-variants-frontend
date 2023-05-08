@@ -1,10 +1,12 @@
 import { Box } from "@mui/system";
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from "@material-ui/core";
-import Square from "../Game/Square";
+import Square from "../../Game/Square";
 import { useEffect, useState } from "react";
-import EditorService, { EditorEvents, EditorState } from "../../Services/EditorService";
-import { Move } from "../../Services/GameService";
+import EditorService, { EditorEvents, PieceEditorState } from "../../../Services/EditorService";
+import { Move } from "../../../Services/GameService";
+import { Modal } from "@mui/material";
+import ImageSelectorPage from "../../Util/ImageSelectorPage";
 
 /**
  * Interface of properties that the userStyles requires to dynamically set different css properties
@@ -41,20 +43,27 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
         },
     },
 }));
+
 const columnCoordinate = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "Y", "Z"];
 
-const initialState: EditorState = {
+const initialState: PieceEditorState = {
     board: [],
     boardSize: { rows: 8, cols: 8 },
     moves: [],
     square: "",
+    belongsTo: "",
 };
 
-export default function EditorBoard(props: { editorID: string }) {
+export default function PieceEditorBoard(props: { editorID: string }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const [editorState, setEditorState] = useState<EditorState>(initialState);
+    const [editorState, setEditorState] = useState<PieceEditorState>(initialState);
+
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
 
     const [active, setActive] = useState(["", [""]]);
 
@@ -62,13 +71,17 @@ export default function EditorBoard(props: { editorID: string }) {
 
     useEffect(() => {
 
-        editorService.on(EditorEvents.UpdatedEditorState, (newEditorState: EditorState) => {
+        editorService.on(EditorEvents.UpdatedPieceEditorState, (newEditorState: PieceEditorState) => {
             console.log("updatestate");
             setEditorState(newEditorState);
-            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)])
+            setActive([newEditorState.square, getValidMoves(newEditorState.moves, newEditorState.square)]);
         })
 
         editorService.on(EditorEvents.Error, (errorMessage: string) => {
+            alert(errorMessage);
+        })
+
+        editorService.on(EditorEvents.BuildFailed, (errorMessage: string) => {
             alert(errorMessage);
         })
     }, [])
@@ -132,8 +145,18 @@ export default function EditorBoard(props: { editorID: string }) {
     }
 
     const clickFunction = (coordinate: string) => {
-        setActive(["", []]);
-        editorService.setActiveSquare(editorID, coordinate);
+        if (coordinate === active[0]) {
+            handleOpen();
+        }
+        else {
+            setActive(["", []]);
+            editorService.setActiveSquare(editorID, coordinate);
+        }
+    }
+
+    const updateImage = (img: string) => {
+        editorService.setImagePath(editorID, img);
+        handleClose();
     }
 
     return (
@@ -146,6 +169,22 @@ export default function EditorBoard(props: { editorID: string }) {
                     ))
                 }
             </Box>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <ImageSelectorPage updateFunction={updateImage}></ImageSelectorPage>
+            </Modal>
         </Box>
     );
 }
+
+//const imageID = (piece: string): string => {
+//    //piece == '--' ? piece : (editorState.belongsTo == "white" ? imageRef.toUpperCase() : imageRef)}
+//
+//    if()
+//
+//    return "";
+//}
