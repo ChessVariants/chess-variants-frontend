@@ -1,42 +1,72 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Paper, Button, Typography, Divider, Box } from "@mui/material";
 import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import CustomButton from "../Util/CustomButton";
-import GameService from "../../Services/GameService";
+import GameService, { GameEvents, GameState } from "../../Services/GameService";
+import { useEffect, useState } from "react";
+import { Result } from "./MatchPage";
+import AcceptDialog from "../Util/AcceptDialog";
 
 
 const useStyles = makeStyles<Theme>(theme => ({
     Container: {
-        backgroundColor: "#2C2D2F",
-        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
         display: "inline-block",
         marginLeft: "20px",
         width: "14vw",
-        minWidth: "120px",
-        height: "36vw",
-        minHeight: "320px",
-        margin: "0",
+        minWidth: "140px",
+        height: "22vw",
+        minHeight: "260px",
         [theme.breakpoints.down('xs')]: {
             display: "block",
+            marginTop: 20,
             marginLeft: "auto",
             marginRight: "auto",
             minWidth: "200px",
-            minHeight: "280px",
+            minHeight: "200px",
         },
     },
 
 }));
 
-export default function SideInfo(props: { gameService: GameService }) {
-
-    const { gameService } = props;
+export default function SideInfo(props: { gameID: string, setGameResult: any }) {
     const classes = useStyles();
+    const gameService = GameService.getInstance();
+    const [sideToMove, setSideToMove] = useState('White');
+    const { gameID, setGameResult } = props;
+    const [open, setOpen] = useState(false);
 
+    /**
+     * gameService subscriptions which only registers once via useEffect
+     */
+    useEffect(() => {
+        gameService.on(GameEvents.UpdatedGameState, (gameState: GameState) => {
+            setSideToMove(gameState.sideToMove);
+        })
+    }, [])
+
+    const surrender = () => {
+        setOpen(false);
+        gameService.sendLeaveGame(gameID);
+        setGameResult(Result.lossBySurrender);
+    }
     return (
-        <Box className={classes.Container}>
-            <p>Settings</p>
-            <CustomButton text={"Leave"} color={"blue"} height={"32px"}></CustomButton>
-        </Box>
+        <Paper className={classes.Container} sx={{ padding: 2, position: 'relative' }}>
+            <Typography sx={{ mb: 1, mt: 1 }} variant="body1">{(sideToMove + " to move").toUpperCase()}</Typography>
+            <Box sx={{ padding: 2, position: 'absolute', bottom: 0, left: 0, width: '100%' }}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    color="joinColor"
+                    onClick={() => setOpen(true)}
+                >RESIGN</Button>
+            </Box>
+            <AcceptDialog
+                open={open}
+                setOpen={setOpen}
+                title="Resign the game"
+                body="You are about to resign the game. Are you sure that you want to continue with this action?"
+                clickFunction={surrender} />
+        </Paper>
     );
 
 }

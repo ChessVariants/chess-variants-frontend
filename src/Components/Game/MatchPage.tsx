@@ -1,7 +1,5 @@
-import { Box } from "@mui/system";
 import GameBoard from "./GameBoard";
 import GameSideInfo from "./GameSideInfo";
-import { Theme } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import GameService, { GameEvents, JoinResult, PromotionOptions } from "../../Services/GameService";
 import { useLocation, useParams } from "react-router-dom";
@@ -9,14 +7,17 @@ import RedirectLogin from "../Util/RedirectLoginPage";
 import { useEffect, useState } from "react";
 import EndScreen from "./EndScreen";
 import PromotionSelector from "./PromotionSelector";
+import { Box } from "@mui/material";
 
 export enum Result {
   ongoing = "Match is ongoing",
   win = "You won!",
   draw = "Draw",
-  loss = "You lost!"
+  loss = "You lost!",
+  winBySurrender = "Opponent resigned!",
+  lossBySurrender = "You resigned!"
 }
-const useStyles = makeStyles<Theme>(theme => ({
+const useStyles = makeStyles(() => ({
   Container: {
     alignContent: "center",
     textAlign: "center",
@@ -71,6 +72,11 @@ export default function MatchPage() {
       setGameResult(Result.draw);
     })
 
+    gameService.on(GameEvents.PlayerLeftGame, (output: string) => {
+      console.log(output)
+      setGameResult(Result.winBySurrender);
+    })
+
     gameService.requestJoinGame(gameID ? gameID : "")
       .then((res: JoinResult) => {
         console.log(res);
@@ -117,13 +123,13 @@ export default function MatchPage() {
   }
 
   return (
-    <div className={classes.Body}>
+    <Box>
       {gameResult === Result.ongoing ? null : <EndScreen players={players} result={gameResult} />}
       <Box className={classes.Container}>
         <GameBoard gameID={gameID + ""} color={location.state?.color}></GameBoard>
         {promotionOptions ? <PromotionSelector options={promotionOptions} gameId={gameID!} /> : null}
-        <GameSideInfo gameService={gameService}></GameSideInfo>
+        <GameSideInfo gameID={gameID + ""} setGameResult={setGameResult} />
       </Box>
-    </div>
+    </Box>
   );
 }
