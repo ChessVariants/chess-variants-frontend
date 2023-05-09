@@ -58,7 +58,7 @@ export default function SideInfo(props: { gameID: string, setGameResult: any }) 
                     fullWidth
                     color="joinColor"
                     onClick={() => setOpen(true)}
-                >SURRENDER</Button>
+                >RESIGN</Button>
             </Box>
             <AcceptDialog
                 open={open}
