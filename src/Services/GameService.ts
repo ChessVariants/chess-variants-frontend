@@ -192,8 +192,13 @@ export interface Move {
 }
 
 export interface PromotionOptions {
-    promotablePieces: string[],
+    promotablePieces: PieceInfo[],
     player: "white" | "black",
+}
+
+export interface PieceInfo {
+    identifier: string,
+    imagePath: string,
 }
 
 

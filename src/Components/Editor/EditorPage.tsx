@@ -54,6 +54,24 @@ export default function EditorPage() {
                     sx={{ mt: 3, mb: 1, p: 2 }}>
                     CREATE NEW BOARD
                 </Button>
+                <Button color={"createColor"} onClick={() => {
+                    navigate("/editor/ruleset");
+                }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3, mb: 1, p: 2 }}>
+                    CREATE NEW RULES
+                </Button>
+                <Button color={"createColor"} onClick={() => {
+                    navigate("/variantEditor");
+                }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3, mb: 1, p: 2 }}>
+                    COMPILE NEW VARIANT
+                </Button>
             </Paper>
         </Container>
     );
