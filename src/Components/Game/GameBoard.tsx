@@ -246,8 +246,8 @@ export default function GameBoard(props: { gameID: string, color: string }) {
                             key={squareCoordinate(i)}
                             clickFunction={() => clickFunction(squareCoordinate(i))}
                             highlight={shouldHighlight(i)}
-                            labelRow={!(color === "white") ? columnCoordinate[(Number(gameState.boardSize.rows) - 1)] : undefined}
-                            labelCol={!(color === "white") ? (Number(gameState.boardSize.cols)).toString() : undefined}
+                            labelRow={!(color === "white") ? columnCoordinate[(Number(gameState.boardSize.cols) - 1)] : undefined}
+                            labelCol={!(color === "white") ? (Number(gameState.boardSize.rows)).toString() : undefined}
                         />
                     ))
                 }
