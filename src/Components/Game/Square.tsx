@@ -28,9 +28,13 @@ export const useStyles = makeStyles<Theme>(theme => ({
     WhiteActive: {
         backgroundColor: "#C4FEC4",
     },
-    Highlighted: {
+    WhiteHighlighted: {
         backgroundColor: "#9fdafc",
     },
+    BlackHighlighted: {
+        backgroundColor: "#7dbada",
+    },
+
 
     Square: {
         fontSize: "calc(4px + 0.7vw)",
@@ -119,7 +123,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
     const fileLabel = (coordinate: string) => {
         if (labelRow) {
             if (coordinate[0] === labelRow) return coordinate.replace(/[^0-9]/gi, '');
-        }    
+        }
         else {
             if (coordinate[0] === "a") return coordinate.replace(/[^0-9]/gi, '');
         }
@@ -154,7 +158,8 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
 
     const Color = () => {
         if (!activated && highlight) {
-            return classes.Highlighted;
+            return isWhite ? classes.WhiteHighlighted : classes.BlackHighlighted;
+
         }
 
         if (isWhite) {
@@ -173,7 +178,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                 <Box className={classes.Square}>
                     {id !== "--" ? <img src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
-                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
+                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : id === "Du" ? classes.CommonPiece : classes.WhitePiece}`}
                     /> : null}
                     <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
                     <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>
@@ -188,7 +193,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                     {id !== "--" ? <img
                         src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
-                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : classes.WhitePiece}`}
+                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : id === "Du" ? classes.CommonPiece : classes.WhitePiece}`}
                     /> : null}
                     <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
                     <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>
