@@ -64,7 +64,7 @@ export default function SideInfo(props: { gameID: string, setGameResult: any }) 
                 open={open}
                 setOpen={setOpen}
                 title="Resign the game"
-                body="You are about to resign the game. Are you sure that you want to continiue with this action?"
+                body="You are about to resign the game. Are you sure that you want to continue with this action?"
                 clickFunction={surrender} />
         </Paper>
     );
