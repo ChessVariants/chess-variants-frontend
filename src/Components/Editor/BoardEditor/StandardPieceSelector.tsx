@@ -50,7 +50,7 @@ export default function StandardPieceSelector(props: { editorID: string, color: 
                 {
                     pieces.map((piece) => (
                         <Grid item xs={2}>
-                            <PieceItem editorID={editorID} piece={piece.name} image={piece.image} displayName={false}></PieceItem>
+                            <PieceItem editorID={editorID} pieceName={piece.name} image={piece.image} displayName={false}></PieceItem>
                         </Grid>
                     ))
                 }
