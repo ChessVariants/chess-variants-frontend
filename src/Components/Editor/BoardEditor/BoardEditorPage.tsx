@@ -40,7 +40,7 @@ export default function BoardEditorPage() {
     }
 
     return (
-        <Box className={classes.Container} style={{ paddingLeft: 450 }} >
+        <Box className={classes.Container} style={{ paddingLeft: 450, paddingTop: 30 }} >
             <BoardEditorBoard editorID={editorID}></BoardEditorBoard>
             <Stack>
                 <BoardEditorSidePage editorID={editorID}></BoardEditorSidePage>
@@ -49,26 +49,3 @@ export default function BoardEditorPage() {
         </Box>
     );
 }
-
-
-/* This is just an example of how board configurations can be selected in the variant editor.
-
-const [boards, setBoards] = useState([""]);
-
-useEffect(() => 
-    editorService.requestBoardsByUser()
-    .then((boards: string[]) => {
-        setBoards(boards);
-    })
-    .catch(e => console.log(e));
-)
-
-<Select >
-    {
-        boards.map((board) => (
-            <MenuItem value={board}>{board} </MenuItem>
-        ))
-    }
-</Select>
-
-*/
