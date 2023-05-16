@@ -4,7 +4,6 @@ import bishop from './bishop.svg';
 import knight from './knight.svg';
 import queen from './queen.svg';
 import king from './king.svg';
-
 import cannon from './cannon.svg'
 import commoner from './commoner.svg'
 import flag from './flag.svg'
@@ -71,6 +70,36 @@ export class PieceImageAdapter {
                 return joker;
             case 'sh':
                 return ship;
+            case 'kr':
+                return knightrotated;
+            case 'nr':
+                return knightroyal;
+            case 'kt':
+                return knighttie;
+            case 'ku':
+                return knightunicorn;
+            case 'ok':
+                return knightvar1;
+            case 'tk':
+                return knightvar2;
+            case 'kz':
+                return knightzebra;
+            case 'op':
+                return pawnvar1;
+            case 'tp':
+                return pawnvar2;
+            case 'hp':
+                return pawnvar3;
+            case 'pl':
+                return plus;
+            case 'st':
+                return supertower;
+            case 'ts':
+                return telescope;
+            case 'to':
+                return tower;
+            case 'wc':
+                return whiteCircle;
             default:
                 return "error"; // ID not found
 

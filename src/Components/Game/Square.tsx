@@ -168,6 +168,13 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
         return activated ? classes.BlackActive : classes.Black;
     }
 
+    const imageRef = (piece: string): string => {
+        if(piece === piece.toLowerCase())
+            return classes.BlackPiece;
+        if(piece === piece.toUpperCase())
+            return classes.WhitePiece;
+        return classes.CommonPiece;
+    }
 
     /**
      * Returns HTML
@@ -178,7 +185,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                 <Box className={classes.Square}>
                     {id !== "--" ? <img src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
-                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : id === "Du" ? classes.CommonPiece : classes.WhitePiece}`}
+                        className={`${classes.Icon} ${imageRef(id)}`}
                     /> : null}
                     <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
                     <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>
@@ -193,7 +200,7 @@ export default function Square(props: { isWhite: boolean, id: string, coordinate
                     {id !== "--" ? <img
                         src={PieceImageAdapter.getImageRef(id)}
                         alt={id}
-                        className={`${classes.Icon} ${id == id.toLowerCase() ? classes.BlackPiece : id === "Du" ? classes.CommonPiece : classes.WhitePiece}`}
+                        className={`${classes.Icon} ${imageRef(id)}`}
                     /> : null}
                     <p className={classes.FileLabel}>{fileLabel(coordinate)}</p>
                     <p className={classes.RankLabel}>{rankLabel(coordinate)}</p>

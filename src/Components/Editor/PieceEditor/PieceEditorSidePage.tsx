@@ -67,7 +67,7 @@ export default function SideInfo(props: { editorID: string }) {
                         <Container className={classes.modal} >
                             <Stack>
                                 <Typography id="pieceNameModal" sx={{ textDecoration: 'underline', textUnderlineOffset: 5, fontSize: 34 }}>
-                                    Enter the name
+                                    Choose a name
                                 </Typography>
                                 <TextField
                                     id="name" type="text" value={name} onChange={handleChange} style={{ position: "relative", marginLeft: "10px" }}

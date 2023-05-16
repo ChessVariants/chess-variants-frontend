@@ -11,29 +11,26 @@ const useStyles = makeStyles<Theme>(({
     BlackPiece: {
         filter: "sepia(2) saturate(1) hue-rotate(200deg) brightness(.2)",
     },
+    CommonPiece: {
+        filter: "invert(19%) sepia(40%) saturate(590%) hue-rotate(5deg) brightness(100%) contrast(84%)"
+    },
 }));
 
-export default function PieceItem(props: { editorID: string, piece: string, image: string, displayName: boolean }) {
+export default function PieceItem(props: { editorID: string, pieceName: string, image: string, displayName: boolean }) {
 
     const editorService: EditorService = EditorService.getInstance();
 
-    const { editorID: editorID, piece: piece, image: image, displayName: displayName } = props;
+    const { editorID: editorID, pieceName: piece, image: image, displayName: displayName } = props;
 
     const classes = useStyles();
 
     const checkColor = (): string => {
-        if (image == image.toLowerCase())
+        if (image === image.toLowerCase())
             return classes.BlackPiece;
-
-        else if (image == image.toUpperCase())
+        else if (image === image.toUpperCase())
             return classes.WhitePiece;
-
-        // Uncomment when rebased with master
-        //else
-        //    return classes.CommonPiece;
-
-        console.log("no color");
-        return classes.WhitePiece;
+        else
+            return classes.CommonPiece;
     };
 
     return (
