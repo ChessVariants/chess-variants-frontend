@@ -125,5 +125,65 @@ const itemData = [
         title: "sh",
         img: PieceImageAdapter.getImageRef('sh'),
     },
+    {
+        title: "kr",
+        img: PieceImageAdapter.getImageRef('kr'),
+    },
+    {
+        title: "nr",
+        img: PieceImageAdapter.getImageRef('nr'),
+    },
+    {
+        title: "kt",
+        img: PieceImageAdapter.getImageRef('kt'),
+    },
+    {
+        title: "ku",
+        img: PieceImageAdapter.getImageRef('ku'),
+    },
+    {
+        title: "ok",
+        img: PieceImageAdapter.getImageRef('ok'),
+    },
+    {
+        title: "tk",
+        img: PieceImageAdapter.getImageRef('tk'),
+    },
+    {
+        title: "kz",
+        img: PieceImageAdapter.getImageRef('kz'),
+    },
+    {
+        title: "op",
+        img: PieceImageAdapter.getImageRef('op'),
+    },
+    {
+        title: "tp",
+        img: PieceImageAdapter.getImageRef('tp'),
+    },
+    {
+        title: "hp",
+        img: PieceImageAdapter.getImageRef('hp'),
+    },
+    {
+        title: "pl",
+        img: PieceImageAdapter.getImageRef('pl'),
+    },
+    {
+        title: "st",
+        img: PieceImageAdapter.getImageRef('st'),
+    },
+    {
+        title: "ts",
+        img: PieceImageAdapter.getImageRef('ts'),
+    },
+    {
+        title: "to",
+        img: PieceImageAdapter.getImageRef('to'),
+    },
+    {
+        title: "wc",
+        img: PieceImageAdapter.getImageRef('wc'),
+    },
 
 ];
